@@ -4,6 +4,8 @@ module Animation exposing
     , State
     , animate
     , infinite
+    , multiple
+    , once
     , pulse
     , run
     , slideUp
@@ -11,8 +13,8 @@ module Animation exposing
     )
 
 import Html as H exposing (Html)
+import Millisecond exposing (Millisecond, millisecond)
 import Svg.Attributes as SA
-import Time exposing (Posix)
 
 
 type Animation
@@ -20,27 +22,42 @@ type Animation
 
 
 type State
-    = State
+    = State (List Animation)
 
 
-run : Posix -> List Animation -> State
-run time animations =
-    Debug.todo "run animation"
+run : Millisecond -> List ( Millisecond, Animation ) -> State
+run current animations =
+    animations
+        |> List.filterMap
+            (\( time, animation ) ->
+                if Millisecond.isAfter current time then
+                    Just animation
+
+                else
+                    Nothing
+            )
+        |> State
 
 
-animate : { duration : Float, iterationCount : IterationCount } -> Animation -> H.Attribute msg
-animate { duration, iterationCount } (Animation options) =
-    SA.style <|
-        "animation-name: "
-            ++ (Tuple.first options.keyframes ++ ";")
-            ++ "animation-duration: "
-            ++ (String.fromFloat duration ++ "s;")
-            ++ "animation-iteration-count: "
-            ++ iterationCountToString iterationCount
+animate : { duration : Float, iterationCount : IterationCount } -> List ( Millisecond, Animation ) -> H.Attribute msg
+animate { duration, iterationCount } animations =
+    let
+        toAnimationStyle ( time, Animation options ) =
+            (Tuple.first options.keyframes ++ " ")
+                ++ (String.fromFloat duration ++ "s ")
+                ++ (iterationCountToString iterationCount ++ " ")
+    in
+    animations
+        |> List.map toAnimationStyle
+        |> String.join ","
+        |> (\style -> "animation: " ++ style ++ "; animation-fill-mode: forwards;")
+        |> SA.style
 
 
 type IterationCount
     = Infinite
+    | Multiple Float
+    | Once
 
 
 infinite : IterationCount
@@ -48,10 +65,26 @@ infinite =
     Infinite
 
 
+once : IterationCount
+once =
+    Once
+
+
+multiple : Float -> IterationCount
+multiple =
+    Multiple
+
+
 iterationCountToString iterationCount =
     case iterationCount of
         Infinite ->
             "infinite"
+
+        Once ->
+            "1"
+
+        Multiple count ->
+            String.fromFloat count
 
 
 pulse : Animation
@@ -72,14 +105,22 @@ slideUp =
         { keyframes =
             ( "slideUp"
             , [ ( "0%", "transform: translate(0px, 0)" )
-              , ( "100%", "transform: translate(-200px, 0)" )
+              , ( "100%", "transform: translate(0px, -500px)" )
               ]
             )
         }
 
 
-toStyle : List Animation -> Html msg
-toStyle animations =
+
+-- toStyle : List Animation -> Html msg
+-- toStyle animations =
+--     H.node "style"
+--         []
+--         [ H.text (animations |> List.map toKeyframe |> String.join "\n") ]
+
+
+toStyle : State -> Html msg
+toStyle (State animations) =
     H.node "style"
         []
         [ H.text (animations |> List.map toKeyframe |> String.join "\n") ]

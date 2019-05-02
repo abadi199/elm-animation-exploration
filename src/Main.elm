@@ -5,7 +5,9 @@ module Main exposing (main)
 
 import Animation exposing (Animation)
 import Browser
+import Browser.Events
 import Html exposing (Html)
+import Millisecond exposing (Millisecond, millisecond)
 import Svg as S exposing (..)
 import Svg.Attributes as SA exposing (..)
 
@@ -20,25 +22,31 @@ main =
 
 
 type alias Model =
-    { animations : List Animation }
+    { animations : List ( Millisecond, Animation )
+    , animationState : Animation.State
+    , timer : Millisecond
+    }
 
 
 pulseAnimation =
-    Animation.pulse
+    ( millisecond 1000, Animation.pulse )
 
 
 slideUpAnimation =
-    Animation.slideUp
+    ( millisecond 0, Animation.slideUp )
 
 
 init : () -> ( Model, Cmd Msg )
 init flags =
-    let animations = [ (0, pulseAnimation)
-            , (1000, slideUpAnimation)
+    let
+        animations =
+            [ pulseAnimation
+            , slideUpAnimation
             ]
-    in 
+    in
     ( { animations = animations
-      , animationState = Animation.run animations
+      , animationState = Animation.run (millisecond 0) animations
+      , timer = millisecond 0
       }
     , Cmd.none
     )
@@ -46,33 +54,42 @@ init flags =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.none
+    Browser.Events.onAnimationFrameDelta (millisecond >> AnimationFrameTicked)
 
 
 type Msg
-    = DeleteMe
+    = AnimationFrameTicked Millisecond
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        DeleteMe ->
-            ( model, Cmd.none )
+        AnimationFrameTicked time ->
+            let
+                timer =
+                    Millisecond.add model.timer time
+            in
+            ( { model
+                | timer = timer
+                , animationState = Animation.run timer model.animations
+              }
+            , Cmd.none
+            )
 
 
 view : Model -> Html Msg
 view model =
     svg [ width "100%", height "100%", viewBox "0 0 1000 1000", SA.style "background: #ccc" ]
-        [ Animation.toStyle model.animations
-        , dot { x = 200, y = 500 }
-        , dot { x = 400, y = 500 }
-        , dot { x = 600, y = 500 }
-        , dot { x = 800, y = 500 }
+        [ Animation.toStyle model.animationState
+        , dot [ slideUpAnimation, pulseAnimation ] { x = 200, y = 500 }
+        , dot [] { x = 400, y = 500 }
+        , dot [] { x = 600, y = 500 }
+        , dot [] { x = 800, y = 500 }
         ]
 
 
-dot : { x : Int, y : Int } -> Svg msg
-dot { x, y } =
+dot : List ( Millisecond, Animation ) -> { x : Int, y : Int } -> Svg msg
+dot animations { x, y } =
     g [ SA.style <| "transform: translate(" ++ String.fromInt x ++ "px," ++ String.fromInt y ++ "px)" ]
         [ circle
             [ cx "0"
@@ -80,8 +97,8 @@ dot { x, y } =
             , r "50"
             , fill "red"
             , Animation.animate
-                { duration = 2, iterationCount = Animation.infinite }
-                pulseAnimation
+                { duration = 2, iterationCount = Animation.once }
+                animations
             ]
             []
         ]
