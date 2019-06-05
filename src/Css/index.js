@@ -1,5 +1,5 @@
 import { Elm } from "./Main.elm";
 
-Elm.Main.init({
+Elm.Css.Main.init({
   node: document.querySelector("main")
 });
