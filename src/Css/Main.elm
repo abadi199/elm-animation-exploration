@@ -1,9 +1,12 @@
 module Css.Main exposing (main)
 
 import Browser
-import Css.Animation as Animation exposing (px, second, withAnimation)
+import Css.Animation as Animation exposing (withAnimation)
 import Html exposing (Html, div)
 import Html.Attributes as HA
+import Html.Events as HE
+import Px exposing (px)
+import Second exposing (second)
 import Svg as S exposing (..)
 import Svg.Attributes as SA exposing (..)
 
@@ -18,12 +21,12 @@ main =
 
 
 type alias Model =
-    {}
+    { redBoxStart : Bool }
 
 
 init : () -> ( Model, Cmd Msg )
 init flags =
-    ( {}
+    ( { redBoxStart = False }
     , Cmd.none
     )
 
@@ -34,77 +37,65 @@ subscriptions model =
 
 
 type Msg
-    = DeleteMe
+    = UserClickRedBox
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        DeleteMe ->
-            ( model, Cmd.none )
+        UserClickRedBox ->
+            ( { model | redBoxStart = True }
+            , Cmd.none
+            )
 
 
 view : Model -> Html Msg
 view model =
     div []
-        [ div
-            |> withAnimation [ Animation.right (px 100) (second 1) ]
-                [ HA.style "background" "red"
-                , HA.style "width" "50px"
-                , HA.style "height" "50px"
-                , HA.style "position" "absolute"
-                , HA.style "top" "calc(50vh - 25px)"
-                , HA.style "left" "calc(50vw - 25px)"
+        [ box "red"
+            |> (if model.redBoxStart then
+                    withAnimation
+                        [ Animation.translate { x = px 0, y = px -200 } (second 0.5)
+                        , Animation.translate { x = px -200, y = px -200 } (second 0.5)
+                            |> Animation.delay (second 0.5)
+                        ]
+                        [ HA.style "left" "calc(50vw - 500px)" ]
+                        [ text "A" ]
+
+                else
+                    Animation.none
+                        [ HA.style "left" "calc(50vw - 500px)", HE.onClick UserClickRedBox ]
+                        [ text "A" ]
+               )
+        , box "green"
+            |> withAnimation
+                [ Animation.translate { x = px 0, y = px -200 } (second 0.5)
+                    |> Animation.delay (second 0.25)
                 ]
-                []
+                [ HA.style "left" "calc(50vw - 400px)" ]
+                [ text "B" ]
+        , box "blue"
+            |> withAnimation
+                [ Animation.translate { x = px 0, y = px -200 } (second 0.5)
+                    |> Animation.delay (second 0.5)
+                ]
+                [ HA.style "left" "calc(50vw - 300px)" ]
+                [ text "C" ]
         ]
 
 
-dot : { x : Int, y : Int } -> Svg msg
-dot { x, y } =
-    g [ SA.style <| "transform: translate(" ++ String.fromInt x ++ "px," ++ String.fromInt y ++ "px)" ]
-        [ node "style"
-            []
-            [ text """
-@keyframes moveRight {
-    0% { transform: translate(0, 0); }
-    100% { transform: translate(500px, 0); }
-}
-
-@keyframes moveUp {
-    0% { transform: translate(500px, 0); }
-    100% { transform: translate(500px, -500px); }
-}
-
-@keyframes blink {
-    0% { opacity: 1; }
-    100% { opacity: 0; }
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); }
-    100% { transform: scale(1.2); }
-}
-"""
-            ]
-        , g
-            [ SA.style """
-animation: moveRight 5s linear forwards
-    , moveUp 5s 5s linear forwards
-    , moveRight 5s 15s linear forwards
-    , moveUp 5s 20s linear forwards
-"""
-            ]
-            [ circle
-                [ cx "0"
-                , cy "0"
-                , r "50"
-                , fill "red"
-                , SA.style """
-animation: blink 1s infinite
-    , pulse 1s infinite
-"""
-                ]
-                []
-            ]
-        ]
+box : String -> List (Attribute Msg) -> List (Html Msg) -> Html Msg
+box color attributes children =
+    div
+        (HA.style "background" color
+            :: HA.style "width" "50px"
+            :: HA.style "height" "50px"
+            :: HA.style "position" "absolute"
+            :: HA.style "top" "calc(50vh - 25px)"
+            :: HA.style "display" "flex"
+            :: HA.style "justify-content" "center"
+            :: HA.style "align-items" "center"
+            :: HA.style "color" "white"
+            :: attributes
+        )
+        children

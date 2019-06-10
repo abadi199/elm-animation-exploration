@@ -1,18 +1,22 @@
 module Css.Animation exposing
-    ( Px
-    , Second
-    , px
-    , right
-    , second
+    ( delay
+    , none
+    , sequence
+    , toKeyframe
+    , translate
     , withAnimation
     )
 
-import Html
+import Html as H
 import Html.Attributes as HA
+import Murmur3
+import Percentage
+import Px exposing (Px, px)
+import Second exposing (Second, second)
 
 
 type alias Html msg =
-    List (Html.Attribute msg) -> List (Html.Html msg) -> Html.Html msg
+    List (H.Attribute msg) -> List (H.Html msg) -> H.Html msg
 
 
 type AnimatedHtml msg
@@ -20,67 +24,186 @@ type AnimatedHtml msg
 
 
 type Animation
-    = Right Px Second
+    = Move { x : Px, y : Px } Second
+    | Sequence (List Animation)
+    | Delay Second Animation
 
 
-type Px
-    = Px Int
+getCoordinate : Animation -> { x : Px, y : Px }
+getCoordinate animation =
+    case animation of
+        Move coordinate _ ->
+            coordinate
+
+        Sequence _ ->
+            Debug.todo "sequence"
+
+        Delay _ delayedAnimation ->
+            getCoordinate delayedAnimation
 
 
-px : Int -> Px
-px =
-    Px
+translate : { x : Px, y : Px } -> Second -> Animation
+translate distance duration =
+    Move distance duration
 
 
-type Second
-    = Second Float
+delay : Second -> Animation -> Animation
+delay =
+    Delay
 
 
-second : Float -> Second
-second =
-    Second
+sequence : List Animation -> Animation
+sequence =
+    Sequence
 
 
-right : Px -> Second -> Animation
-right distance duration =
-    Right distance duration
-
-
-withAnimation : List Animation -> List (Html.Attribute msg) -> List (Html.Html msg) -> Html msg -> Html.Html msg
-withAnimation animations attributes children html =
-    let
-        style =
-            Html.node "style" [] [ Html.text keyframes ]
-    in
-    html
-        (HA.style "animation"
-            """moveRight 1s forwards
-             , moveUp 1s 1s forwards"""
-            :: attributes
+toStyleNode : List Animation -> H.Html msg
+toStyleNode animations =
+    H.node "style"
+        []
+        (animations
+            |> List.map
+                (\animation -> toKeyframe (hash animation) animation |> H.text)
         )
-        (style :: children)
 
 
-keyframes : String
-keyframes =
-    """
-@keyframes moveRight {
-    0% { transform: translate(0, 0); }
-    100% { transform: translate(500px, 0); }
-}
+toKeyframe : String -> Animation -> String
+toKeyframe name animation =
+    case animation of
+        Move { x, y } _ ->
+            "@keyframes "
+                ++ name
+                ++ "{"
+                ++ toKeyframeContent animation
+                ++ "}"
 
-@keyframes moveUp {
-    0% { transform: translate(500px, 0); }
-    100% { transform: translate(500px, -500px); }
-}
+        Delay _ delayedAnimation ->
+            toKeyframe name delayedAnimation
 
-@keyframes blink {
-    0% { opacity: 1; }
-    100% { opacity: 0; }
-}
+        Sequence animations ->
+            "@keyframes " ++ name ++ " { " ++ toKeyframeContent animation ++ "}"
 
-@keyframes pulse {
-    0% { transform: scale(1); }
-    100% { transform: scale(1.2); }
-}
-    """
+
+toKeyframeContent : Animation -> String
+toKeyframeContent animation =
+    case animation of
+        Move { x, y } _ ->
+            "0% { transform: translate(0, 0); }"
+                ++ "100% { transform: translate("
+                ++ Px.toString x
+                ++ ", "
+                ++ Px.toString y
+                ++ "); }"
+
+        Delay _ delayedAnimation ->
+            toKeyframeContent delayedAnimation
+
+        Sequence animations ->
+            let
+                totalDuration =
+                    getTotalDuration animations
+
+                initial =
+                    ( "", { x = px 0, y = px 0 }, second 0 )
+
+                ( keyframe, _, _ ) =
+                    List.foldl (foldAnimation totalDuration) initial animations
+            in
+            keyframe
+
+
+foldAnimation : Second -> Animation -> ( String, { x : Px, y : Px }, Second ) -> ( String, { x : Px, y : Px }, Second )
+foldAnimation totalTime animation ( keyframe, coordinate, time ) =
+    let
+        nextCoordinate =
+            coordinate
+
+        nextTime =
+            Second.add time (getDuration animation)
+
+        percentage =
+            Percentage.fromSecond { numerator = nextTime, denominator = totalTime }
+
+        nextKeyframe =
+            keyframe
+    in
+    ( nextKeyframe
+        ++ Percentage.toString percentage
+        ++ " "
+    , nextCoordinate
+    , nextTime
+    )
+
+
+toStyleAttribute : List Animation -> H.Attribute msg
+toStyleAttribute animations =
+    HA.style "animation"
+        (animations |> List.map toAnimationStyle |> String.join ",")
+
+
+toAnimationStyle : Animation -> String
+toAnimationStyle animation =
+    case animation of
+        Move _ duration ->
+            hash animation ++ " " ++ Second.toString duration ++ " forwards"
+
+        Delay delayDuration delayedAnimation ->
+            hash delayedAnimation
+                ++ " "
+                ++ Second.toString (getDuration delayedAnimation)
+                ++ " "
+                ++ Second.toString delayDuration
+                ++ " forwards"
+
+        Sequence animations ->
+            hash animation ++ " " ++ Second.toString (getTotalDuration animations) ++ " forwards"
+
+
+getTotalDuration : List Animation -> Second
+getTotalDuration animations =
+    animations
+        |> List.map (getDuration >> Second.toFloat)
+        |> List.foldl (+) 0
+        |> second
+
+
+getDuration : Animation -> Second
+getDuration animation =
+    case animation of
+        Move _ duration ->
+            duration
+
+        Delay delayDuration delayedAnimation ->
+            Second.add delayDuration (getDuration delayedAnimation)
+
+        Sequence animations ->
+            getTotalDuration animations
+
+
+hash : Animation -> String
+hash animation =
+    let
+        seed =
+            2019
+    in
+    case animation of
+        Move _ _ ->
+            "move" ++ String.fromInt (Murmur3.hashString seed <| toKeyframeContent animation)
+
+        Delay _ _ ->
+            ""
+
+        Sequence _ ->
+            ""
+
+
+none : List (H.Attribute msg) -> List (H.Html msg) -> Html msg -> H.Html msg
+none attributes children html =
+    html attributes children
+
+
+withAnimation : List Animation -> List (H.Attribute msg) -> List (H.Html msg) -> Html msg -> H.Html msg
+withAnimation animations attributes children html =
+    html
+        (toStyleAttribute animations :: attributes)
+        (toStyleNode animations :: children)
