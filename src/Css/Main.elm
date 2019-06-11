@@ -55,9 +55,11 @@ view model =
         [ box "red"
             |> (if model.redBoxStart then
                     withAnimation
-                        [ Animation.translate { x = px 0, y = px -200 } (second 0.5)
-                        , Animation.translate { x = px -200, y = px -200 } (second 0.5)
-                            |> Animation.delay (second 0.5)
+                        [ Animation.sequence
+                            [ Animation.translate { x = px 100, y = px 0 } (second 2)
+                            , Animation.translate { x = px 0, y = px 200 } (second 3)
+                            , Animation.translate { x = px 50, y = px 50 } (second 1)
+                            ]
                         ]
                         [ HA.style "left" "calc(50vw - 500px)" ]
                         [ text "A" ]
@@ -96,6 +98,7 @@ box color attributes children =
             :: HA.style "justify-content" "center"
             :: HA.style "align-items" "center"
             :: HA.style "color" "white"
+            :: HA.id color
             :: attributes
         )
         children

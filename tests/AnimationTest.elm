@@ -28,9 +28,9 @@ toKeyframeSuite =
                     )
                     |> Expect.equal
                         ("@keyframes test { "
-                            ++ "33% { transform: translate(100px, 0px); } "
-                            ++ "50% { transform: translate(100px, 200px); } "
-                            ++ "100% { transform: translate(150px, 250px); }"
+                            ++ "33% { transform: translate(100px,0px); } "
+                            ++ "50% { transform: translate(100px,200px); } "
+                            ++ "100% { transform: translate(150px,250px); }"
                             ++ " }"
                         )
         ]

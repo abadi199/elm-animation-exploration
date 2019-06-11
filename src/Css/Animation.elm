@@ -116,7 +116,8 @@ foldAnimation : Second -> Animation -> ( String, { x : Px, y : Px }, Second ) ->
 foldAnimation totalTime animation ( keyframe, coordinate, time ) =
     let
         nextCoordinate =
-            coordinate
+            getCoordinate animation
+                |> (\{ x, y } -> { x = Px.add x coordinate.x, y = Px.add y coordinate.y })
 
         nextTime =
             Second.add time (getDuration animation)
@@ -126,10 +127,29 @@ foldAnimation totalTime animation ( keyframe, coordinate, time ) =
 
         nextKeyframe =
             keyframe
+
+        toCss animationForCss =
+            case animationForCss of
+                Move { x, y } _ ->
+                    "transform: translate("
+                        ++ Px.toString nextCoordinate.x
+                        ++ ","
+                        ++ Px.toString nextCoordinate.y
+                        ++ ");"
+
+                Delay _ delayedAnimation ->
+                    toCss delayedAnimation
+
+                Sequence _ ->
+                    Debug.todo "nested sequence is not supported"
+
+        content =
+            "{ " ++ toCss animation ++ " } "
     in
     ( nextKeyframe
         ++ Percentage.toString percentage
         ++ " "
+        ++ content
     , nextCoordinate
     , nextTime
     )
@@ -190,11 +210,11 @@ hash animation =
         Move _ _ ->
             "move" ++ String.fromInt (Murmur3.hashString seed <| toKeyframeContent animation)
 
-        Delay _ _ ->
-            ""
+        Delay _ delayedAnimation ->
+            hash delayedAnimation
 
         Sequence _ ->
-            ""
+            "sequence" ++ String.fromInt (Murmur3.hashString seed <| toKeyframeContent animation)
 
 
 none : List (H.Attribute msg) -> List (H.Html msg) -> Html msg -> H.Html msg

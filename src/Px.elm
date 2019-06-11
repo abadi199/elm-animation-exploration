@@ -1,4 +1,10 @@
-module Px exposing (Px, px, toInt, toString)
+module Px exposing
+    ( Px
+    , add
+    , px
+    , toInt
+    , toString
+    )
 
 
 type Px
@@ -18,3 +24,8 @@ toString (Px n) =
 toInt : Px -> Int
 toInt (Px n) =
     n
+
+
+add : Px -> Px -> Px
+add (Px a) (Px b) =
+    Px (a + b)
