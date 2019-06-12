@@ -1,10 +1,12 @@
 module Css.Main exposing (main)
 
 import Browser
-import Css.Animation as Animation exposing (withAnimation)
+import Count
+import Css.Animation as Animation
 import Html exposing (Html, div)
 import Html.Attributes as HA
 import Html.Events as HE
+import Percentage
 import Px exposing (px)
 import Second exposing (second)
 import Svg as S exposing (..)
@@ -54,7 +56,7 @@ view model =
     div []
         [ box "red"
             |> (if model.redBoxStart then
-                    withAnimation
+                    Animation.with
                         [ Animation.sequence
                             [ Animation.translate { x = px 100, y = px 0 } (second 2)
                             , Animation.translate { x = px 0, y = px 200 } (second 3)
@@ -70,16 +72,20 @@ view model =
                         [ text "A" ]
                )
         , box "green"
-            |> withAnimation
+            |> Animation.with
                 [ Animation.translate { x = px 0, y = px -200 } (second 0.5)
                     |> Animation.delay (second 0.25)
                 ]
                 [ HA.style "left" "calc(50vw - 400px)" ]
                 [ text "B" ]
         , box "blue"
-            |> withAnimation
+            |> Animation.with
                 [ Animation.translate { x = px 0, y = px -200 } (second 0.5)
                     |> Animation.delay (second 0.5)
+                , Animation.opacity
+                    { from = Percentage.fromFloat 1, to = Percentage.fromFloat 0 }
+                    (second 0.25)
+                    |> Animation.iterationCount Count.infinite
                 ]
                 [ HA.style "left" "calc(50vw - 300px)" ]
                 [ text "C" ]

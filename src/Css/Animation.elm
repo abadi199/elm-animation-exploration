@@ -1,16 +1,19 @@
 module Css.Animation exposing
     ( delay
+    , iterationCount
     , none
+    , opacity
     , sequence
     , toKeyframe
     , translate
-    , withAnimation
+    , with
     )
 
+import Count exposing (Count)
 import Html as H
 import Html.Attributes as HA
 import Murmur3
-import Percentage
+import Percentage exposing (Percentage)
 import Px exposing (Px, px)
 import Second exposing (Second, second)
 
@@ -24,27 +27,36 @@ type AnimatedHtml msg
 
 
 type Animation
-    = Move { x : Px, y : Px } Second
+    = Move { x : Px, y : Px } Second Count
+    | Opacity { from : Percentage, to : Percentage } Second Count
     | Sequence (List Animation)
     | Delay Second Animation
 
 
-getCoordinate : Animation -> { x : Px, y : Px }
+getCoordinate : Animation -> Maybe { x : Px, y : Px }
 getCoordinate animation =
     case animation of
-        Move coordinate _ ->
-            coordinate
+        Move coordinate _ _ ->
+            Just coordinate
+
+        Opacity _ _ _ ->
+            Nothing
 
         Sequence _ ->
-            Debug.todo "sequence"
+            Nothing
 
         Delay _ delayedAnimation ->
             getCoordinate delayedAnimation
 
 
 translate : { x : Px, y : Px } -> Second -> Animation
-translate distance duration =
-    Move distance duration
+translate coordinate duration =
+    Move coordinate duration Count.once
+
+
+opacity : { from : Percentage, to : Percentage } -> Second -> Animation
+opacity level duration =
+    Opacity level duration Count.once
 
 
 delay : Second -> Animation -> Animation
@@ -57,8 +69,8 @@ sequence =
     Sequence
 
 
-toStyleNode : List Animation -> H.Html msg
-toStyleNode animations =
+toKeyframes : List Animation -> H.Html msg
+toKeyframes animations =
     H.node "style"
         []
         (animations
@@ -69,31 +81,45 @@ toStyleNode animations =
 
 toKeyframe : String -> Animation -> String
 toKeyframe name animation =
-    case animation of
-        Move { x, y } _ ->
+    let
+        nonDelayedKeyframe =
             "@keyframes "
                 ++ name
                 ++ "{"
                 ++ toKeyframeContent animation
                 ++ "}"
+    in
+    case animation of
+        Move { x, y } _ _ ->
+            nonDelayedKeyframe
+
+        Opacity _ _ _ ->
+            nonDelayedKeyframe
 
         Delay _ delayedAnimation ->
             toKeyframe name delayedAnimation
 
         Sequence animations ->
-            "@keyframes " ++ name ++ " { " ++ toKeyframeContent animation ++ "}"
+            nonDelayedKeyframe
 
 
 toKeyframeContent : Animation -> String
 toKeyframeContent animation =
     case animation of
-        Move { x, y } _ ->
-            "0% { transform: translate(0, 0); }"
-                ++ "100% { transform: translate("
+        Move { x, y } _ _ ->
+            "100% { transform: translate("
                 ++ Px.toString x
                 ++ ", "
                 ++ Px.toString y
                 ++ "); }"
+
+        Opacity { from, to } _ _ ->
+            "0% { opacity: "
+                ++ (from |> Percentage.toFloat |> String.fromFloat)
+                ++ "; }"
+                ++ "100% { opacity: "
+                ++ (to |> Percentage.toFloat |> String.fromFloat)
+                ++ " }"
 
         Delay _ delayedAnimation ->
             toKeyframeContent delayedAnimation
@@ -117,10 +143,13 @@ foldAnimation totalTime animation ( keyframe, coordinate, time ) =
     let
         nextCoordinate =
             getCoordinate animation
-                |> (\{ x, y } -> { x = Px.add x coordinate.x, y = Px.add y coordinate.y })
+                |> Maybe.map (\{ x, y } -> { x = Px.add x coordinate.x, y = Px.add y coordinate.y })
+                |> Maybe.withDefault coordinate
 
         nextTime =
-            Second.add time (getDuration animation)
+            getDuration animation
+                |> Maybe.map (Second.add time)
+                |> Maybe.withDefault time
 
         percentage =
             Percentage.fromSecond { numerator = nextTime, denominator = totalTime }
@@ -130,18 +159,21 @@ foldAnimation totalTime animation ( keyframe, coordinate, time ) =
 
         toCss animationForCss =
             case animationForCss of
-                Move { x, y } _ ->
+                Move { x, y } _ _ ->
                     "transform: translate("
                         ++ Px.toString nextCoordinate.x
                         ++ ","
                         ++ Px.toString nextCoordinate.y
                         ++ ");"
 
+                Opacity _ _ _ ->
+                    Debug.todo "foldAnimation for opacity"
+
                 Delay _ delayedAnimation ->
                     toCss delayedAnimation
 
                 Sequence _ ->
-                    Debug.todo "nested sequence is not supported"
+                    Debug.todo "should we support nested sequence?"
 
         content =
             "{ " ++ toCss animation ++ " } "
@@ -158,19 +190,32 @@ foldAnimation totalTime animation ( keyframe, coordinate, time ) =
 toStyleAttribute : List Animation -> H.Attribute msg
 toStyleAttribute animations =
     HA.style "animation"
-        (animations |> List.map toAnimationStyle |> String.join ",")
+        (animations |> List.map toAnimationStyle |> String.join "," |> Debug.log "")
 
 
 toAnimationStyle : Animation -> String
 toAnimationStyle animation =
     case animation of
-        Move _ duration ->
-            hash animation ++ " " ++ Second.toString duration ++ " forwards"
+        Move _ duration count ->
+            hash animation
+                ++ " "
+                ++ Second.toString duration
+                ++ " "
+                ++ Count.toString count
+                ++ " forwards"
+
+        Opacity _ duration count ->
+            hash animation
+                ++ " "
+                ++ Second.toString duration
+                ++ " "
+                ++ Count.toString count
+                ++ " forwards"
 
         Delay delayDuration delayedAnimation ->
             hash delayedAnimation
                 ++ " "
-                ++ Second.toString (getDuration delayedAnimation)
+                ++ Count.toString (getCount delayedAnimation)
                 ++ " "
                 ++ Second.toString delayDuration
                 ++ " forwards"
@@ -182,22 +227,42 @@ toAnimationStyle animation =
 getTotalDuration : List Animation -> Second
 getTotalDuration animations =
     animations
-        |> List.map (getDuration >> Second.toFloat)
+        |> List.map (getDuration >> Maybe.withDefault (second 0) >> Second.toFloat)
         |> List.foldl (+) 0
         |> second
 
 
-getDuration : Animation -> Second
-getDuration animation =
+getCount : Animation -> Count
+getCount animation =
     case animation of
-        Move _ duration ->
-            duration
+        Move _ duration count ->
+            count
+
+        Opacity _ duration count ->
+            count
 
         Delay delayDuration delayedAnimation ->
-            Second.add delayDuration (getDuration delayedAnimation)
+            getCount delayedAnimation
+
+        Sequence _ ->
+            Debug.todo "???"
+
+
+getDuration : Animation -> Maybe Second
+getDuration animation =
+    case animation of
+        Move _ duration _ ->
+            Just duration
+
+        Opacity _ duration _ ->
+            Just duration
+
+        Delay delayDuration delayedAnimation ->
+            getDuration delayedAnimation
+                |> Maybe.map (Second.add delayDuration)
 
         Sequence animations ->
-            getTotalDuration animations
+            Just <| getTotalDuration animations
 
 
 hash : Animation -> String
@@ -205,16 +270,22 @@ hash animation =
     let
         seed =
             2019
+
+        hashInt =
+            Murmur3.hashString seed <| toKeyframeContent animation
     in
     case animation of
-        Move _ _ ->
-            "move" ++ String.fromInt (Murmur3.hashString seed <| toKeyframeContent animation)
+        Move _ _ _ ->
+            "move" ++ String.fromInt hashInt
+
+        Opacity _ _ _ ->
+            "opacity" ++ String.fromInt hashInt
 
         Delay _ delayedAnimation ->
             hash delayedAnimation
 
         Sequence _ ->
-            "sequence" ++ String.fromInt (Murmur3.hashString seed <| toKeyframeContent animation)
+            "sequence" ++ String.fromInt hashInt
 
 
 none : List (H.Attribute msg) -> List (H.Html msg) -> Html msg -> H.Html msg
@@ -222,8 +293,24 @@ none attributes children html =
     html attributes children
 
 
-withAnimation : List Animation -> List (H.Attribute msg) -> List (H.Html msg) -> Html msg -> H.Html msg
-withAnimation animations attributes children html =
+with : List Animation -> List (H.Attribute msg) -> List (H.Html msg) -> Html msg -> H.Html msg
+with animations attributes children html =
     html
         (toStyleAttribute animations :: attributes)
-        (toStyleNode animations :: children)
+        (toKeyframes animations :: children)
+
+
+iterationCount : Count -> Animation -> Animation
+iterationCount count animation =
+    case animation of
+        Move a b _ ->
+            Move a b count
+
+        Opacity a b _ ->
+            Opacity a b count
+
+        Delay a b ->
+            Delay a (iterationCount count b)
+
+        Sequence animations ->
+            Sequence animations
