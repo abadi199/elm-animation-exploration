@@ -2,9 +2,12 @@ module Px exposing
     ( Px
     , add
     , px
+    , randomGenerator
     , toInt
     , toString
     )
+
+import Random
 
 
 type Px
@@ -29,3 +32,9 @@ toInt (Px n) =
 add : Px -> Px -> Px
 add (Px a) (Px b) =
     Px (a + b)
+
+
+randomGenerator : Int -> Int -> Random.Generator Px
+randomGenerator low high =
+    Random.int low high
+        |> Random.map px
