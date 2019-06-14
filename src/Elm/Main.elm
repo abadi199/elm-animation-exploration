@@ -1,13 +1,13 @@
-module Js.Main exposing (main)
+module Elm.Main exposing (main)
 
 import Browser
+import Browser.Events
 import Color exposing (Color)
 import Coordinate exposing (Coordinate, coordinate)
 import Count
 import Html exposing (Html, div)
 import Html.Attributes as HA
 import Html.Events as HE
-import Js.Animation as Animation
 import Json.Decode as JD
 import Percentage
 import Px exposing (Px, px)
@@ -15,6 +15,7 @@ import Random
 import Second exposing (second)
 import Svg as S exposing (..)
 import Svg.Attributes as SA exposing (..)
+import Time exposing (Posix)
 
 
 main =
@@ -32,7 +33,7 @@ type Model
 
 
 type alias Data =
-    { boxes : List Box }
+    { boxes : List Box, time : Posix }
 
 
 type alias Box =
@@ -64,11 +65,11 @@ init flags =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.none
+    Browser.Events.onAnimationFrame AnimationFrameTick
 
 
 type Msg
-    = AnimationFinish
+    = AnimationFrameTick Posix
     | RandomGeneratorCompleteBoxes (List Box)
 
 
@@ -85,22 +86,18 @@ update msg model =
 updateNotReady : Msg -> ( Model, Cmd Msg )
 updateNotReady msg =
     case msg of
-        AnimationFinish ->
+        AnimationFrameTick _ ->
             ( NotReady, Cmd.none )
 
         RandomGeneratorCompleteBoxes boxes ->
-            ( Ready { boxes = boxes }, Cmd.none )
+            ( Ready { boxes = boxes, time = Time.millisToPosix 0 }, Cmd.none )
 
 
 updateReady : Msg -> Data -> ( Model, Cmd Msg )
 updateReady msg data =
     case msg of
-        AnimationFinish ->
-            let
-                _ =
-                    Debug.log "AnimationFinish" ""
-            in
-            ( Ready data, Cmd.none )
+        AnimationFrameTick time ->
+            ( Ready { data | time = time }, Cmd.none )
 
         RandomGeneratorCompleteBoxes boxes ->
             ( Ready { data | boxes = boxes }, Cmd.none )
@@ -115,33 +112,42 @@ view model =
         Ready data ->
             div []
                 (data.boxes
-                    |> List.map animatedBox
+                    |> List.map (animatedBox data.time)
                 )
 
 
-animatedBox : Box -> Html Msg
-animatedBox box =
-    Animation.node
-        [ Animation.translate { x = px 0, y = px -200 } (second 0.5)
-        ]
-        [ HE.on "finish" (JD.succeed AnimationFinish) ]
-        (viewBox box.coordinate
-            box.color
-            [ text "JS" ]
-        )
+animatedBox : Posix -> Box -> Html Msg
+animatedBox time box =
+    viewBox time box [ text "Elm" ]
 
 
-viewBox : Coordinate -> Color -> List (Html Msg) -> Html Msg
-viewBox coord color children =
+timeToRotation : Posix -> Int
+timeToRotation time =
+    let
+        millisecond =
+            Time.posixToMillis time
+    in
+    if millisecond == 0 then
+        0
+
+    else
+        modBy 3600 millisecond // 10
+
+
+viewBox : Posix -> Box -> List (Html Msg) -> Html Msg
+viewBox time box children =
     let
         x =
-            Coordinate.x coord
+            Coordinate.x box.coordinate
 
         y =
-            Coordinate.y coord
+            Coordinate.y box.coordinate
+
+        rotation =
+            "rotate(" ++ (time |> timeToRotation |> String.fromInt) ++ "deg)"
     in
     div
-        [ HA.style "background" (Color.toCssString color)
+        [ HA.style "background" (Color.toCssString box.color)
         , HA.style "box-shadow" "0 0 10px rgba(0,0,0,0.5)"
         , HA.style "width" "50px"
         , HA.style "height" "50px"
@@ -152,5 +158,6 @@ viewBox coord color children =
         , HA.style "align-items" "center"
         , HA.style "color" "white"
         , HA.style "left" (Px.toString x)
+        , HA.style "transform" rotation
         ]
         children
