@@ -5,7 +5,7 @@ import Browser.Events
 import Color exposing (Color)
 import Coordinate exposing (Coordinate, coordinate)
 import Count
-import Html exposing (Html, div)
+import Html as H exposing (Html, div)
 import Html.Attributes as HA
 import Html.Events as HE
 import Json.Decode as JD
@@ -33,7 +33,7 @@ type Model
 
 
 type alias Data =
-    { boxes : List Box, time : Posix }
+    { boxes : List Box, time : Posix, showShadow : Bool }
 
 
 type alias Box =
@@ -68,9 +68,14 @@ subscriptions model =
     Browser.Events.onAnimationFrame AnimationFrameTick
 
 
+
+-- MSG
+
+
 type Msg
     = AnimationFrameTick Posix
     | RandomGeneratorCompleteBoxes (List Box)
+    | UserUpdateShowShadowCheckBox Bool
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -89,8 +94,11 @@ updateNotReady msg =
         AnimationFrameTick _ ->
             ( NotReady, Cmd.none )
 
+        UserUpdateShowShadowCheckBox _ ->
+            ( NotReady, Cmd.none )
+
         RandomGeneratorCompleteBoxes boxes ->
-            ( Ready { boxes = boxes, time = Time.millisToPosix 0 }, Cmd.none )
+            ( Ready { boxes = boxes, time = Time.millisToPosix 0, showShadow = False }, Cmd.none )
 
 
 updateReady : Msg -> Data -> ( Model, Cmd Msg )
@@ -99,8 +107,15 @@ updateReady msg data =
         AnimationFrameTick time ->
             ( Ready { data | time = time }, Cmd.none )
 
+        UserUpdateShowShadowCheckBox checked ->
+            ( Ready { data | showShadow = checked }, Cmd.none )
+
         RandomGeneratorCompleteBoxes boxes ->
             ( Ready { data | boxes = boxes }, Cmd.none )
+
+
+
+-- VIEW
 
 
 view : Model -> Html Msg
@@ -111,14 +126,36 @@ view model =
 
         Ready data ->
             div []
-                (data.boxes
-                    |> List.map (animatedBox data.time)
-                )
+                [ div [] (List.map (animatedBox data) data.boxes)
+                , controlPanel data
+                ]
 
 
-animatedBox : Posix -> Box -> Html Msg
-animatedBox time box =
-    viewBox time box [ text "Elm" ]
+controlPanel : Data -> Html Msg
+controlPanel data =
+    div
+        [ HA.style "background" "white"
+        , HA.style "position" "absolute"
+        ]
+        [ showShadowCheckBox data ]
+
+
+showShadowCheckBox : Data -> Html Msg
+showShadowCheckBox data =
+    H.label []
+        [ H.input
+            [ HA.type_ "checkbox"
+            , HE.onCheck UserUpdateShowShadowCheckBox
+            , HA.checked data.showShadow
+            ]
+            []
+        , H.text "Show Shadow"
+        ]
+
+
+animatedBox : Data -> Box -> Html Msg
+animatedBox data box =
+    viewBox data box [ text "Elm" ]
 
 
 timeToRotation : Posix -> Int
@@ -134,8 +171,8 @@ timeToRotation time =
         modBy 3600 millisecond // 10
 
 
-viewBox : Posix -> Box -> List (Html Msg) -> Html Msg
-viewBox time box children =
+viewBox : Data -> Box -> List (Html Msg) -> Html Msg
+viewBox data box children =
     let
         x =
             Coordinate.x box.coordinate
@@ -144,11 +181,11 @@ viewBox time box children =
             Coordinate.y box.coordinate
 
         rotation =
-            "rotate(" ++ (time |> timeToRotation |> String.fromInt) ++ "deg)"
+            "rotate(" ++ (data.time |> timeToRotation |> String.fromInt) ++ "deg)"
     in
     div
-        [ HA.style "background" (Color.toCssString box.color)
-        , HA.style "box-shadow" "0 0 10px rgba(0,0,0,0.5)"
+        [ shadow data.showShadow
+        , HA.style "background" (Color.toCssString box.color)
         , HA.style "width" "50px"
         , HA.style "height" "50px"
         , HA.style "position" "absolute"
@@ -161,3 +198,12 @@ viewBox time box children =
         , HA.style "transform" rotation
         ]
         children
+
+
+shadow : Bool -> H.Attribute Msg
+shadow show =
+    if show then
+        HA.style "box-shadow" "0 0 10px rgba(0,0,0,0.5)"
+
+    else
+        HA.style "box-shadow" "none"

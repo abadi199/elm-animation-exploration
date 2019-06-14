@@ -4,7 +4,7 @@ import Browser
 import Color exposing (Color)
 import Coordinate exposing (Coordinate, coordinate)
 import Count
-import Html exposing (Html, div)
+import Html as H exposing (Html, div)
 import Html.Attributes as HA
 import Html.Events as HE
 import Js.Animation as Animation
@@ -17,6 +17,10 @@ import Svg as S exposing (..)
 import Svg.Attributes as SA exposing (..)
 
 
+
+-- MAIN
+
+
 main =
     Browser.element
         { init = init
@@ -26,13 +30,17 @@ main =
         }
 
 
+
+-- MODEL
+
+
 type Model
     = NotReady
     | Ready Data
 
 
 type alias Data =
-    { boxes : List Box }
+    { boxes : List Box, showShadow : Bool }
 
 
 type alias Box =
@@ -67,9 +75,18 @@ subscriptions model =
     Sub.none
 
 
+
+-- MSG
+
+
 type Msg
     = AnimationFinish
     | RandomGeneratorCompleteBoxes (List Box)
+    | UserUpdateShowShadowCheckBox Bool
+
+
+
+-- UPDATE
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -88,8 +105,11 @@ updateNotReady msg =
         AnimationFinish ->
             ( NotReady, Cmd.none )
 
+        UserUpdateShowShadowCheckBox _ ->
+            ( NotReady, Cmd.none )
+
         RandomGeneratorCompleteBoxes boxes ->
-            ( Ready { boxes = boxes }, Cmd.none )
+            ( Ready { boxes = boxes, showShadow = False }, Cmd.none )
 
 
 updateReady : Msg -> Data -> ( Model, Cmd Msg )
@@ -102,8 +122,15 @@ updateReady msg data =
             in
             ( Ready data, Cmd.none )
 
+        UserUpdateShowShadowCheckBox checked ->
+            ( Ready { data | showShadow = checked }, Cmd.none )
+
         RandomGeneratorCompleteBoxes boxes ->
             ( Ready { data | boxes = boxes }, Cmd.none )
+
+
+
+-- VIEW
 
 
 view : Model -> Html Msg
@@ -114,35 +141,54 @@ view model =
 
         Ready data ->
             div []
-                (data.boxes
-                    |> List.map animatedBox
-                )
+                [ div [] (List.map (animatedBox data) data.boxes)
+                , controlPanel data
+                ]
 
 
-animatedBox : Box -> Html Msg
-animatedBox box =
+controlPanel : Data -> Html Msg
+controlPanel data =
+    div
+        [ HA.style "background" "white"
+        , HA.style "position" "absolute"
+        ]
+        [ showShadowCheckBox data ]
+
+
+showShadowCheckBox : Data -> Html Msg
+showShadowCheckBox data =
+    H.label []
+        [ H.input
+            [ HA.type_ "checkbox"
+            , HE.onCheck UserUpdateShowShadowCheckBox
+            , HA.checked data.showShadow
+            ]
+            []
+        , H.text "Show Shadow"
+        ]
+
+
+animatedBox : Data -> Box -> Html Msg
+animatedBox data box =
     Animation.node
         [ Animation.translate { x = px 0, y = px -200 } (second 0.5)
         ]
         [ HE.on "finish" (JD.succeed AnimationFinish) ]
-        (viewBox box.coordinate
-            box.color
-            [ text "JS" ]
-        )
+        (viewBox data box [ text "JS" ])
 
 
-viewBox : Coordinate -> Color -> List (Html Msg) -> Html Msg
-viewBox coord color children =
+viewBox : Data -> Box -> List (Html Msg) -> Html Msg
+viewBox data box children =
     let
         x =
-            Coordinate.x coord
+            Coordinate.x box.coordinate
 
         y =
-            Coordinate.y coord
+            Coordinate.y box.coordinate
     in
     div
-        [ HA.style "background" (Color.toCssString color)
-        , HA.style "box-shadow" "0 0 10px rgba(0,0,0,0.5)"
+        [ shadow data.showShadow
+        , HA.style "background" (Color.toCssString box.color)
         , HA.style "width" "50px"
         , HA.style "height" "50px"
         , HA.style "position" "absolute"
@@ -154,3 +200,12 @@ viewBox coord color children =
         , HA.style "left" (Px.toString x)
         ]
         children
+
+
+shadow : Bool -> H.Attribute Msg
+shadow show =
+    if show then
+        HA.style "box-shadow" "0 0 10px rgba(0,0,0,0.5)"
+
+    else
+        HA.style "box-shadow" "none"
