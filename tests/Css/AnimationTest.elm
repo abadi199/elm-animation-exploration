@@ -1,4 +1,4 @@
-module AnimationTest exposing (suite)
+module Css.AnimationTest exposing (suite)
 
 import Css.Animation as Animation
 import Expect exposing (Expectation)
@@ -10,7 +10,7 @@ import Test exposing (..)
 
 suite : Test
 suite =
-    describe "Animation module"
+    describe "Css.Animation module"
         [ toKeyframeSuite ]
 
 

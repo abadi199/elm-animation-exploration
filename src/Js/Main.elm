@@ -13,6 +13,7 @@ import Percentage
 import Px exposing (Px, px)
 import Random
 import Second exposing (second)
+import Shared.ControlPanel exposing (controlPanel)
 import Svg as S exposing (..)
 import Svg.Attributes as SA exposing (..)
 
@@ -58,15 +59,15 @@ randomColorGenerator =
 randomBoxGenerator : Random.Generator Box
 randomBoxGenerator =
     Random.map3 (\x y color -> { coordinate = coordinate { x = x, y = y }, color = color })
-        (Px.randomGenerator -100 2000)
-        (Px.randomGenerator -100 1000)
+        (Px.randomGenerator 10 200)
+        (Px.randomGenerator 10 100)
         randomColorGenerator
 
 
 init : () -> ( Model, Cmd Msg )
 init flags =
     ( NotReady
-    , Random.generate RandomGeneratorCompleteBoxes (Random.list 2000 randomBoxGenerator)
+    , Random.generate RandomGeneratorCompleteBoxes (Random.list 1 randomBoxGenerator)
     )
 
 
@@ -82,7 +83,7 @@ subscriptions model =
 type Msg
     = AnimationFinish
     | RandomGeneratorCompleteBoxes (List Box)
-    | UserUpdateShowShadowCheckBox Bool
+    | UserCheckShowShadowCheckBox Bool
 
 
 
@@ -105,7 +106,7 @@ updateNotReady msg =
         AnimationFinish ->
             ( NotReady, Cmd.none )
 
-        UserUpdateShowShadowCheckBox _ ->
+        UserCheckShowShadowCheckBox _ ->
             ( NotReady, Cmd.none )
 
         RandomGeneratorCompleteBoxes boxes ->
@@ -122,7 +123,7 @@ updateReady msg data =
             in
             ( Ready data, Cmd.none )
 
-        UserUpdateShowShadowCheckBox checked ->
+        UserCheckShowShadowCheckBox checked ->
             ( Ready { data | showShadow = checked }, Cmd.none )
 
         RandomGeneratorCompleteBoxes boxes ->
@@ -142,36 +143,14 @@ view model =
         Ready data ->
             div []
                 [ div [] (List.map (animatedBox data) data.boxes)
-                , controlPanel data
+                , controlPanel data { onShowShadowCheck = UserCheckShowShadowCheckBox }
                 ]
-
-
-controlPanel : Data -> Html Msg
-controlPanel data =
-    div
-        [ HA.style "background" "white"
-        , HA.style "position" "absolute"
-        ]
-        [ showShadowCheckBox data ]
-
-
-showShadowCheckBox : Data -> Html Msg
-showShadowCheckBox data =
-    H.label []
-        [ H.input
-            [ HA.type_ "checkbox"
-            , HE.onCheck UserUpdateShowShadowCheckBox
-            , HA.checked data.showShadow
-            ]
-            []
-        , H.text "Show Shadow"
-        ]
 
 
 animatedBox : Data -> Box -> Html Msg
 animatedBox data box =
     Animation.node
-        [ Animation.translate { x = px 0, y = px -200 } (second 0.5)
+        [ Animation.translate (coordinate { x = px 0, y = px -200 }) (second 0.5)
         ]
         [ HE.on "finish" (JD.succeed AnimationFinish) ]
         (viewBox data box [ text "JS" ])

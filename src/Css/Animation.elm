@@ -85,7 +85,7 @@ toKeyframe name animation =
         nonDelayedKeyframe =
             "@keyframes "
                 ++ name
-                ++ "{"
+                ++ " { "
                 ++ toKeyframeContent animation
                 ++ "}"
     in

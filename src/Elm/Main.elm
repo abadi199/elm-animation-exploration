@@ -13,6 +13,7 @@ import Percentage
 import Px exposing (Px, px)
 import Random
 import Second exposing (second)
+import Shared.ControlPanel exposing (controlPanel)
 import Svg as S exposing (..)
 import Svg.Attributes as SA exposing (..)
 import Time exposing (Posix)
@@ -75,7 +76,7 @@ subscriptions model =
 type Msg
     = AnimationFrameTick Posix
     | RandomGeneratorCompleteBoxes (List Box)
-    | UserUpdateShowShadowCheckBox Bool
+    | UserCheckShowShadowCheckBox Bool
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -94,7 +95,7 @@ updateNotReady msg =
         AnimationFrameTick _ ->
             ( NotReady, Cmd.none )
 
-        UserUpdateShowShadowCheckBox _ ->
+        UserCheckShowShadowCheckBox _ ->
             ( NotReady, Cmd.none )
 
         RandomGeneratorCompleteBoxes boxes ->
@@ -107,7 +108,7 @@ updateReady msg data =
         AnimationFrameTick time ->
             ( Ready { data | time = time }, Cmd.none )
 
-        UserUpdateShowShadowCheckBox checked ->
+        UserCheckShowShadowCheckBox checked ->
             ( Ready { data | showShadow = checked }, Cmd.none )
 
         RandomGeneratorCompleteBoxes boxes ->
@@ -127,30 +128,8 @@ view model =
         Ready data ->
             div []
                 [ div [] (List.map (animatedBox data) data.boxes)
-                , controlPanel data
+                , controlPanel data { onShowShadowCheck = UserCheckShowShadowCheckBox }
                 ]
-
-
-controlPanel : Data -> Html Msg
-controlPanel data =
-    div
-        [ HA.style "background" "white"
-        , HA.style "position" "absolute"
-        ]
-        [ showShadowCheckBox data ]
-
-
-showShadowCheckBox : Data -> Html Msg
-showShadowCheckBox data =
-    H.label []
-        [ H.input
-            [ HA.type_ "checkbox"
-            , HE.onCheck UserUpdateShowShadowCheckBox
-            , HA.checked data.showShadow
-            ]
-            []
-        , H.text "Show Shadow"
-        ]
 
 
 animatedBox : Data -> Box -> Html Msg
