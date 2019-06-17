@@ -1,9 +1,12 @@
 module Count exposing
     ( Count
+    , encode
     , infinite
     , once
     , toString
     )
+
+import Json.Encode as JE
 
 
 type Count
@@ -33,3 +36,16 @@ toString count =
 
         Many number ->
             String.fromFloat number
+
+
+encode : Count -> JE.Value
+encode count =
+    case count of
+        Once ->
+            JE.int 1
+
+        Infinite ->
+            JE.string "Infinity"
+
+        Many number ->
+            JE.float number

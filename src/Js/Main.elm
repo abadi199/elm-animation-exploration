@@ -4,6 +4,7 @@ import Browser
 import Color exposing (Color)
 import Coordinate exposing (Coordinate, coordinate)
 import Count
+import Degree exposing (deg)
 import Html as H exposing (Html, div)
 import Html.Attributes as HA
 import Html.Events as HE
@@ -59,15 +60,15 @@ randomColorGenerator =
 randomBoxGenerator : Random.Generator Box
 randomBoxGenerator =
     Random.map3 (\x y color -> { coordinate = coordinate { x = x, y = y }, color = color })
-        (Px.randomGenerator 10 200)
-        (Px.randomGenerator 10 100)
+        (Px.randomGenerator 10 2000)
+        (Px.randomGenerator 10 1000)
         randomColorGenerator
 
 
 init : () -> ( Model, Cmd Msg )
 init flags =
     ( NotReady
-    , Random.generate RandomGeneratorCompleteBoxes (Random.list 1 randomBoxGenerator)
+    , Random.generate RandomGeneratorCompleteBoxes (Random.list 1000 randomBoxGenerator)
     )
 
 
@@ -150,7 +151,10 @@ view model =
 animatedBox : Data -> Box -> Html Msg
 animatedBox data box =
     Animation.node
-        [ Animation.translate (coordinate { x = px 0, y = px -200 }) (second 0.5)
+        [ Animation.rotate (deg 0) (second 0)
+            |> Animation.withCount Count.infinite
+        , Animation.rotate (deg 360) (second 2)
+            |> Animation.withCount Count.infinite
         ]
         [ HE.on "finish" (JD.succeed AnimationFinish) ]
         (viewBox data box [ text "JS" ])
@@ -184,7 +188,7 @@ viewBox data box children =
 shadow : Bool -> H.Attribute Msg
 shadow show =
     if show then
-        HA.style "box-shadow" "0 0 10px rgba(0,0,0,0.5)"
+        HA.style "box-shadow" "0 0 10px rgba(0,0,0,1)"
 
     else
         HA.style "box-shadow" "none"

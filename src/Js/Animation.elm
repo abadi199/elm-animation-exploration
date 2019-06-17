@@ -1,9 +1,9 @@
 module Js.Animation exposing
     ( animationsToString
     , delay
-    , encode
+    , encodeKeyframe
+    , jsonToString
     , node
-    , none
     , opacity
     , rotate
     , sequence
@@ -18,22 +18,15 @@ import Html as H
 import Html.Attributes as HA
 import Html.Events as HE
 import Json.Encode as JE
+import Millisecond exposing (Millisecond, millisecond)
 import Percentage exposing (Percentage)
 import Px exposing (Px, px)
 import Second exposing (Second, second)
 
 
-type alias Html msg =
-    List (H.Attribute msg) -> List (H.Html msg) -> H.Html msg
-
-
-type AnimatedHtml msg
-    = Animated (List Animation) (Html msg)
-
-
 type Animation
     = Move Coordinate Second Count
-    | Opacity { from : Percentage, to : Percentage } Second Count
+    | Opacity Percentage Second Count
     | Sequence (List Animation)
     | Delay Second Animation
     | Rotate Degree Second Count
@@ -68,7 +61,7 @@ translate coordinate duration =
     Move coordinate duration Count.once
 
 
-opacity : { from : Percentage, to : Percentage } -> Second -> Animation
+opacity : Percentage -> Second -> Animation
 opacity level duration =
     Opacity level duration Count.once
 
@@ -89,6 +82,11 @@ getTotalDuration animations =
         |> List.map (getDuration >> Maybe.withDefault (second 0) >> Second.toFloat)
         |> List.foldl (+) 0
         |> second
+
+
+getTotalCount : List Animation -> Count
+getTotalCount animations =
+    Count.infinite
 
 
 getCount : Animation -> Count
@@ -130,11 +128,6 @@ getDuration animation =
             Just duration
 
 
-none : List (H.Attribute msg) -> List (H.Html msg) -> Html msg -> H.Html msg
-none attributes children html =
-    html attributes children
-
-
 node : List Animation -> List (H.Attribute msg) -> H.Html msg -> H.Html msg
 node animations attributes html =
     H.node "elm-animation"
@@ -142,14 +135,56 @@ node animations attributes html =
         [ html ]
 
 
-encode : Animation -> JE.Value
-encode animation =
-    JE.object [ ( "keyframes", JE.string "" ) ]
+
+--ENCODER
 
 
 animationsToString : List Animation -> String
 animationsToString animations =
-    "{\"keyframes\":[{\"transform\":\"rotate(0deg)\"},{\"transform\":\"rotate(360deg)\"}],\"options\":{\"duration\":3000,\"iterations\":\"Infinity\"}}"
+    let
+        keyframes =
+            JE.list encodeKeyframe animations
+
+        totalDuration =
+            getTotalDuration animations |> Millisecond.fromSecond |> Millisecond.toInt
+
+        count =
+            getTotalCount animations
+                |> Count.encode
+
+        options =
+            JE.object [ ( "duration", JE.int totalDuration ), ( "iterations", count ) ]
+    in
+    JE.object [ ( "keyframes", keyframes ), ( "options", options ) ]
+        |> jsonToString
+
+
+jsonToString : JE.Value -> String
+jsonToString =
+    JE.encode 0
+
+
+encodeKeyframe : Animation -> JE.Value
+encodeKeyframe animation =
+    case animation of
+        Move coordinate _ _ ->
+            JE.object [ ( "transform", JE.string <| "translate" ++ Coordinate.toString coordinate ) ]
+
+        Rotate rotation _ _ ->
+            JE.object [ ( "transform", JE.string <| "rotate(" ++ Degree.toString rotation ++ ")" ) ]
+
+        Opacity percentage _ _ ->
+            JE.object [ ( "opacity", JE.string <| "rotate" ++ (percentage |> Percentage.toFloat |> String.fromFloat) ) ]
+
+        Delay _ delayedAnimation ->
+            encodeKeyframe delayedAnimation
+
+        Sequence animations ->
+            Debug.todo "implement toKeyframeContent for sequence"
+
+
+
+-- ITERATION COUNT
 
 
 withCount : Count -> Animation -> Animation

@@ -16,9 +16,8 @@ class ElmAnimation extends HTMLElement {
   }
 
   animateContent(json: string): Animation | null {
-    console.log("animateContent", json);
-
     const animationData: any = JSON.parse(json);
+
     if (!this.children || this.children.length === 0) {
       return null;
     }
