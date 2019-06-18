@@ -1,14 +1,12 @@
 module Js.Animation exposing
-    ( animationsToString
-    , delay
-    , encodeKeyframe
+    ( encodeKeyframe
     , jsonToString
     , node
     , opacity
     , rotate
-    , sequence
+    , toString
     , translate
-    , withCount
+    , withOffset
     )
 
 import Coordinate exposing (Coordinate, coordinate)
@@ -20,6 +18,7 @@ import Fill exposing (Fill)
 import Html as H
 import Html.Attributes as HA
 import Html.Events as HE
+import Js.Animation.Options as Options exposing (Options)
 import Json.Encode as JE
 import Millisecond exposing (Millisecond, millisecond)
 import Offset exposing (Offset, offset)
@@ -75,30 +74,14 @@ getOffset animation =
             offset
 
 
-type Options
-    = Options OptionsData
 
-
-type alias OptionsData =
-    { delay : Millisecond
-    , direction : Direction
-    , duration : Millisecond
-    , easing : Easing
-    , endDelay : Millisecond
-    , fill : Fill
-    , iterationStart : NotImplemented
-    , iterations : Count
-    }
-
-
-type NotImplemented
-    = NotImplemented
+-- OPTIONS
 
 
 node : List Keyframe -> Options -> List (H.Attribute msg) -> H.Html msg -> H.Html msg
-node animations options attributes html =
+node keyframes options attributes html =
     H.node "elm-animation"
-        (HA.attribute "animate" (animationsToString animations) :: attributes)
+        (HA.attribute "animate" (toString keyframes options) :: attributes)
         [ html ]
 
 
@@ -106,23 +89,12 @@ node animations options attributes html =
 --ENCODER
 
 
-animationsToString : List Keyframe -> String
-animationsToString animations =
-    let
-        keyframes =
-            JE.list encodeKeyframe animations
-
-        totalDuration =
-            getTotalDuration animations |> Millisecond.fromSecond |> Millisecond.toInt
-
-        count =
-            getTotalCount animations
-                |> Count.encode
-
-        options =
-            JE.object [ ( "duration", JE.int totalDuration ), ( "iterations", count ) ]
-    in
-    JE.object [ ( "keyframes", keyframes ), ( "options", options ) ]
+toString : List Keyframe -> Options -> String
+toString keyframes options =
+    JE.object
+        [ ( "keyframes", JE.list encodeKeyframe keyframes )
+        , ( "options", Options.encode options )
+        ]
         |> jsonToString
 
 
@@ -143,20 +115,14 @@ encodeKeyframe animation =
         Opacity percentage _ ->
             JE.object [ ( "opacity", JE.string <| "rotate" ++ (percentage |> Percentage.toFloat |> String.fromFloat) ) ]
 
-        Delay _ delayedAnimation ->
-            encodeKeyframe delayedAnimation
-
-        Sequence animations ->
-            Debug.todo "implement toKeyframeContent for sequence"
-
 
 
 -- WITH MODIFIER
 
 
-withOffset : Offset -> Keyframe -> Animation
-withOffset offset animation =
-    case animation of
+withOffset : Offset -> Keyframe -> Keyframe
+withOffset offset keyframe =
+    case keyframe of
         Translate a _ ->
             Translate a offset
 
@@ -165,9 +131,3 @@ withOffset offset animation =
 
         Rotate a _ ->
             Rotate a offset
-
-        Delay a b ->
-            Delay a (withOffset offset b)
-
-        Sequence animations ->
-            Sequence animations

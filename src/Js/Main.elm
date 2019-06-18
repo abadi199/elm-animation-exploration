@@ -9,7 +9,9 @@ import Html as H exposing (Html, div)
 import Html.Attributes as HA
 import Html.Events as HE
 import Js.Animation as Animation
+import Js.Animation.Options as Options
 import Json.Decode as JD
+import Millisecond exposing (millisecond)
 import Percentage
 import Px exposing (Px, px)
 import Random
@@ -151,11 +153,12 @@ view model =
 animatedBox : Data -> Box -> Html Msg
 animatedBox data box =
     Animation.node
-        [ Animation.rotate (deg 0) (second 0)
-            |> Animation.withCount Count.infinite
-        , Animation.rotate (deg 360) (second 2)
-            |> Animation.withCount Count.infinite
+        [ Animation.rotate (deg 0)
+        , Animation.rotate (deg 360)
         ]
+        (Options.default { duration = millisecond 2000 }
+            |> Options.withIterations Count.infinite
+        )
         [ HE.on "finish" (JD.succeed AnimationFinish) ]
         (viewBox data box [ text "JS" ])
 

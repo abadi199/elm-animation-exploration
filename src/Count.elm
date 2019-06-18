@@ -1,5 +1,6 @@
 module Count exposing
     ( Count
+    , default
     , encode
     , infinite
     , once
@@ -13,6 +14,11 @@ type Count
     = Once
     | Infinite
     | Many Float
+
+
+default : Count
+default =
+    Once
 
 
 infinite : Count

@@ -1,9 +1,15 @@
 module Fill exposing
     ( Fill
     , backwards
+    , default
     , forwards
     , none
     )
+
+
+default : Fill
+default =
+    None
 
 
 type Fill

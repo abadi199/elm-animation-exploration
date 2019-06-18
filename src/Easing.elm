@@ -1,6 +1,7 @@
 module Easing exposing
     ( Easing
     , cubicBezier
+    , default
     , ease
     , easeIn
     , easeInOut
@@ -16,6 +17,11 @@ type Easing
     | EaseOut
     | EaseInOut
     | CubicBezier
+
+
+default : Easing
+default =
+    linear
 
 
 linear : Easing

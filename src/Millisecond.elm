@@ -1,6 +1,7 @@
 module Millisecond exposing
     ( Millisecond
     , add
+    , encode
     , fromSecond
     , isAfter
     , millisecond
@@ -8,6 +9,7 @@ module Millisecond exposing
     , toString
     )
 
+import Json.Encode as JE
 import Second exposing (Second)
 
 
@@ -46,3 +48,8 @@ fromSecond second =
 toInt : Millisecond -> Int
 toInt (Millisecond ms) =
     ms
+
+
+encode : Millisecond -> JE.Value
+encode (Millisecond ms) =
+    JE.int ms
