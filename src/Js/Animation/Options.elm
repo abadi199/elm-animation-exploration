@@ -2,6 +2,8 @@ module Js.Animation.Options exposing
     ( Options
     , default
     , encode
+    , withEasing
+    , withFill
     , withIterations
     )
 
@@ -54,9 +56,20 @@ withIterations count (Options options) =
     Options { options | iterations = count }
 
 
+withEasing : Easing -> Options -> Options
+withEasing easing (Options options) =
+    Options { options | easing = easing }
+
+
+withFill : Fill -> Options -> Options
+withFill fill (Options options) =
+    Options { options | fill = fill }
+
+
 encode : Options -> JE.Value
 encode (Options options) =
     JE.object
         [ ( "duration", Millisecond.encode options.duration )
         , ( "iterations", Count.encode options.iterations )
+        , ( "fill", Fill.encode options.fill )
         ]

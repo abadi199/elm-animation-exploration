@@ -1,7 +1,9 @@
 module Js.Animation exposing
-    ( encodeKeyframe
+    ( animation
+    , encodeKeyframe
     , jsonToString
     , node
+    , none
     , opacity
     , rotate
     , toString
@@ -34,8 +36,8 @@ type Keyframe
 
 
 getCoordinate : Keyframe -> Maybe Coordinate
-getCoordinate animation =
-    case animation of
+getCoordinate keyframe =
+    case keyframe of
         Translate coordinate _ ->
             Just coordinate
 
@@ -51,9 +53,9 @@ rotate degree =
     Rotate degree Offset.none
 
 
-translate : Coordinate -> Keyframe
-translate coordinate =
-    Translate coordinate Offset.none
+translate : { x : Px, y : Px } -> Keyframe
+translate coord =
+    Translate (coordinate coord) Offset.none
 
 
 opacity : Percentage -> Keyframe
@@ -62,8 +64,8 @@ opacity level =
 
 
 getOffset : Keyframe -> Offset
-getOffset animation =
-    case animation of
+getOffset keyframe =
+    case keyframe of
         Translate _ offset ->
             offset
 
@@ -74,8 +76,14 @@ getOffset animation =
             offset
 
 
+none : H.Html msg -> H.Html msg
+none html =
+    html
 
--- OPTIONS
+
+animation : List Keyframe -> Options -> H.Html msg -> H.Html msg
+animation keyframes options html =
+    node keyframes options [] html
 
 
 node : List Keyframe -> Options -> List (H.Attribute msg) -> H.Html msg -> H.Html msg
@@ -104,8 +112,8 @@ jsonToString =
 
 
 encodeKeyframe : Keyframe -> JE.Value
-encodeKeyframe animation =
-    case animation of
+encodeKeyframe keyframe =
+    case keyframe of
         Translate coordinate _ ->
             JE.object [ ( "transform", JE.string <| "translate" ++ Coordinate.toString coordinate ) ]
 

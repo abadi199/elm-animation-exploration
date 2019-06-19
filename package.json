@@ -7,6 +7,7 @@
     "start": "parcel src/Css/index.html",
     "css": "parcel src/Css/index.html",
     "js": "parcel src/Js/index.html --no-cache",
+    "slide": "parcel src/Slide/index.html --no-cache",
     "elm": "parcel src/Elm/index.html --no-cache"
   },
   "author": "",
