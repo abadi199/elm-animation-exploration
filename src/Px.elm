@@ -1,12 +1,15 @@
 module Px exposing
     ( Px
     , add
+    , negate
     , px
     , randomGenerator
+    , toElmCss
     , toInt
     , toString
     )
 
+import Css
 import Random
 
 
@@ -38,3 +41,13 @@ randomGenerator : Int -> Int -> Random.Generator Px
 randomGenerator low high =
     Random.int low high
         |> Random.map px
+
+
+toElmCss : Px -> Css.Px
+toElmCss (Px n) =
+    Css.px (toFloat n)
+
+
+negate : Px -> Px
+negate (Px n) =
+    Px -n

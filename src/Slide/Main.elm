@@ -4,7 +4,9 @@ import Browser
 import Color exposing (Color)
 import Coordinate exposing (Coordinate, coordinate)
 import Count
+import Css exposing (..)
 import Degree exposing (deg)
+import Dimension exposing (Dimension, dimension)
 import Easing
 import Fill
 import Html
@@ -48,16 +50,23 @@ type Model
 
 
 type alias Data =
-    {}
+    { slide01 : Slide01.State
+    , slide : SlideState
+    }
 
 
-type alias Box =
-    {}
+type Slide
+    = Slide01
+
+
+type SlideState
+    = Showing Slide
+    | Transitioning Slide
 
 
 init : () -> ( Model, Cmd Msg )
 init flags =
-    ( Ready {}
+    ( Ready { slide01 = Slide01.initialState, slide = Showing Slide01 }
     , Cmd.none
     )
 
@@ -73,6 +82,13 @@ subscriptions model =
 
 type Msg
     = AnimationFinish
+    | Slide01Msg Slide01Msg
+
+
+type Slide01Msg
+    = Slide01UpdateState Slide01.State
+    | Slide01Transition
+    | Slide01TransitionFinish
 
 
 
@@ -91,9 +107,7 @@ update msg model =
 
 updateNotReady : Msg -> ( Model, Cmd Msg )
 updateNotReady msg =
-    case msg of
-        AnimationFinish ->
-            ( NotReady, Cmd.none )
+    ( NotReady, Cmd.none )
 
 
 updateReady : Msg -> Data -> ( Model, Cmd Msg )
@@ -106,6 +120,22 @@ updateReady msg data =
             in
             ( Ready data, Cmd.none )
 
+        Slide01Msg slide01Msg ->
+            updateSlide01 slide01Msg data
+
+
+updateSlide01 : Slide01Msg -> Data -> ( Model, Cmd Msg )
+updateSlide01 msg data =
+    case msg of
+        Slide01UpdateState state ->
+            ( Ready { data | slide01 = state }, Cmd.none )
+
+        Slide01Transition ->
+            ( Ready data, Cmd.none )
+
+        Slide01TransitionFinish ->
+            ( Ready data, Cmd.none )
+
 
 
 -- VIEW
@@ -113,11 +143,28 @@ updateReady msg data =
 
 view : Model -> Html Msg
 view model =
-    case model of
-        NotReady ->
-            H.div [] [ H.text "Loading..." ]
+    H.div
+        [ HA.css
+            [ fontFamilies [ "Verdana", "Arial" ]
+            , displayFlex
+            , Css.width (vw 100)
+            , Css.height (vh 100)
+            , alignItems center
+            , justifyContent center
+            ]
+        ]
+        (case model of
+            NotReady ->
+                [ H.text "Loading..." ]
 
-        Ready data ->
-            H.div []
+            Ready data ->
                 [ Slide01.view
+                    { dimension = dimension { width = px 1000, height = px 800 }
+                    , onStateUpdate = Slide01UpdateState
+                    , onTransition = Slide01Transition
+                    , onTransitionFinish = Slide01TransitionFinish
+                    }
+                    data.slide01
+                    |> H.map Slide01Msg
                 ]
+        )
