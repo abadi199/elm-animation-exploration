@@ -23,8 +23,7 @@ import Random
 import Second exposing (second)
 import Shared.ControlPanel exposing (controlPanel)
 import Slide.Slide01 as Slide01
-import Svg as S exposing (..)
-import Svg.Attributes as SA exposing (..)
+import Slide.Slide02 as Slide02
 
 
 
@@ -51,6 +50,7 @@ type Model
 
 type alias Data =
     { slide01 : Slide01.State
+    , slide02 : Slide02.State
     , slide : SlideState
     }
 
@@ -66,7 +66,11 @@ type SlideState
 
 init : () -> ( Model, Cmd Msg )
 init flags =
-    ( Ready { slide01 = Slide01.initialState, slide = Showing Slide01 }
+    ( Ready
+        { slide01 = Slide01.initialState
+        , slide02 = Slide02.initialState
+        , slide = Showing Slide01
+        }
     , Cmd.none
     )
 
@@ -83,6 +87,13 @@ subscriptions model =
 type Msg
     = AnimationFinish
     | Slide01Msg Slide01Msg
+    | Slide02Msg Slide02Msg
+
+
+type Slide02Msg
+    = Slide02UpdateState Slide02.State
+    | Slide02Transition
+    | Slide02TransitionFinish
 
 
 type Slide01Msg
@@ -122,6 +133,22 @@ updateReady msg data =
 
         Slide01Msg slide01Msg ->
             updateSlide01 slide01Msg data
+
+        Slide02Msg slide02Msg ->
+            updateSlide02 slide02Msg data
+
+
+updateSlide02 : Slide02Msg -> Data -> ( Model, Cmd Msg )
+updateSlide02 msg data =
+    case msg of
+        Slide02UpdateState state ->
+            ( Ready { data | slide02 = state }, Cmd.none )
+
+        Slide02Transition ->
+            ( Ready data, Cmd.none )
+
+        Slide02TransitionFinish ->
+            ( Ready data, Cmd.none )
 
 
 updateSlide01 : Slide01Msg -> Data -> ( Model, Cmd Msg )
@@ -166,5 +193,13 @@ view model =
                     }
                     data.slide01
                     |> H.map Slide01Msg
+                , Slide02.view
+                    { dimension = dimension { width = px 1000, height = px 800 }
+                    , onStateUpdate = Slide02UpdateState
+                    , onTransition = Slide02Transition
+                    , onTransitionFinish = Slide02TransitionFinish
+                    }
+                    data.slide02
+                    |> H.map Slide02Msg
                 ]
         )
