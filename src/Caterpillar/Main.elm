@@ -22,6 +22,20 @@ import Task
 import Time exposing (Posix)
 
 
+
+-- CONSTANTS
+
+
+constBoxDimension : Dimension
+constBoxDimension =
+    dimension { width = px 100, height = px 100 }
+
+
+constNumberOfBoxes : Int
+constNumberOfBoxes =
+    100
+
+
 main =
     Browser.element
         { init = init
@@ -45,31 +59,35 @@ type alias Data =
 
 
 type alias Box =
-    { coordinate : Coordinate, color : Color }
+    { coordinate : Coordinate, spinSpeed : Float }
 
 
-randomColorGenerator : Random.Generator Color
-randomColorGenerator =
-    Random.map3 Color.rgb
-        (Random.float 0 1)
-        (Random.float 0 1)
-        (Random.float 0 1)
+randomBoxGenerator : Dimension -> Random.Generator Box
+randomBoxGenerator windowDimension =
+    let
+        fromX =
+            constBoxDimension |> Dimension.width |> Px.toInt |> (\n -> n // 2)
 
+        toX =
+            windowDimension |> Dimension.width |> Px.toInt |> (\n -> n + fromX)
 
-randomBoxGenerator : Random.Generator Box
-randomBoxGenerator =
-    Random.map3 (\x y color -> { coordinate = coordinate { x = x, y = y }, color = color })
-        (Px.randomGenerator -100 2000)
-        (Px.randomGenerator -100 1000)
-        randomColorGenerator
+        fromY =
+            constBoxDimension |> Dimension.height |> Px.toInt |> (\n -> n // 2)
+
+        toY =
+            windowDimension |> Dimension.height |> Px.toInt |> (\n -> n + fromY)
+    in
+    Random.map3 (\x y spinSpeed -> { coordinate = coordinate { x = x, y = y }, spinSpeed = spinSpeed })
+        (Px.randomGenerator -fromX toX)
+        (Px.randomGenerator -fromY toY)
+        (Random.float 0.75 1)
 
 
 init : { apple : String } -> ( Model, Cmd Msg )
 init { apple } =
     ( NotReady { windowDimension = Nothing, boxes = Nothing, time = Nothing, apple = apple }
     , Cmd.batch
-        [ Random.generate RandomGeneratorCompleteBoxes (Random.list 100 randomBoxGenerator)
-        , Browser.Dom.getViewport |> Task.perform GetViewportComplete
+        [ Browser.Dom.getViewport |> Task.perform GetViewportComplete
         ]
     )
 
@@ -98,14 +116,16 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         GetViewportComplete viewport ->
-            ( model
-                |> setWindowDimension
-                    (dimension
+            let
+                windowDimension =
+                    dimension
                         { width = px (round viewport.viewport.width)
                         , height = px (round viewport.viewport.height)
                         }
-                    )
-            , Cmd.none
+            in
+            ( model
+                |> setWindowDimension windowDimension
+            , generateBoxes windowDimension
             )
 
         AnimationFrameTick time ->
@@ -118,7 +138,21 @@ update msg model =
             ( model |> setBoxes boxes, Cmd.none )
 
         UserResizeWindow width height ->
-            ( model |> setWindowDimension (dimension { width = px width, height = px height }), Cmd.none )
+            let
+                windowDimension =
+                    dimension { width = px width, height = px height }
+            in
+            ( model |> setWindowDimension windowDimension
+            , generateBoxes windowDimension
+            )
+
+
+generateBoxes : Dimension -> Cmd Msg
+generateBoxes dimension =
+    dimension
+        |> randomBoxGenerator
+        |> Random.list constNumberOfBoxes
+        |> Random.generate RandomGeneratorCompleteBoxes
 
 
 toReady : NotReadyData -> Model
@@ -211,8 +245,8 @@ animatedBox data box =
         ]
 
 
-timeToRotation : Posix -> Int
-timeToRotation time =
+timeToRotation : Float -> Posix -> Int
+timeToRotation spinSpeed time =
     let
         millisecond =
             Time.posixToMillis time
@@ -221,7 +255,7 @@ timeToRotation time =
         0
 
     else
-        modBy 3600 millisecond // 10
+        modBy 3600 millisecond // round (10 * spinSpeed)
 
 
 viewBox : Data -> Box -> List (Html Msg) -> Html Msg
@@ -234,12 +268,12 @@ viewBox data box children =
             Coordinate.y box.coordinate
 
         rotation =
-            "rotate(" ++ (data.time |> timeToRotation |> String.fromInt) ++ "deg)"
+            "rotate(" ++ (data.time |> timeToRotation box.spinSpeed |> String.fromInt) ++ "deg)"
     in
     div
         [ shadow data.showShadow
-        , HA.style "width" "8vw"
-        , HA.style "height" "15vh"
+        , HA.style "width" (constBoxDimension |> Dimension.width |> Px.toString)
+        , HA.style "height" (constBoxDimension |> Dimension.width |> Px.toString)
         , HA.style "position" "absolute"
         , HA.style "top" (Px.toString y)
         , HA.style "display" "flex"
