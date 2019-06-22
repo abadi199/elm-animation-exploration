@@ -37,11 +37,11 @@ type Model
 
 
 type alias NotReadyData =
-    { windowDimension : Maybe Dimension, boxes : Maybe (List Box), time : Maybe Posix }
+    { windowDimension : Maybe Dimension, boxes : Maybe (List Box), time : Maybe Posix, apple : String }
 
 
 type alias Data =
-    { windowDimension : Dimension, boxes : List Box, time : Posix, showShadow : Bool }
+    { windowDimension : Dimension, boxes : List Box, time : Posix, showShadow : Bool, apple : String }
 
 
 type alias Box =
@@ -64,11 +64,11 @@ randomBoxGenerator =
         randomColorGenerator
 
 
-init : () -> ( Model, Cmd Msg )
-init flags =
-    ( NotReady { windowDimension = Nothing, boxes = Nothing, time = Nothing }
+init : { apple : String } -> ( Model, Cmd Msg )
+init { apple } =
+    ( NotReady { windowDimension = Nothing, boxes = Nothing, time = Nothing, apple = apple }
     , Cmd.batch
-        [ Random.generate RandomGeneratorCompleteBoxes (Random.list 2000 randomBoxGenerator)
+        [ Random.generate RandomGeneratorCompleteBoxes (Random.list 100 randomBoxGenerator)
         , Browser.Dom.getViewport |> Task.perform GetViewportComplete
         ]
     )
@@ -130,6 +130,7 @@ toReady data =
                 , boxes = boxes
                 , time = time
                 , showShadow = False
+                , apple = data.apple
                 }
 
         _ ->
@@ -199,7 +200,15 @@ view model =
 
 animatedBox : Data -> Box -> Html Msg
 animatedBox data box =
-    viewBox data box [ text "Elm" ]
+    viewBox data
+        box
+        [ H.img
+            [ HA.src data.apple
+            , HA.style "width" "100%"
+            , HA.style "height" "100%"
+            ]
+            []
+        ]
 
 
 timeToRotation : Posix -> Int
@@ -229,9 +238,8 @@ viewBox data box children =
     in
     div
         [ shadow data.showShadow
-        , HA.style "background" (Color.toCssString box.color)
-        , HA.style "width" "50px"
-        , HA.style "height" "50px"
+        , HA.style "width" "8vw"
+        , HA.style "height" "15vh"
         , HA.style "position" "absolute"
         , HA.style "top" (Px.toString y)
         , HA.style "display" "flex"
