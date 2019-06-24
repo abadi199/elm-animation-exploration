@@ -7,6 +7,7 @@ import Color exposing (Color)
 import Coordinate exposing (Coordinate, coordinate)
 import Count
 import Dimension exposing (Dimension, dimension)
+import Fps exposing (Fps)
 import Html as H exposing (Html, div)
 import Html.Attributes as HA
 import Html.Events as HE
@@ -33,7 +34,7 @@ constBoxDimension =
 
 constNumberOfBoxes : Int
 constNumberOfBoxes =
-    100
+    400
 
 
 main =
@@ -51,11 +52,21 @@ type Model
 
 
 type alias NotReadyData =
-    { windowDimension : Maybe Dimension, boxes : Maybe (List Box), time : Maybe Posix, apple : String }
+    { windowDimension : Maybe Dimension
+    , boxes : Maybe (List Box)
+    , time : Maybe Posix
+    , apple : String
+    }
 
 
 type alias Data =
-    { windowDimension : Dimension, boxes : List Box, time : Posix, showShadow : Bool, apple : String }
+    { windowDimension : Dimension
+    , boxes : List Box
+    , time : Posix
+    , showShadow : Bool
+    , apple : String
+    , fps : Fps
+    }
 
 
 type alias Box =
@@ -80,7 +91,7 @@ randomBoxGenerator windowDimension =
     Random.map3 (\x y spinSpeed -> { coordinate = coordinate { x = x, y = y }, spinSpeed = spinSpeed })
         (Px.randomGenerator -fromX toX)
         (Px.randomGenerator -fromY toY)
-        (Random.float 0.75 1)
+        (Random.float 5 10)
 
 
 init : { apple : String } -> ( Model, Cmd Msg )
@@ -110,6 +121,10 @@ type Msg
     | UserCheckShowShadowCheckBox Bool
     | UserResizeWindow Int Int
     | GetViewportComplete Browser.Dom.Viewport
+
+
+
+-- UPDATE
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -165,6 +180,7 @@ toReady data =
                 , time = time
                 , showShadow = False
                 , apple = data.apple
+                , fps = Fps.initial time
                 }
 
         _ ->
@@ -179,7 +195,7 @@ setTime time model =
                 |> toReady
 
         Ready data ->
-            Ready { data | time = time }
+            Ready { data | time = time, fps = Fps.update time data.fps }
 
 
 setShowShadow : Bool -> Model -> Model
@@ -229,7 +245,25 @@ view model =
             div []
                 [ div [] (List.map (animatedBox data) data.boxes)
                 , controlPanel data { onShowShadowCheck = UserCheckShowShadowCheckBox }
+                , fpsPanel data
                 ]
+
+
+fpsPanel : Data -> Html msg
+fpsPanel { fps } =
+    let
+        currentFps =
+            fps |> Fps.fps
+    in
+    if isNaN currentFps then
+        text ""
+
+    else
+        div
+            [ HA.style "position" "absolute"
+            , HA.style "bottom" "0px"
+            ]
+            [ text "fps: ", text (currentFps |> String.fromFloat |> String.left 5) ]
 
 
 animatedBox : Data -> Box -> Html Msg
@@ -240,6 +274,8 @@ animatedBox data box =
             [ HA.src data.apple
             , HA.style "width" "100%"
             , HA.style "height" "100%"
+            , HA.style "grid-row" "1/2"
+            , HA.style "grid-column" "1/2"
             ]
             []
         ]
@@ -255,7 +291,7 @@ timeToRotation spinSpeed time =
         0
 
     else
-        modBy 3600 millisecond // round (10 * spinSpeed)
+        modBy 3600 <| round (toFloat millisecond / spinSpeed)
 
 
 viewBox : Data -> Box -> List (Html Msg) -> Html Msg
@@ -267,8 +303,11 @@ viewBox data box children =
         y =
             Coordinate.y box.coordinate
 
+        timer =
+            data.time |> timeToRotation box.spinSpeed |> String.fromInt
+
         rotation =
-            "rotate(" ++ (data.time |> timeToRotation box.spinSpeed |> String.fromInt) ++ "deg)"
+            "rotate(" ++ timer ++ "deg)"
     in
     div
         [ shadow data.showShadow
@@ -276,10 +315,11 @@ viewBox data box children =
         , HA.style "height" (constBoxDimension |> Dimension.width |> Px.toString)
         , HA.style "position" "absolute"
         , HA.style "top" (Px.toString y)
-        , HA.style "display" "flex"
+        , HA.style "display" "grid"
         , HA.style "justify-content" "center"
         , HA.style "align-items" "center"
-        , HA.style "color" "white"
+        , HA.style "grid-template-columns" "1fr"
+        , HA.style "grid-template-rows" "1fr"
         , HA.style "left" (Px.toString x)
         , HA.style "transform" rotation
         ]
