@@ -6,12 +6,16 @@ import Browser.Events
 import Color exposing (Color)
 import Coordinate exposing (Coordinate, coordinate)
 import Count
+import Degree exposing (deg)
 import Dimension exposing (Dimension, dimension)
 import Fps exposing (Fps)
 import Html as H exposing (Html, div)
 import Html.Attributes as HA
 import Html.Events as HE
+import Js.Animation as Animation
+import Js.Animation.Options as Options
 import Json.Decode as JD
+import Millisecond exposing (millisecond)
 import Percentage
 import Px exposing (Px, px)
 import Random
@@ -34,7 +38,7 @@ constBoxDimension =
 
 constNumberOfBoxes : Int
 constNumberOfBoxes =
-    400
+    100
 
 
 main =
@@ -66,7 +70,13 @@ type alias Data =
     , showShadow : Bool
     , apple : String
     , fps : Fps
+    , animationType : AnimationType
     }
+
+
+type AnimationType
+    = Elm
+    | WebAnimation
 
 
 type alias Box =
@@ -178,9 +188,10 @@ toReady data =
                 { windowDimension = windowDimension
                 , boxes = boxes
                 , time = time
-                , showShadow = False
+                , showShadow = True
                 , apple = data.apple
                 , fps = Fps.initial time
+                , animationType = WebAnimation
                 }
 
         _ ->
@@ -274,8 +285,6 @@ animatedBox data box =
             [ HA.src data.apple
             , HA.style "width" "100%"
             , HA.style "height" "100%"
-            , HA.style "grid-row" "1/2"
-            , HA.style "grid-column" "1/2"
             ]
             []
         ]
@@ -309,27 +318,59 @@ viewBox data box children =
         rotation =
             "rotate(" ++ timer ++ "deg)"
     in
-    div
-        [ shadow data.showShadow
-        , HA.style "width" (constBoxDimension |> Dimension.width |> Px.toString)
-        , HA.style "height" (constBoxDimension |> Dimension.width |> Px.toString)
-        , HA.style "position" "absolute"
-        , HA.style "top" (Px.toString y)
-        , HA.style "display" "grid"
-        , HA.style "justify-content" "center"
-        , HA.style "align-items" "center"
-        , HA.style "grid-template-columns" "1fr"
-        , HA.style "grid-template-rows" "1fr"
-        , HA.style "left" (Px.toString x)
-        , HA.style "transform" rotation
-        ]
-        children
+    case data.animationType of
+        Elm ->
+            div
+                [ shadow data.showShadow
+                , HA.style "width" (constBoxDimension |> Dimension.width |> Px.toString)
+                , HA.style "height" (constBoxDimension |> Dimension.width |> Px.toString)
+                , HA.style "position" "absolute"
+                , HA.style "top" (Px.toString y)
+                , HA.style "display" "grid"
+                , HA.style "justify-content" "center"
+                , HA.style "align-items" "center"
+                , HA.style "grid-template-columns" "1fr"
+                , HA.style "grid-template-rows" "1fr"
+                , HA.style "left" (Px.toString x)
+                , HA.style "transform" rotation
+                ]
+                children
+
+        WebAnimation ->
+            Animation.node
+                [ Animation.rotate (deg 0)
+                , Animation.rotate (deg 360)
+                ]
+                (Options.default { duration = millisecond 2000 }
+                    |> Options.withIterations Count.infinite
+                )
+                []
+                (div
+                    [ shadow data.showShadow
+                    , HA.style "width" (constBoxDimension |> Dimension.width |> Px.toString)
+                    , HA.style "height" (constBoxDimension |> Dimension.width |> Px.toString)
+                    , HA.style "position" "absolute"
+                    , HA.style "top" (Px.toString y)
+                    , HA.style "display" "grid"
+                    , HA.style "justify-content" "center"
+                    , HA.style "align-items" "center"
+                    , HA.style "grid-template-columns" "1fr"
+                    , HA.style "grid-template-rows" "1fr"
+                    , HA.style "left" (Px.toString x)
+                    ]
+                    children
+                )
 
 
 shadow : Bool -> H.Attribute Msg
 shadow show =
     if show then
-        HA.style "box-shadow" "0 0 10px rgba(0,0,0,0.5)"
+        HA.style "filter" "drop-shadow(0 0 10px rgba(0,0,0,0.5))"
+        -- HA.style "box-shadow" "0 0 10px rgba(0,0,0,0.5)"
 
     else
-        HA.style "box-shadow" "none"
+        HA.style "filter" "none"
+
+
+
+-- HA.style "box-shadow" "none"
