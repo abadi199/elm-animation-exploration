@@ -3,15 +3,16 @@ module Caterpillar.Main exposing (main)
 import Browser
 import Browser.Dom
 import Browser.Events
+import Caterpillar.Caterpillar as Caterpillar
 import Color exposing (Color)
 import Coordinate exposing (Coordinate, coordinate)
 import Count
 import Degree exposing (deg)
 import Dimension exposing (Dimension, dimension)
 import Fps exposing (Fps)
-import Html as H exposing (Html, div)
-import Html.Attributes as HA
-import Html.Events as HE
+import Html.Styled as H exposing (Html, div)
+import Html.Styled.Attributes as HA
+import Html.Styled.Events as HE
 import Js.Animation as Animation
 import Js.Animation.Options as Options
 import Json.Decode as JD
@@ -46,7 +47,7 @@ main =
         { init = init
         , subscriptions = subscriptions
         , update = update
-        , view = view
+        , view = view >> H.toUnstyled
         }
 
 
@@ -60,6 +61,7 @@ type alias NotReadyData =
     , boxes : Maybe (List Box)
     , time : Maybe Posix
     , apple : String
+    , caterpillar : String
     }
 
 
@@ -69,6 +71,7 @@ type alias Data =
     , time : Posix
     , showShadow : Bool
     , apple : String
+    , caterpillar : String
     , fps : Fps
     , animationType : AnimationType
     }
@@ -104,9 +107,15 @@ randomBoxGenerator windowDimension =
         (Random.float 5 10)
 
 
-init : { apple : String } -> ( Model, Cmd Msg )
-init { apple } =
-    ( NotReady { windowDimension = Nothing, boxes = Nothing, time = Nothing, apple = apple }
+init : { apple : String, caterpillar : String } -> ( Model, Cmd Msg )
+init { apple, caterpillar } =
+    ( NotReady
+        { windowDimension = Nothing
+        , boxes = Nothing
+        , time = Nothing
+        , apple = apple
+        , caterpillar = caterpillar
+        }
     , Cmd.batch
         [ Browser.Dom.getViewport |> Task.perform GetViewportComplete
         ]
@@ -190,6 +199,7 @@ toReady data =
                 , time = time
                 , showShadow = True
                 , apple = data.apple
+                , caterpillar = data.caterpillar
                 , fps = Fps.initial time
                 , animationType = WebAnimation
                 }
@@ -250,12 +260,13 @@ view : Model -> Html Msg
 view model =
     case model of
         NotReady _ ->
-            div [] [ text "Loading..." ]
+            div [] [ H.text "Loading..." ]
 
         Ready data ->
             div []
                 [ div [] (List.map (animatedBox data) data.boxes)
-                , controlPanel data { onShowShadowCheck = UserCheckShowShadowCheckBox }
+                , controlPanel data { onShowShadowCheck = UserCheckShowShadowCheckBox } |> H.fromUnstyled
+                , Caterpillar.view data
                 , fpsPanel data
                 ]
 
@@ -267,14 +278,14 @@ fpsPanel { fps } =
             fps |> Fps.fps
     in
     if isNaN currentFps then
-        text ""
+        H.text ""
 
     else
         div
             [ HA.style "position" "absolute"
             , HA.style "bottom" "0px"
             ]
-            [ text "fps: ", text (currentFps |> String.fromFloat |> String.left 5) ]
+            [ H.text "fps: ", H.text (currentFps |> String.fromFloat |> String.left 5) ]
 
 
 animatedBox : Data -> Box -> Html Msg
@@ -359,14 +370,15 @@ viewBox data box children =
                     , HA.style "left" (Px.toString x)
                     ]
                     children
+                    |> H.toUnstyled
                 )
+                |> H.fromUnstyled
 
 
 shadow : Bool -> H.Attribute Msg
 shadow show =
     if show then
         HA.style "filter" "drop-shadow(0 0 10px rgba(0,0,0,0.5))"
-        -- HA.style "box-shadow" "0 0 10px rgba(0,0,0,0.5)"
 
     else
         HA.style "filter" "none"

@@ -1,6 +1,7 @@
 module Px exposing
     ( Px
     , add
+    , divideBy
     , negate
     , px
     , randomGenerator
@@ -35,6 +36,11 @@ toInt (Px n) =
 add : Px -> Px -> Px
 add (Px a) (Px b) =
     Px (a + b)
+
+
+divideBy : Int -> Px -> Px
+divideBy denominator (Px numerator) =
+    numerator // denominator |> Px
 
 
 randomGenerator : Int -> Int -> Random.Generator Px
