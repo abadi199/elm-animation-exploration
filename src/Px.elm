@@ -1,10 +1,17 @@
 module Px exposing
     ( Px
     , add
+    , divideBy
+    , negate
     , px
+    , randomGenerator
+    , toElmCss
     , toInt
     , toString
     )
+
+import Css
+import Random
 
 
 type Px
@@ -29,3 +36,24 @@ toInt (Px n) =
 add : Px -> Px -> Px
 add (Px a) (Px b) =
     Px (a + b)
+
+
+divideBy : Int -> Px -> Px
+divideBy denominator (Px numerator) =
+    numerator // denominator |> Px
+
+
+randomGenerator : Int -> Int -> Random.Generator Px
+randomGenerator low high =
+    Random.int low high
+        |> Random.map px
+
+
+toElmCss : Px -> Css.Px
+toElmCss (Px n) =
+    Css.px (toFloat n)
+
+
+negate : Px -> Px
+negate (Px n) =
+    Px -n

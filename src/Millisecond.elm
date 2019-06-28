@@ -1,8 +1,20 @@
-module Millisecond exposing (Millisecond, add, isAfter, millisecond, toString)
+module Millisecond exposing
+    ( Millisecond
+    , add
+    , encode
+    , fromSecond
+    , isAfter
+    , millisecond
+    , toInt
+    , toString
+    )
+
+import Json.Encode as JE
+import Second exposing (Second)
 
 
 type Millisecond
-    = Millisecond Float
+    = Millisecond Int
 
 
 millisecond =
@@ -21,4 +33,23 @@ add (Millisecond a) (Millisecond b) =
 
 toString : Millisecond -> String
 toString (Millisecond ms) =
-    String.fromFloat ms ++ "ms"
+    String.fromInt ms ++ "ms"
+
+
+fromSecond : Second -> Millisecond
+fromSecond second =
+    second
+        |> Second.toFloat
+        |> (*) 1000
+        |> round
+        |> millisecond
+
+
+toInt : Millisecond -> Int
+toInt (Millisecond ms) =
+    ms
+
+
+encode : Millisecond -> JE.Value
+encode (Millisecond ms) =
+    JE.int ms

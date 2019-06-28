@@ -5,13 +5,18 @@
   "main": "index.js",
   "scripts": {
     "start": "parcel src/Css/index.html",
-    "css": "parcel src/Css/index.html"
+    "css": "parcel src/Css/index.html",
+    "js": "parcel src/Js/index.html --no-cache",
+    "slide": "parcel src/Slide/index.html --no-cache",
+    "cat": "parcel src/Caterpillar/index.html --no-cache",
+    "elm": "parcel src/Elm/index.html --no-cache"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "elm-hot": "^1.0.1",
     "node-elm-compiler": "^5.0.3",
-    "parcel-bundler": "^1.12.3"
+    "parcel-bundler": "^1.12.3",
+    "typescript": "^3.5.1"
   }
 }
