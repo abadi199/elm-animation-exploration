@@ -1,4 +1,4 @@
-module Caterpillar.Grass exposing (view)
+module Caterpillar.Bush exposing (view)
 
 import Css exposing (..)
 import Dimension exposing (Dimension)
@@ -8,11 +8,11 @@ import Px
 import Time exposing (Posix)
 
 
-view : { a | grass : String, windowDimension : Dimension, time : Posix } -> Html msg
-view { grass, windowDimension, time } =
+view : { a | imageUrl : String, windowDimension : Dimension, time : Posix } -> Html msg
+view { imageUrl, windowDimension, time } =
     let
         loopDuration =
-            5000
+            9000
 
         windowWidth =
             windowDimension
@@ -31,14 +31,14 @@ view { grass, windowDimension, time } =
     in
     H.div
         [ HA.css
-            [ backgroundImage (url grass)
+            [ backgroundImage (url imageUrl)
             , backgroundSize (px windowWidth)
             , backgroundPosition2 (px backgroundOffset) zero
-            , height (vh 50)
+            , backgroundRepeat2 repeat noRepeat
+            , height (px 170)
             , width (vw 100)
             , position absolute
-            , bottom (px 0)
+            , top (vh 46)
             ]
         ]
-        [ H.text "grass"
-        ]
+        []

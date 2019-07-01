@@ -3,8 +3,12 @@ module Caterpillar.Main exposing (main)
 import Browser
 import Browser.Dom
 import Browser.Events
+import Caterpillar.Bush as Bush
 import Caterpillar.Caterpillar as Caterpillar
+import Caterpillar.Fence as Fence
 import Caterpillar.Grass as Grass
+import Caterpillar.HillFar as HillFar
+import Caterpillar.HillNear as HillNear
 import Caterpillar.Sky as Sky
 import Color exposing (Color)
 import Coordinate exposing (Coordinate, coordinate)
@@ -108,6 +112,10 @@ type alias Flags =
     , caterpillar : String
     , sky : String
     , grass : String
+    , fence : String
+    , hillFar : String
+    , hillNear : String
+    , bush : String
     }
 
 
@@ -134,7 +142,7 @@ subscriptions model =
 
 
 
--- MSG
+-- MESSAGE
 
 
 type Msg
@@ -267,9 +275,39 @@ view model =
         Ready data ->
             div []
                 [ div [] (List.map (animatedBox data) data.boxes)
-                , Sky.view { sky = data.flags.sky, windowDimension = data.windowDimension }
-                , Grass.view { grass = data.flags.grass, windowDimension = data.windowDimension, time = data.time }
-                , Caterpillar.view { caterpillar = data.flags.caterpillar, windowDimension = data.windowDimension }
+                , Sky.view
+                    { sky = data.flags.sky
+                    , windowDimension = data.windowDimension
+                    }
+                , HillFar.view
+                    { imageUrl = data.flags.hillFar
+                    , windowDimension = data.windowDimension
+                    , time = data.time
+                    }
+                , HillNear.view
+                    { imageUrl = data.flags.hillNear
+                    , windowDimension = data.windowDimension
+                    , time = data.time
+                    }
+                , Grass.view
+                    { grass = data.flags.grass
+                    , windowDimension = data.windowDimension
+                    , time = data.time
+                    }
+                , Fence.view
+                    { fence = data.flags.fence
+                    , windowDimension = data.windowDimension
+                    , time = data.time
+                    }
+                , Bush.view
+                    { imageUrl = data.flags.bush
+                    , windowDimension = data.windowDimension
+                    , time = data.time
+                    }
+                , Caterpillar.view
+                    { caterpillar = data.flags.caterpillar
+                    , windowDimension = data.windowDimension
+                    }
                 , Fps.view data
                 ]
 
