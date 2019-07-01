@@ -4,6 +4,8 @@ import Browser
 import Browser.Dom
 import Browser.Events
 import Caterpillar.Caterpillar as Caterpillar
+import Caterpillar.Grass as Grass
+import Caterpillar.Sky as Sky
 import Color exposing (Color)
 import Coordinate exposing (Coordinate, coordinate)
 import Count
@@ -12,18 +14,13 @@ import Dimension exposing (Dimension, dimension)
 import Fps exposing (Fps)
 import Html.Styled as H exposing (Html, div)
 import Html.Styled.Attributes as HA
-import Html.Styled.Events as HE
 import Js.Animation as Animation
 import Js.Animation.Options as Options
-import Json.Decode as JD
 import Millisecond exposing (millisecond)
-import Percentage
 import Px exposing (Px, px)
 import Random
 import Second exposing (second)
 import Shared.ControlPanel exposing (controlPanel)
-import Svg as S exposing (..)
-import Svg.Attributes as SA exposing (..)
 import Task
 import Time exposing (Posix)
 
@@ -39,9 +36,10 @@ constBoxDimension =
 
 constNumberOfBoxes : Int
 constNumberOfBoxes =
-    100
+    0
 
 
+main : Platform.Program Flags Model Msg
 main =
     Browser.element
         { init = init
@@ -57,21 +55,19 @@ type Model
 
 
 type alias NotReadyData =
-    { windowDimension : Maybe Dimension
+    { flags : Flags
+    , windowDimension : Maybe Dimension
     , boxes : Maybe (List Box)
     , time : Maybe Posix
-    , apple : String
-    , caterpillar : String
     }
 
 
 type alias Data =
-    { windowDimension : Dimension
+    { flags : Flags
+    , windowDimension : Dimension
     , boxes : List Box
     , time : Posix
     , showShadow : Bool
-    , apple : String
-    , caterpillar : String
     , fps : Fps
     , animationType : AnimationType
     }
@@ -107,14 +103,21 @@ randomBoxGenerator windowDimension =
         (Random.float 5 10)
 
 
-init : { apple : String, caterpillar : String } -> ( Model, Cmd Msg )
-init { apple, caterpillar } =
+type alias Flags =
+    { apple : String
+    , caterpillar : String
+    , sky : String
+    , grass : String
+    }
+
+
+init : Flags -> ( Model, Cmd Msg )
+init flags =
     ( NotReady
-        { windowDimension = Nothing
+        { flags = flags
+        , windowDimension = Nothing
         , boxes = Nothing
         , time = Nothing
-        , apple = apple
-        , caterpillar = caterpillar
         }
     , Cmd.batch
         [ Browser.Dom.getViewport |> Task.perform GetViewportComplete
@@ -194,12 +197,11 @@ toReady data =
     case ( data.windowDimension, data.boxes, data.time ) of
         ( Just windowDimension, Just boxes, Just time ) ->
             Ready
-                { windowDimension = windowDimension
+                { flags = data.flags
+                , windowDimension = windowDimension
                 , boxes = boxes
                 , time = time
                 , showShadow = True
-                , apple = data.apple
-                , caterpillar = data.caterpillar
                 , fps = Fps.initial time
                 , animationType = WebAnimation
                 }
@@ -265,27 +267,11 @@ view model =
         Ready data ->
             div []
                 [ div [] (List.map (animatedBox data) data.boxes)
-                , controlPanel data { onShowShadowCheck = UserCheckShowShadowCheckBox } |> H.fromUnstyled
-                , Caterpillar.view data
-                , fpsPanel data
+                , Sky.view { sky = data.flags.sky, windowDimension = data.windowDimension }
+                , Grass.view { grass = data.flags.grass, windowDimension = data.windowDimension, time = data.time }
+                , Caterpillar.view { caterpillar = data.flags.caterpillar, windowDimension = data.windowDimension }
+                , Fps.view data
                 ]
-
-
-fpsPanel : Data -> Html msg
-fpsPanel { fps } =
-    let
-        currentFps =
-            fps |> Fps.fps
-    in
-    if isNaN currentFps then
-        H.text ""
-
-    else
-        div
-            [ HA.style "position" "absolute"
-            , HA.style "bottom" "0px"
-            ]
-            [ H.text "fps: ", H.text (currentFps |> String.fromFloat |> String.left 5) ]
 
 
 animatedBox : Data -> Box -> Html Msg
@@ -293,7 +279,7 @@ animatedBox data box =
     viewBox data
         box
         [ H.img
-            [ HA.src data.apple
+            [ HA.src data.flags.apple
             , HA.style "width" "100%"
             , HA.style "height" "100%"
             ]

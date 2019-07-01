@@ -1,5 +1,8 @@
-module Fps exposing (Fps, fps, initial, update)
+module Fps exposing (Fps, fps, initial, update, view)
 
+import Css exposing (..)
+import Html.Styled as H exposing (Html)
+import Html.Styled.Attributes as HA
 import Time exposing (Posix)
 
 
@@ -8,7 +11,10 @@ type Fps
 
 
 type alias FpsCounter =
-    { beginTime : Posix, currentTime : Posix, frameCount : Int }
+    { beginTime : Posix
+    , currentTime : Posix
+    , frameCount : Int
+    }
 
 
 initial : Posix -> Fps
@@ -49,3 +55,23 @@ fps (Fps _ past) =
         |> List.map (.frameCount >> toFloat)
         |> List.sum
         |> (\total -> total / toFloat (List.length recentPast))
+
+
+view : { a | fps : Fps } -> Html msg
+view data =
+    let
+        currentFps =
+            data.fps |> fps
+    in
+    if isNaN currentFps then
+        H.text ""
+
+    else
+        H.div
+            [ HA.css
+                [ position absolute
+                , bottom (px 0)
+                , fontSize (px 42)
+                ]
+            ]
+            [ H.text "fps: ", H.text (currentFps |> String.fromFloat |> String.left 5) ]
