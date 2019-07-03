@@ -2,6 +2,10 @@ module Coordinate exposing
     ( Coordinate
     , add
     , coordinate
+    , multiplyX
+    , multiplyY
+    , setX
+    , setY
     , toString
     , x
     , y
@@ -40,3 +44,23 @@ add (Coordinate a) (Coordinate b) =
         { x = Px.add a.x b.x
         , y = Px.add a.y b.y
         }
+
+
+setY : Px -> Coordinate -> Coordinate
+setY px (Coordinate coord) =
+    Coordinate { coord | y = px }
+
+
+setX : Px -> Coordinate -> Coordinate
+setX px (Coordinate coord) =
+    Coordinate { coord | x = px }
+
+
+multiplyY : Float -> Coordinate -> Coordinate
+multiplyY multiplier (Coordinate coord) =
+    Coordinate { coord | y = coord.y |> Px.multiply multiplier }
+
+
+multiplyX : Float -> Coordinate -> Coordinate
+multiplyX multiplier (Coordinate coord) =
+    Coordinate { coord | x = coord.x |> Px.multiply multiplier }

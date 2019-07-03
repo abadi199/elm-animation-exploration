@@ -5,6 +5,7 @@ module Millisecond exposing
     , fromSecond
     , isAfter
     , millisecond
+    , toFloat
     , toInt
     , toString
     )
@@ -48,6 +49,11 @@ fromSecond second =
 toInt : Millisecond -> Int
 toInt (Millisecond ms) =
     ms
+
+
+toFloat : Millisecond -> Float
+toFloat =
+    toInt >> Basics.toFloat
 
 
 encode : Millisecond -> JE.Value

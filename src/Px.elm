@@ -2,6 +2,7 @@ module Px exposing
     ( Px
     , add
     , divideBy
+    , multiply
     , negate
     , px
     , randomGenerator
@@ -57,3 +58,8 @@ toElmCss (Px n) =
 negate : Px -> Px
 negate (Px n) =
     Px -n
+
+
+multiply : Float -> Px -> Px
+multiply multiplier (Px number) =
+    toFloat number * multiplier |> round |> Px

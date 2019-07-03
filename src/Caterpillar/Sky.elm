@@ -15,7 +15,6 @@ view { sky, windowDimension } =
             , backgroundPosition2 (px 200) zero
             , height (vh 50)
             , width (vw 100)
-            , backgroundSize contain
             ]
         ]
         [ H.text "Sky"

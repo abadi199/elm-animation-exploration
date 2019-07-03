@@ -1,4 +1,4 @@
-module Caterpillar.Fence exposing (view)
+module Caterpillar.Sun exposing (view)
 
 import Css exposing (..)
 import Dimension exposing (Dimension)
@@ -32,13 +32,13 @@ view { imageUrl, windowDimension, time } =
     H.div
         [ HA.css
             [ backgroundImage (url imageUrl)
-            , backgroundSize (px windowWidth)
-            , backgroundPosition2 (px backgroundOffset) zero
-            , backgroundRepeat2 repeat noRepeat
-            , height (px 150)
-            , width (vw 100)
+            , backgroundRepeat2 noRepeat noRepeat
+            , height (px 250)
+            , width (px 250)
             , position absolute
-            , top (vh 42)
+            , left (vw 80)
+            , top (vh 5)
+            , backgroundSize contain
             ]
         ]
         []

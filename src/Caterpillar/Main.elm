@@ -9,7 +9,9 @@ import Caterpillar.Fence as Fence
 import Caterpillar.Grass as Grass
 import Caterpillar.HillFar as HillFar
 import Caterpillar.HillNear as HillNear
+import Caterpillar.Object as Object
 import Caterpillar.Sky as Sky
+import Caterpillar.Sun as Sun
 import Color exposing (Color)
 import Coordinate exposing (Coordinate, coordinate)
 import Count
@@ -116,6 +118,11 @@ type alias Flags =
     , hillFar : String
     , hillNear : String
     , bush : String
+    , sun : String
+    , cloud1 : String
+    , cloud2 : String
+    , tree : String
+    , apples : String
     }
 
 
@@ -273,40 +280,114 @@ view model =
             div [] [ H.text "Loading..." ]
 
         Ready data ->
+            let
+                windowDimension =
+                    data.windowDimension
+
+                cloud1 =
+                    Object.view
+                        { imageUrl = data.flags.cloud1
+                        , windowDimension = windowDimension
+                        , time = data.time
+                        , loopDuration = millisecond 60000
+                        , dimension = windowDimension |> Dimension.setHeight (px 200)
+                        , coordinate =
+                            windowDimension
+                                |> Dimension.toCoordinate
+                                |> Coordinate.setX (px 0)
+                                |> Coordinate.multiplyY 0.15
+                        }
+
+                cloud2 =
+                    Object.view
+                        { imageUrl = data.flags.cloud2
+                        , windowDimension = windowDimension
+                        , time = data.time
+                        , loopDuration = millisecond 60000
+                        , dimension = windowDimension |> Dimension.setHeight (px 200)
+                        , coordinate =
+                            windowDimension
+                                |> Dimension.toCoordinate
+                                |> Coordinate.setX (px 0)
+                                |> Coordinate.multiplyY 0.05
+                        }
+
+                hillFar =
+                    Object.view
+                        { imageUrl = data.flags.hillFar
+                        , windowDimension = windowDimension
+                        , time = data.time
+                        , loopDuration = millisecond 40000
+                        , dimension = windowDimension |> Dimension.multiplyHeight 0.75
+                        , coordinate =
+                            windowDimension
+                                |> Dimension.toCoordinate
+                                |> Coordinate.setX (px 0)
+                                |> Coordinate.multiplyY 0.3
+                        }
+
+                hillNear =
+                    Object.view
+                        { imageUrl = data.flags.hillNear
+                        , windowDimension = windowDimension
+                        , time = data.time
+                        , loopDuration = millisecond 30000
+                        , dimension = windowDimension |> Dimension.multiplyHeight 0.75
+                        , coordinate =
+                            windowDimension
+                                |> Dimension.toCoordinate
+                                |> Coordinate.setX (px 0)
+                                |> Coordinate.multiplyY 0.3
+                        }
+
+                tree =
+                    Object.view
+                        { imageUrl = data.flags.tree
+                        , windowDimension = windowDimension
+                        , time = data.time
+                        , loopDuration = millisecond 15000
+                        , dimension = windowDimension |> Dimension.multiplyHeight 0.75
+                        , coordinate =
+                            windowDimension
+                                |> Dimension.toCoordinate
+                                |> Coordinate.setX (px 0)
+                                |> Coordinate.multiplyY -0.05
+                        }
+            in
             div []
                 [ div [] (List.map (animatedBox data) data.boxes)
                 , Sky.view
                     { sky = data.flags.sky
-                    , windowDimension = data.windowDimension
+                    , windowDimension = windowDimension
                     }
-                , HillFar.view
-                    { imageUrl = data.flags.hillFar
-                    , windowDimension = data.windowDimension
+                , Sun.view
+                    { imageUrl = data.flags.sun
+                    , windowDimension = windowDimension
                     , time = data.time
                     }
-                , HillNear.view
-                    { imageUrl = data.flags.hillNear
-                    , windowDimension = data.windowDimension
-                    , time = data.time
-                    }
+                , cloud1
+                , cloud2
+                , hillFar
+                , hillNear
+                , tree
                 , Grass.view
                     { grass = data.flags.grass
-                    , windowDimension = data.windowDimension
+                    , windowDimension = windowDimension
                     , time = data.time
                     }
                 , Fence.view
-                    { fence = data.flags.fence
-                    , windowDimension = data.windowDimension
+                    { imageUrl = data.flags.fence
+                    , windowDimension = windowDimension
                     , time = data.time
                     }
                 , Bush.view
                     { imageUrl = data.flags.bush
-                    , windowDimension = data.windowDimension
+                    , windowDimension = windowDimension
                     , time = data.time
                     }
                 , Caterpillar.view
                     { caterpillar = data.flags.caterpillar
-                    , windowDimension = data.windowDimension
+                    , windowDimension = windowDimension
                     }
                 , Fps.view data
                 ]
