@@ -17,5 +17,4 @@ view { sky, windowDimension } =
             , width (vw 100)
             ]
         ]
-        [ H.text "Sky"
-        ]
+        []

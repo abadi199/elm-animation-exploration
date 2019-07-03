@@ -18,6 +18,9 @@ controlPanel data handler =
     div
         [ HA.style "background" "white"
         , HA.style "position" "absolute"
+        , HA.style "top" "0"
+        , HA.style "left" "0"
+        , HA.style "background" "none"
         ]
         [ showShadowCheckBox data handler ]
 

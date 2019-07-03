@@ -1,5 +1,6 @@
 module Caterpillar.Sun exposing (view)
 
+import Caterpillar.Shadow as Shadow
 import Css exposing (..)
 import Dimension exposing (Dimension)
 import Html.Styled as H exposing (Html)
@@ -8,8 +9,8 @@ import Px
 import Time exposing (Posix)
 
 
-view : { a | imageUrl : String, windowDimension : Dimension, time : Posix } -> Html msg
-view { imageUrl, windowDimension, time } =
+view : { a | imageUrl : String, windowDimension : Dimension, time : Posix, showShadow : Bool } -> Html msg
+view { imageUrl, windowDimension, time, showShadow } =
     let
         loopDuration =
             10000
@@ -39,6 +40,7 @@ view { imageUrl, windowDimension, time } =
             , left (vw 80)
             , top (vh 5)
             , backgroundSize contain
+            , Shadow.style showShadow
             ]
         ]
         []

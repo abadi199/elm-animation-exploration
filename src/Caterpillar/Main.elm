@@ -287,6 +287,7 @@ view model =
                 cloud1 =
                     Object.view
                         { imageUrl = data.flags.cloud1
+                        , showShadow = data.showShadow
                         , windowDimension = windowDimension
                         , time = data.time
                         , loopDuration = millisecond 60000
@@ -301,6 +302,7 @@ view model =
                 cloud2 =
                     Object.view
                         { imageUrl = data.flags.cloud2
+                        , showShadow = data.showShadow
                         , windowDimension = windowDimension
                         , time = data.time
                         , loopDuration = millisecond 60000
@@ -315,6 +317,7 @@ view model =
                 hillFar =
                     Object.view
                         { imageUrl = data.flags.hillFar
+                        , showShadow = data.showShadow
                         , windowDimension = windowDimension
                         , time = data.time
                         , loopDuration = millisecond 40000
@@ -329,6 +332,7 @@ view model =
                 hillNear =
                     Object.view
                         { imageUrl = data.flags.hillNear
+                        , showShadow = data.showShadow
                         , windowDimension = windowDimension
                         , time = data.time
                         , loopDuration = millisecond 30000
@@ -343,6 +347,7 @@ view model =
                 tree =
                     Object.view
                         { imageUrl = data.flags.tree
+                        , showShadow = data.showShadow
                         , windowDimension = windowDimension
                         , time = data.time
                         , loopDuration = millisecond 15000
@@ -353,10 +358,54 @@ view model =
                                 |> Coordinate.setX (px 0)
                                 |> Coordinate.multiplyY -0.05
                         }
+
+                grass =
+                    Object.view
+                        { imageUrl = data.flags.grass
+                        , showShadow = data.showShadow
+                        , windowDimension = windowDimension
+                        , time = data.time
+                        , loopDuration = millisecond 5000
+                        , dimension = windowDimension |> Dimension.multiplyHeight 0.5
+                        , coordinate =
+                            windowDimension
+                                |> Dimension.toCoordinate
+                                |> Coordinate.setX (px 0)
+                                |> Coordinate.multiplyY 0.5
+                        }
+
+                bush =
+                    Object.view
+                        { imageUrl = data.flags.bush
+                        , showShadow = data.showShadow
+                        , windowDimension = windowDimension
+                        , time = data.time
+                        , loopDuration = millisecond 9000
+                        , dimension = windowDimension |> Dimension.setHeight (px 170)
+                        , coordinate =
+                            windowDimension
+                                |> Dimension.toCoordinate
+                                |> Coordinate.setX (px 0)
+                                |> Coordinate.multiplyY 0.46
+                        }
+
+                fence =
+                    Object.view
+                        { imageUrl = data.flags.fence
+                        , showShadow = data.showShadow
+                        , windowDimension = windowDimension
+                        , time = data.time
+                        , loopDuration = millisecond 10000
+                        , dimension = windowDimension |> Dimension.setHeight (px 150)
+                        , coordinate =
+                            windowDimension
+                                |> Dimension.toCoordinate
+                                |> Coordinate.setX (px 0)
+                                |> Coordinate.multiplyY 0.42
+                        }
             in
             div []
-                [ div [] (List.map (animatedBox data) data.boxes)
-                , Sky.view
+                [ Sky.view
                     { sky = data.flags.sky
                     , windowDimension = windowDimension
                     }
@@ -364,130 +413,21 @@ view model =
                     { imageUrl = data.flags.sun
                     , windowDimension = windowDimension
                     , time = data.time
+                    , showShadow = data.showShadow
                     }
                 , cloud1
                 , cloud2
                 , hillFar
                 , hillNear
                 , tree
-                , Grass.view
-                    { grass = data.flags.grass
-                    , windowDimension = windowDimension
-                    , time = data.time
-                    }
-                , Fence.view
-                    { imageUrl = data.flags.fence
-                    , windowDimension = windowDimension
-                    , time = data.time
-                    }
-                , Bush.view
-                    { imageUrl = data.flags.bush
-                    , windowDimension = windowDimension
-                    , time = data.time
-                    }
+                , grass
+                , fence
+                , bush
                 , Caterpillar.view
                     { caterpillar = data.flags.caterpillar
                     , windowDimension = windowDimension
+                    , showShadow = data.showShadow
                     }
+                , H.fromUnstyled <| controlPanel data { onShowShadowCheck = UserCheckShowShadowCheckBox }
                 , Fps.view data
                 ]
-
-
-animatedBox : Data -> Box -> Html Msg
-animatedBox data box =
-    viewBox data
-        box
-        [ H.img
-            [ HA.src data.flags.apple
-            , HA.style "width" "100%"
-            , HA.style "height" "100%"
-            ]
-            []
-        ]
-
-
-timeToRotation : Float -> Posix -> Int
-timeToRotation spinSpeed time =
-    let
-        millisecond =
-            Time.posixToMillis time
-    in
-    if millisecond == 0 then
-        0
-
-    else
-        modBy 3600 <| round (toFloat millisecond / spinSpeed)
-
-
-viewBox : Data -> Box -> List (Html Msg) -> Html Msg
-viewBox data box children =
-    let
-        x =
-            Coordinate.x box.coordinate
-
-        y =
-            Coordinate.y box.coordinate
-
-        timer =
-            data.time |> timeToRotation box.spinSpeed |> String.fromInt
-
-        rotation =
-            "rotate(" ++ timer ++ "deg)"
-    in
-    case data.animationType of
-        Elm ->
-            div
-                [ shadow data.showShadow
-                , HA.style "width" (constBoxDimension |> Dimension.width |> Px.toString)
-                , HA.style "height" (constBoxDimension |> Dimension.width |> Px.toString)
-                , HA.style "position" "absolute"
-                , HA.style "top" (Px.toString y)
-                , HA.style "display" "grid"
-                , HA.style "justify-content" "center"
-                , HA.style "align-items" "center"
-                , HA.style "grid-template-columns" "1fr"
-                , HA.style "grid-template-rows" "1fr"
-                , HA.style "left" (Px.toString x)
-                , HA.style "transform" rotation
-                ]
-                children
-
-        WebAnimation ->
-            Animation.node
-                [ Animation.rotate (deg 0)
-                , Animation.rotate (deg 360)
-                ]
-                (Options.default { duration = millisecond 2000 }
-                    |> Options.withIterations Count.infinite
-                )
-                []
-                (div
-                    [ shadow data.showShadow
-                    , HA.style "width" (constBoxDimension |> Dimension.width |> Px.toString)
-                    , HA.style "height" (constBoxDimension |> Dimension.width |> Px.toString)
-                    , HA.style "position" "absolute"
-                    , HA.style "top" (Px.toString y)
-                    , HA.style "display" "grid"
-                    , HA.style "justify-content" "center"
-                    , HA.style "align-items" "center"
-                    , HA.style "grid-template-columns" "1fr"
-                    , HA.style "grid-template-rows" "1fr"
-                    , HA.style "left" (Px.toString x)
-                    ]
-                    children
-                    |> H.toUnstyled
-                )
-                |> H.fromUnstyled
-
-
-shadow : Bool -> H.Attribute Msg
-shadow show =
-    if show then
-        HA.style "filter" "drop-shadow(0 0 10px rgba(0,0,0,0.5))"
-
-    else
-        HA.style "filter" "none"
-
-
-
--- HA.style "box-shadow" "none"

@@ -1,5 +1,6 @@
 module Caterpillar.Object exposing (view)
 
+import Caterpillar.Shadow as Shadow
 import Coordinate exposing (Coordinate)
 import Css exposing (..)
 import Dimension exposing (Dimension)
@@ -17,11 +18,12 @@ type alias Options =
     , loopDuration : Millisecond
     , dimension : Dimension
     , coordinate : Coordinate
+    , showShadow : Bool
     }
 
 
 view : Options -> Html msg
-view { imageUrl, windowDimension, time, loopDuration, dimension, coordinate } =
+view { imageUrl, windowDimension, time, loopDuration, dimension, coordinate, showShadow } =
     let
         windowWidth =
             windowDimension
@@ -49,6 +51,7 @@ view { imageUrl, windowDimension, time, loopDuration, dimension, coordinate } =
             , position absolute
             , top (coordinate |> Coordinate.y |> Px.toElmCss)
             , left (coordinate |> Coordinate.x |> Px.toElmCss)
+            , Shadow.style showShadow
             ]
         ]
         []
