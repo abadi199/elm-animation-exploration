@@ -2,6 +2,7 @@ module Px exposing
     ( Px
     , add
     , divideBy
+    , map
     , multiply
     , negate
     , px
@@ -63,3 +64,8 @@ negate (Px n) =
 multiply : Float -> Px -> Px
 multiply multiplier (Px number) =
     toFloat number * multiplier |> round |> Px
+
+
+map : (Int -> Int) -> Px -> Px
+map f (Px n) =
+    Px (f n)

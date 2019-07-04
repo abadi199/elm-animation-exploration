@@ -44,13 +44,13 @@ view { imageUrl, windowDimension, time, loopDuration, dimension, coordinate, sho
         [ HA.css
             [ backgroundImage (url imageUrl)
             , backgroundSize (px windowWidth)
-            , backgroundPosition2 (px backgroundOffset) zero
             , backgroundRepeat2 repeat noRepeat
             , height (dimension |> Dimension.height |> Px.toElmCss)
-            , width (dimension |> Dimension.width |> Px.toElmCss)
+            , width (dimension |> Dimension.width |> Px.multiply 2 |> Px.toElmCss)
             , position absolute
             , top (coordinate |> Coordinate.y |> Px.toElmCss)
-            , left (coordinate |> Coordinate.x |> Px.toElmCss)
+            , left (px backgroundOffset)
+            , border3 (px 1) solid (rgba 0 0 0 1)
             , Shadow.style showShadow
             ]
         ]

@@ -3,12 +3,8 @@ module Caterpillar.Main exposing (main)
 import Browser
 import Browser.Dom
 import Browser.Events
-import Caterpillar.Bush as Bush
 import Caterpillar.Caterpillar as Caterpillar
-import Caterpillar.Fence as Fence
-import Caterpillar.Grass as Grass
-import Caterpillar.HillFar as HillFar
-import Caterpillar.HillNear as HillNear
+import Caterpillar.FastObject as FastObject
 import Caterpillar.Object as Object
 import Caterpillar.Sky as Sky
 import Caterpillar.Sun as Sun
@@ -362,7 +358,7 @@ view model =
                 grass =
                     Object.view
                         { imageUrl = data.flags.grass
-                        , showShadow = data.showShadow
+                        , showShadow = False
                         , windowDimension = windowDimension
                         , time = data.time
                         , loopDuration = millisecond 5000

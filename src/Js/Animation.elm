@@ -6,6 +6,7 @@ module Js.Animation exposing
     , none
     , opacity
     , rotate
+    , styledNode
     , toString
     , translate
     , withOffset
@@ -20,6 +21,9 @@ import Fill exposing (Fill)
 import Html as H
 import Html.Attributes as HA
 import Html.Events as HE
+import Html.Styled as HS
+import Html.Styled.Attributes as HSA
+import Html.Styled.Events as HSE
 import Js.Animation.Options as Options exposing (Options)
 import Json.Encode as JE
 import Millisecond exposing (Millisecond, millisecond)
@@ -84,6 +88,13 @@ none html =
 animation : List Keyframe -> Options -> H.Html msg -> H.Html msg
 animation keyframes options html =
     node keyframes options [] html
+
+
+styledNode : List Keyframe -> Options -> List (HS.Attribute msg) -> HS.Html msg -> HS.Html msg
+styledNode keyframes options attributes html =
+    HS.node "elm-animation"
+        (HSA.attribute "animate" (toString keyframes options) :: attributes)
+        [ html ]
 
 
 node : List Keyframe -> Options -> List (H.Attribute msg) -> H.Html msg -> H.Html msg
