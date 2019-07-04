@@ -50,7 +50,6 @@ view { imageUrl, windowDimension, time, loopDuration, dimension, coordinate, sho
             , position absolute
             , top (coordinate |> Coordinate.y |> Px.toElmCss)
             , left (px backgroundOffset)
-            , border3 (px 1) solid (rgba 0 0 0 1)
             , Shadow.style showShadow
             ]
         ]

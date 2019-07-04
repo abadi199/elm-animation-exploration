@@ -1,5 +1,6 @@
 module Caterpillar.Main exposing (main)
 
+import AnimationType exposing (AnimationType)
 import Browser
 import Browser.Dom
 import Browser.Events
@@ -22,7 +23,7 @@ import Millisecond exposing (millisecond)
 import Px exposing (Px, px)
 import Random
 import Second exposing (second)
-import Shared.ControlPanel exposing (controlPanel)
+import Shared.ControlPanel as ControlPanel exposing (controlPanel)
 import Task
 import Time exposing (Posix)
 
@@ -73,11 +74,6 @@ type alias Data =
     , fps : Fps
     , animationType : AnimationType
     }
-
-
-type AnimationType
-    = Elm
-    | WebAnimation
 
 
 type alias Box =
@@ -152,6 +148,7 @@ type Msg
     = AnimationFrameTick Posix
     | RandomGeneratorCompleteBoxes (List Box)
     | UserCheckShowShadowCheckBox Bool
+    | UserChangeAnimationType AnimationType
     | UserResizeWindow Int Int
     | GetViewportComplete Browser.Dom.Viewport
 
@@ -178,6 +175,9 @@ update msg model =
 
         AnimationFrameTick time ->
             ( model |> setTime time, Cmd.none )
+
+        UserChangeAnimationType animationType ->
+            ( model |> setAnimationType animationType, Cmd.none )
 
         UserCheckShowShadowCheckBox checked ->
             ( model |> setShowShadow checked, Cmd.none )
@@ -214,7 +214,7 @@ toReady data =
                 , time = time
                 , showShadow = True
                 , fps = Fps.initial time
-                , animationType = WebAnimation
+                , animationType = AnimationType.WebAnimation
                 }
 
         _ ->
@@ -230,6 +230,17 @@ setTime time model =
 
         Ready data ->
             Ready { data | time = time, fps = Fps.update time data.fps }
+
+
+setAnimationType : AnimationType -> Model -> Model
+setAnimationType animationType model =
+    case model of
+        NotReady data ->
+            data
+                |> toReady
+
+        Ready data ->
+            Ready { data | animationType = animationType }
 
 
 setShowShadow : Bool -> Model -> Model
@@ -280,8 +291,16 @@ view model =
                 windowDimension =
                     data.windowDimension
 
+                objectView =
+                    case data.animationType of
+                        AnimationType.Elm ->
+                            Object.view
+
+                        AnimationType.WebAnimation ->
+                            FastObject.view
+
                 cloud1 =
-                    Object.view
+                    objectView
                         { imageUrl = data.flags.cloud1
                         , showShadow = data.showShadow
                         , windowDimension = windowDimension
@@ -296,7 +315,7 @@ view model =
                         }
 
                 cloud2 =
-                    Object.view
+                    objectView
                         { imageUrl = data.flags.cloud2
                         , showShadow = data.showShadow
                         , windowDimension = windowDimension
@@ -311,7 +330,7 @@ view model =
                         }
 
                 hillFar =
-                    Object.view
+                    objectView
                         { imageUrl = data.flags.hillFar
                         , showShadow = data.showShadow
                         , windowDimension = windowDimension
@@ -326,7 +345,7 @@ view model =
                         }
 
                 hillNear =
-                    Object.view
+                    objectView
                         { imageUrl = data.flags.hillNear
                         , showShadow = data.showShadow
                         , windowDimension = windowDimension
@@ -341,7 +360,7 @@ view model =
                         }
 
                 tree =
-                    Object.view
+                    objectView
                         { imageUrl = data.flags.tree
                         , showShadow = data.showShadow
                         , windowDimension = windowDimension
@@ -356,7 +375,7 @@ view model =
                         }
 
                 grass =
-                    Object.view
+                    objectView
                         { imageUrl = data.flags.grass
                         , showShadow = False
                         , windowDimension = windowDimension
@@ -371,7 +390,7 @@ view model =
                         }
 
                 bush =
-                    Object.view
+                    objectView
                         { imageUrl = data.flags.bush
                         , showShadow = data.showShadow
                         , windowDimension = windowDimension
@@ -386,7 +405,7 @@ view model =
                         }
 
                 fence =
-                    Object.view
+                    objectView
                         { imageUrl = data.flags.fence
                         , showShadow = data.showShadow
                         , windowDimension = windowDimension
@@ -424,6 +443,9 @@ view model =
                     , windowDimension = windowDimension
                     , showShadow = data.showShadow
                     }
-                , H.fromUnstyled <| controlPanel data { onShowShadowCheck = UserCheckShowShadowCheckBox }
+                , controlPanel
+                    |> ControlPanel.withShowShadowCheck UserCheckShowShadowCheckBox
+                    |> ControlPanel.withAnimationType UserChangeAnimationType
+                    |> ControlPanel.view data
                 , Fps.view data
                 ]
