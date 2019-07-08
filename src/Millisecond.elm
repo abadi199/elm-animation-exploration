@@ -5,6 +5,7 @@ module Millisecond exposing
     , fromSecond
     , isAfter
     , millisecond
+    , modBy
     , toFloat
     , toInt
     , toString
@@ -59,3 +60,8 @@ toFloat =
 encode : Millisecond -> JE.Value
 encode (Millisecond ms) =
     JE.int ms
+
+
+modBy : Int -> Millisecond -> Millisecond
+modBy n (Millisecond ms) =
+    millisecond (ms |> Basics.modBy n)

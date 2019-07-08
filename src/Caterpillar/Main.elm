@@ -442,6 +442,7 @@ view model =
                     { caterpillar = data.flags.caterpillar
                     , windowDimension = windowDimension
                     , showShadow = data.showShadow
+                    , time = data.time
                     }
                 , controlPanel
                     |> ControlPanel.withShowShadowCheck UserCheckShowShadowCheckBox
