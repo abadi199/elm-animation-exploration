@@ -1,4 +1,4 @@
-module Caterpillar.Object exposing (view)
+module Caterpillar.Object exposing (State, initialState, tick, view)
 
 import Caterpillar.Shadow as Shadow
 import Coordinate exposing (Coordinate)
@@ -6,15 +6,27 @@ import Css exposing (..)
 import Dimension exposing (Dimension)
 import Html.Styled as H exposing (Html)
 import Html.Styled.Attributes as HA
-import Millisecond exposing (Millisecond)
+import Millisecond exposing (Millisecond, millisecond)
 import Px
 import Time exposing (Posix)
+
+
+type State
+    = State StateData
+
+
+type alias StateData =
+    { timer : Millisecond }
+
+
+initialState : State
+initialState =
+    State { timer = millisecond 0 }
 
 
 type alias Options =
     { imageUrl : String
     , windowDimension : Dimension
-    , time : Posix
     , loopDuration : Millisecond
     , dimension : Dimension
     , coordinate : Coordinate
@@ -22,8 +34,18 @@ type alias Options =
     }
 
 
-view : Options -> Html msg
-view { imageUrl, windowDimension, time, loopDuration, dimension, coordinate, showShadow } =
+tick : Millisecond -> State -> State
+tick animationFrameDelta (State stateData) =
+    State
+        { stateData
+            | timer =
+                stateData.timer
+                    |> Millisecond.add animationFrameDelta
+        }
+
+
+view : State -> Options -> Html msg
+view (State stateData) { imageUrl, windowDimension, loopDuration, dimension, coordinate, showShadow } =
     let
         windowWidth =
             windowDimension
@@ -31,14 +53,14 @@ view { imageUrl, windowDimension, time, loopDuration, dimension, coordinate, sho
                 |> Px.toInt
                 |> toFloat
 
-        tick =
-            time
-                |> Time.posixToMillis
-                |> modBy (Millisecond.toInt loopDuration)
+        timer =
+            stateData.timer
+                |> Millisecond.modBy (Millisecond.toInt loopDuration)
+                |> Millisecond.toInt
                 |> toFloat
 
         backgroundOffset =
-            (tick * windowWidth) / Millisecond.toFloat loopDuration |> negate
+            (timer * windowWidth) / Millisecond.toFloat loopDuration |> negate
     in
     H.div
         [ HA.css

@@ -3,7 +3,7 @@ module Fps exposing (Fps, fps, initial, update, view)
 import Css exposing (..)
 import Html.Styled as H exposing (Html)
 import Html.Styled.Attributes as HA
-import Time exposing (Posix)
+import Millisecond exposing (Millisecond, millisecond)
 
 
 type Fps
@@ -11,27 +11,25 @@ type Fps
 
 
 type alias FpsCounter =
-    { beginTime : Posix
-    , currentTime : Posix
+    { timer : Millisecond
     , frameCount : Int
     }
 
 
-initial : Posix -> Fps
-initial time =
-    Fps { beginTime = time, currentTime = time, frameCount = 0 } []
+initial : Fps
+initial =
+    Fps { timer = millisecond 0, frameCount = 0 } []
 
 
-update : Posix -> Fps -> Fps
-update time (Fps fpsCounter past) =
+update : Millisecond -> Fps -> Fps
+update animationFrameDelta (Fps fpsCounter past) =
     let
         timeElapsed =
-            Time.posixToMillis time - Time.posixToMillis fpsCounter.beginTime
+            fpsCounter.timer |> Millisecond.add animationFrameDelta
     in
-    if timeElapsed > 1000 then
+    if Millisecond.toInt timeElapsed > 1000 then
         Fps
-            { beginTime = time
-            , currentTime = time
+            { timer = millisecond 0
             , frameCount = 0
             }
             (fpsCounter :: past)
@@ -39,7 +37,7 @@ update time (Fps fpsCounter past) =
     else
         Fps
             { fpsCounter
-                | currentTime = time
+                | timer = timeElapsed
                 , frameCount = fpsCounter.frameCount + 1
             }
             past

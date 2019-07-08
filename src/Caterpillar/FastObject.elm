@@ -17,7 +17,6 @@ import Time exposing (Posix)
 type alias Options =
     { imageUrl : String
     , windowDimension : Dimension
-    , time : Posix
     , loopDuration : Millisecond
     , dimension : Dimension
     , coordinate : Coordinate

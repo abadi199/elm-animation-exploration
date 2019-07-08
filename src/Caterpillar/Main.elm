@@ -61,7 +61,6 @@ type alias NotReadyData =
     { flags : Flags
     , windowDimension : Maybe Dimension
     , boxes : Maybe (List Box)
-    , time : Maybe Posix
     }
 
 
@@ -69,11 +68,18 @@ type alias Data =
     { flags : Flags
     , windowDimension : Dimension
     , boxes : List Box
-    , time : Posix
     , showShadow : Bool
     , fps : Fps
     , animationType : AnimationType
     , caterpillarState : Caterpillar.State
+    , cloud1State : Object.State
+    , cloud2State : Object.State
+    , hillFarState : Object.State
+    , hillNearState : Object.State
+    , treeState : Object.State
+    , grassState : Object.State
+    , bushState : Object.State
+    , fenceState : Object.State
     }
 
 
@@ -125,7 +131,6 @@ init flags =
         { flags = flags
         , windowDimension = Nothing
         , boxes = Nothing
-        , time = Nothing
         }
     , Cmd.batch
         [ Browser.Dom.getViewport |> Task.perform GetViewportComplete
@@ -136,8 +141,7 @@ init flags =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ Browser.Events.onAnimationFrame AnimationFrameTick
-        , Browser.Events.onAnimationFrameDelta (round >> millisecond >> AnimationFrameDeltaTick)
+        [ Browser.Events.onAnimationFrameDelta (round >> millisecond >> AnimationFrameDeltaTick)
         , Browser.Events.onResize UserResizeWindow
         ]
 
@@ -147,8 +151,7 @@ subscriptions model =
 
 
 type Msg
-    = AnimationFrameTick Posix
-    | AnimationFrameDeltaTick Millisecond
+    = AnimationFrameDeltaTick Millisecond
     | RandomGeneratorCompleteBoxes (List Box)
     | UserCheckShowShadowCheckBox Bool
     | UserChangeAnimationType AnimationType
@@ -179,9 +182,6 @@ update msg model =
         AnimationFrameDeltaTick animationFrameDelta ->
             ( model |> setAnimationState animationFrameDelta, Cmd.none )
 
-        AnimationFrameTick time ->
-            ( model |> setTime time, Cmd.none )
-
         UserChangeAnimationType animationType ->
             ( model |> setAnimationType animationType, Cmd.none )
 
@@ -211,17 +211,24 @@ generateBoxes dimension =
 
 toReady : NotReadyData -> Model
 toReady data =
-    case ( data.windowDimension, data.boxes, data.time ) of
-        ( Just windowDimension, Just boxes, Just time ) ->
+    case ( data.windowDimension, data.boxes ) of
+        ( Just windowDimension, Just boxes ) ->
             Ready
                 { flags = data.flags
                 , windowDimension = windowDimension
                 , boxes = boxes
-                , time = time
                 , showShadow = True
-                , fps = Fps.initial time
-                , animationType = AnimationType.WebAnimation
+                , fps = Fps.initial
+                , animationType = AnimationType.Elm
                 , caterpillarState = Caterpillar.initialState
+                , cloud1State = Object.initialState
+                , cloud2State = Object.initialState
+                , hillFarState = Object.initialState
+                , hillNearState = Object.initialState
+                , treeState = Object.initialState
+                , grassState = Object.initialState
+                , bushState = Object.initialState
+                , fenceState = Object.initialState
                 }
 
         _ ->
@@ -237,19 +244,17 @@ setAnimationState animationFrameDelta model =
         Ready data ->
             Ready
                 { data
-                    | caterpillarState = Caterpillar.tick animationFrameDelta data.caterpillarState
+                    | fps = Fps.update animationFrameDelta data.fps
+                    , caterpillarState = Caterpillar.tick animationFrameDelta data.caterpillarState
+                    , cloud1State = Object.tick animationFrameDelta data.cloud1State
+                    , cloud2State = Object.tick animationFrameDelta data.cloud2State
+                    , hillFarState = Object.tick animationFrameDelta data.hillFarState
+                    , hillNearState = Object.tick animationFrameDelta data.hillNearState
+                    , treeState = Object.tick animationFrameDelta data.treeState
+                    , grassState = Object.tick animationFrameDelta data.grassState
+                    , bushState = Object.tick animationFrameDelta data.bushState
+                    , fenceState = Object.tick animationFrameDelta data.fenceState
                 }
-
-
-setTime : Posix -> Model -> Model
-setTime time model =
-    case model of
-        NotReady data ->
-            { data | time = Just time }
-                |> toReady
-
-        Ready data ->
-            Ready { data | time = time, fps = Fps.update time data.fps }
 
 
 setAnimationType : AnimationType -> Model -> Model
@@ -311,20 +316,19 @@ view model =
                 windowDimension =
                     data.windowDimension
 
-                objectView =
+                objectView state =
                     case data.animationType of
                         AnimationType.Elm ->
-                            Object.view
+                            Object.view state
 
                         AnimationType.WebAnimation ->
                             FastObject.view
 
                 cloud1 =
-                    objectView
+                    objectView data.cloud1State
                         { imageUrl = data.flags.cloud1
                         , showShadow = data.showShadow
                         , windowDimension = windowDimension
-                        , time = data.time
                         , loopDuration = millisecond 60000
                         , dimension = windowDimension |> Dimension.setHeight (px 200)
                         , coordinate =
@@ -335,11 +339,10 @@ view model =
                         }
 
                 cloud2 =
-                    objectView
+                    objectView data.cloud2State
                         { imageUrl = data.flags.cloud2
                         , showShadow = data.showShadow
                         , windowDimension = windowDimension
-                        , time = data.time
                         , loopDuration = millisecond 60000
                         , dimension = windowDimension |> Dimension.setHeight (px 200)
                         , coordinate =
@@ -350,11 +353,10 @@ view model =
                         }
 
                 hillFar =
-                    objectView
+                    objectView data.hillFarState
                         { imageUrl = data.flags.hillFar
                         , showShadow = data.showShadow
                         , windowDimension = windowDimension
-                        , time = data.time
                         , loopDuration = millisecond 40000
                         , dimension = windowDimension |> Dimension.multiplyHeight 0.75
                         , coordinate =
@@ -365,11 +367,10 @@ view model =
                         }
 
                 hillNear =
-                    objectView
+                    objectView data.hillNearState
                         { imageUrl = data.flags.hillNear
                         , showShadow = data.showShadow
                         , windowDimension = windowDimension
-                        , time = data.time
                         , loopDuration = millisecond 30000
                         , dimension = windowDimension |> Dimension.multiplyHeight 0.75
                         , coordinate =
@@ -380,11 +381,10 @@ view model =
                         }
 
                 tree =
-                    objectView
+                    objectView data.treeState
                         { imageUrl = data.flags.tree
                         , showShadow = data.showShadow
                         , windowDimension = windowDimension
-                        , time = data.time
                         , loopDuration = millisecond 15000
                         , dimension = windowDimension |> Dimension.multiplyHeight 0.75
                         , coordinate =
@@ -395,11 +395,10 @@ view model =
                         }
 
                 grass =
-                    objectView
+                    objectView data.grassState
                         { imageUrl = data.flags.grass
                         , showShadow = False
                         , windowDimension = windowDimension
-                        , time = data.time
                         , loopDuration = millisecond 5000
                         , dimension = windowDimension |> Dimension.multiplyHeight 0.5
                         , coordinate =
@@ -410,11 +409,10 @@ view model =
                         }
 
                 bush =
-                    objectView
+                    objectView data.bushState
                         { imageUrl = data.flags.bush
                         , showShadow = data.showShadow
                         , windowDimension = windowDimension
-                        , time = data.time
                         , loopDuration = millisecond 9000
                         , dimension = windowDimension |> Dimension.setHeight (px 170)
                         , coordinate =
@@ -425,11 +423,10 @@ view model =
                         }
 
                 fence =
-                    objectView
+                    objectView data.fenceState
                         { imageUrl = data.flags.fence
                         , showShadow = data.showShadow
                         , windowDimension = windowDimension
-                        , time = data.time
                         , loopDuration = millisecond 10000
                         , dimension = windowDimension |> Dimension.setHeight (px 150)
                         , coordinate =
@@ -447,7 +444,7 @@ view model =
                 , Sun.view
                     { imageUrl = data.flags.sun
                     , windowDimension = windowDimension
-                    , time = data.time
+                    , time = Time.millisToPosix 0
                     , showShadow = data.showShadow
                     }
                 , cloud1
