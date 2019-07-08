@@ -1,4 +1,4 @@
-module Caterpillar.Caterpillar exposing (view)
+module Caterpillar.Caterpillar exposing (State, initialState, tick, view)
 
 import Array exposing (Array)
 import Caterpillar.Shadow as Shadow
@@ -9,6 +9,26 @@ import Html.Styled.Attributes as HA
 import Millisecond exposing (Millisecond, millisecond)
 import Px
 import Time exposing (Posix)
+
+
+loopDuration : Millisecond
+loopDuration =
+    millisecond 2000
+
+
+type State
+    = State StateData
+
+
+type alias StateData =
+    { timer : Millisecond
+    }
+
+
+initialState =
+    State
+        { timer = millisecond 0
+        }
 
 
 caterpillarDimension : Dimension
@@ -39,26 +59,31 @@ backgroundPositions =
         ]
 
 
-calculateBackgroundPositionIndex : Posix -> Int
-calculateBackgroundPositionIndex time =
+calculateBackgroundPositionIndex : State -> Int
+calculateBackgroundPositionIndex (State stateData) =
     let
-        loopDuration =
-            2000
-
         numberOfFrames =
             Array.length backgroundPositions
-
-        mod =
-            time |> Time.posixToMillis |> modBy loopDuration
     in
-    mod * numberOfFrames // loopDuration
+    Millisecond.toInt stateData.timer * numberOfFrames // Millisecond.toInt loopDuration
 
 
-view : { caterpillar : String, windowDimension : Dimension, showShadow : Bool, time : Posix } -> Html msg
-view { caterpillar, windowDimension, showShadow, time } =
+tick : Millisecond -> State -> State
+tick animationFrameDelta (State stateData) =
+    State
+        { stateData
+            | timer =
+                stateData.timer
+                    |> Millisecond.add animationFrameDelta
+                    |> Millisecond.modBy (Millisecond.toInt loopDuration)
+        }
+
+
+view : { caterpillar : String, windowDimension : Dimension, showShadow : Bool, state : State } -> Html msg
+view { caterpillar, windowDimension, showShadow, state } =
     let
         positionIndex =
-            calculateBackgroundPositionIndex time
+            calculateBackgroundPositionIndex state
     in
     H.div
         [ HA.css

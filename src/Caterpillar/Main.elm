@@ -19,7 +19,7 @@ import Html.Styled as H exposing (Html, div)
 import Html.Styled.Attributes as HA
 import Js.Animation as Animation
 import Js.Animation.Options as Options
-import Millisecond exposing (millisecond)
+import Millisecond exposing (Millisecond, millisecond)
 import Px exposing (Px, px)
 import Random
 import Second exposing (second)
@@ -73,6 +73,7 @@ type alias Data =
     , showShadow : Bool
     , fps : Fps
     , animationType : AnimationType
+    , caterpillarState : Caterpillar.State
     }
 
 
@@ -136,6 +137,7 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
         [ Browser.Events.onAnimationFrame AnimationFrameTick
+        , Browser.Events.onAnimationFrameDelta (round >> millisecond >> AnimationFrameDeltaTick)
         , Browser.Events.onResize UserResizeWindow
         ]
 
@@ -146,6 +148,7 @@ subscriptions model =
 
 type Msg
     = AnimationFrameTick Posix
+    | AnimationFrameDeltaTick Millisecond
     | RandomGeneratorCompleteBoxes (List Box)
     | UserCheckShowShadowCheckBox Bool
     | UserChangeAnimationType AnimationType
@@ -172,6 +175,9 @@ update msg model =
                 |> setWindowDimension windowDimension
             , generateBoxes windowDimension
             )
+
+        AnimationFrameDeltaTick animationFrameDelta ->
+            ( model |> setAnimationState animationFrameDelta, Cmd.none )
 
         AnimationFrameTick time ->
             ( model |> setTime time, Cmd.none )
@@ -215,10 +221,24 @@ toReady data =
                 , showShadow = True
                 , fps = Fps.initial time
                 , animationType = AnimationType.WebAnimation
+                , caterpillarState = Caterpillar.initialState
                 }
 
         _ ->
             NotReady data
+
+
+setAnimationState : Millisecond -> Model -> Model
+setAnimationState animationFrameDelta model =
+    case model of
+        NotReady data ->
+            model
+
+        Ready data ->
+            Ready
+                { data
+                    | caterpillarState = Caterpillar.tick animationFrameDelta data.caterpillarState
+                }
 
 
 setTime : Posix -> Model -> Model
@@ -442,7 +462,7 @@ view model =
                     { caterpillar = data.flags.caterpillar
                     , windowDimension = windowDimension
                     , showShadow = data.showShadow
-                    , time = data.time
+                    , state = data.caterpillarState
                     }
                 , controlPanel
                     |> ControlPanel.withShowShadowCheck UserCheckShowShadowCheckBox
