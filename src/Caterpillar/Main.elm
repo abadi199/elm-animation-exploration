@@ -242,19 +242,24 @@ setAnimationState animationFrameDelta model =
             model
 
         Ready data ->
-            Ready
-                { data
-                    | fps = Fps.update animationFrameDelta data.fps
-                    , caterpillarState = Caterpillar.tick animationFrameDelta data.caterpillarState
-                    , cloud1State = Object.tick animationFrameDelta data.cloud1State
-                    , cloud2State = Object.tick animationFrameDelta data.cloud2State
-                    , hillFarState = Object.tick animationFrameDelta data.hillFarState
-                    , hillNearState = Object.tick animationFrameDelta data.hillNearState
-                    , treeState = Object.tick animationFrameDelta data.treeState
-                    , grassState = Object.tick animationFrameDelta data.grassState
-                    , bushState = Object.tick animationFrameDelta data.bushState
-                    , fenceState = Object.tick animationFrameDelta data.fenceState
-                }
+            case data.animationType of
+                AnimationType.WebAnimation ->
+                    Ready { data | fps = Fps.update animationFrameDelta data.fps }
+
+                AnimationType.Elm ->
+                    Ready
+                        { data
+                            | fps = Fps.update animationFrameDelta data.fps
+                            , caterpillarState = Caterpillar.tick animationFrameDelta data.caterpillarState
+                            , cloud1State = Object.tick animationFrameDelta data.cloud1State
+                            , cloud2State = Object.tick animationFrameDelta data.cloud2State
+                            , hillFarState = Object.tick animationFrameDelta data.hillFarState
+                            , hillNearState = Object.tick animationFrameDelta data.hillNearState
+                            , treeState = Object.tick animationFrameDelta data.treeState
+                            , grassState = Object.tick animationFrameDelta data.grassState
+                            , bushState = Object.tick animationFrameDelta data.bushState
+                            , fenceState = Object.tick animationFrameDelta data.fenceState
+                        }
 
 
 setAnimationType : AnimationType -> Model -> Model
