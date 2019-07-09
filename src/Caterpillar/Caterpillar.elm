@@ -11,23 +11,20 @@ import Px
 import Time exposing (Posix)
 
 
-loopDuration : Millisecond
-loopDuration =
-    millisecond 2000
-
-
 type State
     = State StateData
 
 
 type alias StateData =
     { timer : Millisecond
+    , loopDuration : Millisecond
     }
 
 
 initialState =
     State
         { timer = millisecond 0
+        , loopDuration = millisecond 0
         }
 
 
@@ -65,17 +62,18 @@ calculateBackgroundPositionIndex (State stateData) =
         numberOfFrames =
             Array.length backgroundPositions
     in
-    Millisecond.toInt stateData.timer * numberOfFrames // Millisecond.toInt loopDuration
+    Millisecond.toInt stateData.timer * numberOfFrames // Millisecond.toInt stateData.loopDuration
 
 
-tick : Millisecond -> State -> State
-tick animationFrameDelta (State stateData) =
+tick : { animationFrameDelta : Millisecond, loopDuration : Millisecond, windowDimension : Dimension } -> State -> State
+tick { animationFrameDelta, loopDuration } (State stateData) =
     State
         { stateData
-            | timer =
+            | loopDuration = loopDuration
+            , timer =
                 stateData.timer
                     |> Millisecond.add animationFrameDelta
-                    |> Millisecond.modBy (Millisecond.toInt loopDuration)
+                    |> Millisecond.modBy loopDuration
         }
 
 
@@ -95,7 +93,7 @@ view { caterpillar, windowDimension, showShadow, state } =
                 (windowDimension
                     |> Dimension.width
                     |> Px.divideBy 2
-                    |> Px.add (Px.px (Basics.round (caterpillarDimension |> Dimension.width |> Px.toInt |> toFloat |> negate) // 2))
+                    |> Px.add (Px.px ((caterpillarDimension |> Dimension.width |> Px.toInt |> toFloat |> negate |> Basics.round) // 2))
                     |> Px.toElmCss
                 )
             , bottom (px 200)

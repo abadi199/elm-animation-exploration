@@ -32,6 +32,11 @@ import Time exposing (Posix)
 -- CONSTANTS
 
 
+caterpillarLoopDuration : Millisecond
+caterpillarLoopDuration =
+    millisecond 1000
+
+
 constBoxDimension : Dimension
 constBoxDimension =
     dimension { width = px 100, height = px 100 }
@@ -242,6 +247,13 @@ setAnimationState animationFrameDelta model =
             model
 
         Ready data ->
+            let
+                options =
+                    { animationFrameDelta = animationFrameDelta
+                    , loopDuration = caterpillarLoopDuration
+                    , windowDimension = data.windowDimension
+                    }
+            in
             case data.animationType of
                 AnimationType.WebAnimation ->
                     Ready { data | fps = Fps.update animationFrameDelta data.fps }
@@ -250,15 +262,15 @@ setAnimationState animationFrameDelta model =
                     Ready
                         { data
                             | fps = Fps.update animationFrameDelta data.fps
-                            , caterpillarState = Caterpillar.tick animationFrameDelta data.caterpillarState
-                            , cloud1State = Object.tick animationFrameDelta data.cloud1State
-                            , cloud2State = Object.tick animationFrameDelta data.cloud2State
-                            , hillFarState = Object.tick animationFrameDelta data.hillFarState
-                            , hillNearState = Object.tick animationFrameDelta data.hillNearState
-                            , treeState = Object.tick animationFrameDelta data.treeState
-                            , grassState = Object.tick animationFrameDelta data.grassState
-                            , bushState = Object.tick animationFrameDelta data.bushState
-                            , fenceState = Object.tick animationFrameDelta data.fenceState
+                            , caterpillarState = Caterpillar.tick options data.caterpillarState
+                            , cloud1State = Object.tick options data.cloud1State
+                            , cloud2State = Object.tick options data.cloud2State
+                            , hillFarState = Object.tick options data.hillFarState
+                            , hillNearState = Object.tick options data.hillNearState
+                            , treeState = Object.tick options data.treeState
+                            , grassState = Object.tick options data.grassState
+                            , bushState = Object.tick options data.bushState
+                            , fenceState = Object.tick options data.fenceState
                         }
 
 

@@ -2,6 +2,7 @@ module Px exposing
     ( Px
     , add
     , divideBy
+    , is
     , map
     , multiply
     , negate
@@ -69,3 +70,8 @@ multiply multiplier (Px number) =
 map : (Int -> Int) -> Px -> Px
 map f (Px n) =
     Px (f n)
+
+
+is : (Int -> Int -> Bool) -> Px -> Px -> Bool
+is comparer (Px right) (Px left) =
+    comparer left right

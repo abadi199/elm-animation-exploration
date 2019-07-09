@@ -2,10 +2,11 @@ module Millisecond exposing
     ( Millisecond
     , add
     , encode
-    , fromSecond
+    , is
     , isAfter
     , millisecond
     , modBy
+    , multiply
     , toFloat
     , toInt
     , toString
@@ -21,6 +22,11 @@ type Millisecond
 
 millisecond =
     Millisecond
+
+
+multiply : Float -> Millisecond -> Millisecond
+multiply multiplier (Millisecond n) =
+    Millisecond (Basics.toFloat n * multiplier |> round)
 
 
 isAfter : Millisecond -> Millisecond -> Bool
@@ -62,6 +68,11 @@ encode (Millisecond ms) =
     JE.int ms
 
 
-modBy : Int -> Millisecond -> Millisecond
-modBy n (Millisecond ms) =
+modBy : Millisecond -> Millisecond -> Millisecond
+modBy (Millisecond n) (Millisecond ms) =
     millisecond (ms |> Basics.modBy n)
+
+
+is : (Int -> Int -> Bool) -> Millisecond -> Millisecond -> Bool
+is comparer (Millisecond right) (Millisecond left) =
+    comparer left right

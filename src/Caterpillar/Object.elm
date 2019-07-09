@@ -7,7 +7,7 @@ import Dimension exposing (Dimension)
 import Html.Styled as H exposing (Html)
 import Html.Styled.Attributes as HA
 import Millisecond exposing (Millisecond, millisecond)
-import Px
+import Px exposing (Px)
 import Time exposing (Posix)
 
 
@@ -16,12 +16,17 @@ type State
 
 
 type alias StateData =
-    { timer : Millisecond }
+    { timer : Millisecond
+    , positionX : Px
+    }
 
 
 initialState : State
 initialState =
-    State { timer = millisecond 0 }
+    State
+        { timer = millisecond 0
+        , positionX = Px.px 0
+        }
 
 
 type alias Options =
@@ -34,18 +39,45 @@ type alias Options =
     }
 
 
-tick : Millisecond -> State -> State
-tick animationFrameDelta (State stateData) =
+tick : { animationFrameDelta : Millisecond, loopDuration : Millisecond, windowDimension : Dimension } -> State -> State
+tick { animationFrameDelta, loopDuration, windowDimension } (State stateData) =
+    let
+        timer =
+            stateData.timer
+                |> Millisecond.add animationFrameDelta
+                |> Millisecond.modBy loopDuration
+
+        halfLoop =
+            loopDuration |> Millisecond.multiply 0.6
+
+        positionX =
+            if timer |> Millisecond.is (>) halfLoop then
+                let
+                    windowWidth =
+                        windowDimension |> Dimension.width
+
+                    newPositionX =
+                        stateData.positionX
+                            |> Px.add (Px.px -20)
+                in
+                if newPositionX |> Px.is (<) (windowWidth |> Px.map negate) then
+                    Px.px 0
+
+                else
+                    newPositionX
+
+            else
+                stateData.positionX
+    in
     State
         { stateData
-            | timer =
-                stateData.timer
-                    |> Millisecond.add animationFrameDelta
+            | timer = timer
+            , positionX = positionX
         }
 
 
 view : State -> Options -> Html msg
-view (State stateData) { imageUrl, windowDimension, loopDuration, dimension, coordinate, showShadow } =
+view (State stateData) { imageUrl, windowDimension, dimension, coordinate, showShadow } =
     let
         windowWidth =
             windowDimension
@@ -55,12 +87,8 @@ view (State stateData) { imageUrl, windowDimension, loopDuration, dimension, coo
 
         timer =
             stateData.timer
-                |> Millisecond.modBy (Millisecond.toInt loopDuration)
                 |> Millisecond.toInt
                 |> toFloat
-
-        backgroundOffset =
-            (timer * windowWidth) / Millisecond.toFloat loopDuration |> negate
     in
     H.div
         [ HA.css
@@ -71,7 +99,7 @@ view (State stateData) { imageUrl, windowDimension, loopDuration, dimension, coo
             , width (dimension |> Dimension.width |> Px.multiply 2 |> Px.toElmCss)
             , position absolute
             , top (coordinate |> Coordinate.y |> Px.toElmCss)
-            , left (px backgroundOffset)
+            , left (stateData.positionX |> Px.toElmCss)
             , Shadow.style showShadow
             ]
         ]
