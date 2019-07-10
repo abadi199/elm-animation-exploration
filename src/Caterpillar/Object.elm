@@ -8,6 +8,7 @@ import Html.Styled as H exposing (Html)
 import Html.Styled.Attributes as HA
 import Millisecond exposing (Millisecond, millisecond)
 import Px exposing (Px)
+import PxPerMs exposing (PxPerMs)
 import Time exposing (Posix)
 
 
@@ -39,8 +40,16 @@ type alias Options =
     }
 
 
-tick : { animationFrameDelta : Millisecond, loopDuration : Millisecond, windowDimension : Dimension } -> State -> State
-tick { animationFrameDelta, loopDuration, windowDimension } (State stateData) =
+type alias TickOptions =
+    { animationFrameDelta : Millisecond
+    , loopDuration : Millisecond
+    , windowDimension : Dimension
+    , speed : PxPerMs
+    }
+
+
+tick : TickOptions -> State -> State
+tick { animationFrameDelta, loopDuration, windowDimension, speed } (State stateData) =
     let
         timer =
             stateData.timer
@@ -58,9 +67,9 @@ tick { animationFrameDelta, loopDuration, windowDimension } (State stateData) =
 
                     newPositionX =
                         stateData.positionX
-                            |> Px.add (Px.px -20)
+                            |> Px.add (speed |> PxPerMs.toPx animationFrameDelta)
                 in
-                if newPositionX |> Px.is (<) (windowWidth |> Px.map negate) then
+                if newPositionX |> Px.is (<) (Px.map negate windowWidth) then
                     Px.px 0
 
                 else

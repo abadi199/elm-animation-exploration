@@ -8,6 +8,7 @@ import Html.Styled as H exposing (Html)
 import Html.Styled.Attributes as HA
 import Millisecond exposing (Millisecond, millisecond)
 import Px
+import PxPerMs exposing (PxPerMs)
 import Time exposing (Posix)
 
 
@@ -65,7 +66,15 @@ calculateBackgroundPositionIndex (State stateData) =
     Millisecond.toInt stateData.timer * numberOfFrames // Millisecond.toInt stateData.loopDuration
 
 
-tick : { animationFrameDelta : Millisecond, loopDuration : Millisecond, windowDimension : Dimension } -> State -> State
+type alias TickOptions =
+    { animationFrameDelta : Millisecond
+    , loopDuration : Millisecond
+    , windowDimension : Dimension
+    , speed : PxPerMs
+    }
+
+
+tick : TickOptions -> State -> State
 tick { animationFrameDelta, loopDuration } (State stateData) =
     State
         { stateData

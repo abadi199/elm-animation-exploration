@@ -21,6 +21,7 @@ import Js.Animation as Animation
 import Js.Animation.Options as Options
 import Millisecond exposing (Millisecond, millisecond)
 import Px exposing (Px, px)
+import PxPerMs exposing (PxPerMs, pxPerMs)
 import Random
 import Second exposing (second)
 import Shared.ControlPanel as ControlPanel exposing (controlPanel)
@@ -252,6 +253,7 @@ setAnimationState animationFrameDelta model =
                     { animationFrameDelta = animationFrameDelta
                     , loopDuration = caterpillarLoopDuration
                     , windowDimension = data.windowDimension
+                    , speed = pxPerMs -0.6
                     }
             in
             case data.animationType of
@@ -263,14 +265,14 @@ setAnimationState animationFrameDelta model =
                         { data
                             | fps = Fps.update animationFrameDelta data.fps
                             , caterpillarState = Caterpillar.tick options data.caterpillarState
-                            , cloud1State = Object.tick options data.cloud1State
-                            , cloud2State = Object.tick options data.cloud2State
-                            , hillFarState = Object.tick options data.hillFarState
-                            , hillNearState = Object.tick options data.hillNearState
-                            , treeState = Object.tick options data.treeState
-                            , grassState = Object.tick options data.grassState
-                            , bushState = Object.tick options data.bushState
-                            , fenceState = Object.tick options data.fenceState
+                            , cloud1State = Object.tick { options | speed = pxPerMs -0.05 } data.cloud1State
+                            , cloud2State = Object.tick { options | speed = pxPerMs -0.08 } data.cloud2State
+                            , hillFarState = Object.tick { options | speed = pxPerMs -0.1 } data.hillFarState
+                            , hillNearState = Object.tick { options | speed = pxPerMs -0.2 } data.hillNearState
+                            , treeState = Object.tick { options | speed = pxPerMs -0.3 } data.treeState
+                            , fenceState = Object.tick { options | speed = pxPerMs -0.4 } data.fenceState
+                            , bushState = Object.tick { options | speed = pxPerMs -0.5 } data.bushState
+                            , grassState = Object.tick { options | speed = pxPerMs -0.6 } data.grassState
                         }
 
 
