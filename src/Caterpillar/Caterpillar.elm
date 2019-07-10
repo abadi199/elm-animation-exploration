@@ -66,15 +66,16 @@ calculateBackgroundPositionIndex (State stateData) =
     Millisecond.toInt stateData.timer * numberOfFrames // Millisecond.toInt stateData.loopDuration
 
 
-type alias TickOptions =
-    { animationFrameDelta : Millisecond
-    , loopDuration : Millisecond
-    , windowDimension : Dimension
-    , speed : PxPerMs
+type alias TickOptions a =
+    { a
+        | animationFrameDelta : Millisecond
+        , loopDuration : Millisecond
+        , windowDimension : Dimension
+        , speed : PxPerMs
     }
 
 
-tick : TickOptions -> State -> State
+tick : TickOptions a -> State -> State
 tick { animationFrameDelta, loopDuration } (State stateData) =
     State
         { stateData

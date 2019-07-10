@@ -1,4 +1,4 @@
-module Caterpillar.Object exposing (State, initialState, tick, view)
+module Caterpillar.Object exposing (State, continuousTick, initialState, tick, view)
 
 import Caterpillar.Shadow as Shadow
 import Coordinate exposing (Coordinate)
@@ -40,15 +40,49 @@ type alias Options =
     }
 
 
-type alias TickOptions =
-    { animationFrameDelta : Millisecond
-    , loopDuration : Millisecond
-    , windowDimension : Dimension
-    , speed : PxPerMs
+type alias TickOptions a =
+    { a
+        | animationFrameDelta : Millisecond
+        , loopDuration : Millisecond
+        , windowDimension : Dimension
+        , speed : PxPerMs
     }
 
 
-tick : TickOptions -> State -> State
+continuousTick : TickOptions a -> State -> State
+continuousTick { animationFrameDelta, loopDuration, windowDimension, speed } (State stateData) =
+    let
+        timer =
+            stateData.timer
+                |> Millisecond.add animationFrameDelta
+                |> Millisecond.modBy loopDuration
+
+        positionX =
+            let
+                windowWidth =
+                    windowDimension |> Dimension.width
+
+                newPositionX =
+                    stateData.positionX
+                        |> Px.add (speed |> PxPerMs.toPx animationFrameDelta)
+            in
+            if newPositionX |> Px.is (<) (Px.map negate windowWidth) then
+                Px.px 0
+
+            else if newPositionX |> Px.is (>) windowWidth then
+                Px.px 0
+
+            else
+                newPositionX
+    in
+    State
+        { stateData
+            | timer = timer
+            , positionX = positionX
+        }
+
+
+tick : TickOptions a -> State -> State
 tick { animationFrameDelta, loopDuration, windowDimension, speed } (State stateData) =
     let
         timer =
@@ -91,8 +125,6 @@ view (State stateData) { imageUrl, windowDimension, dimension, coordinate, showS
         windowWidth =
             windowDimension
                 |> Dimension.width
-                |> Px.toInt
-                |> toFloat
 
         timer =
             stateData.timer
@@ -102,13 +134,13 @@ view (State stateData) { imageUrl, windowDimension, dimension, coordinate, showS
     H.div
         [ HA.css
             [ backgroundImage (url imageUrl)
-            , backgroundSize (px windowWidth)
+            , backgroundSize (windowWidth |> Px.toElmCss)
             , backgroundRepeat2 repeat noRepeat
             , height (dimension |> Dimension.height |> Px.toElmCss)
-            , width (dimension |> Dimension.width |> Px.multiply 2 |> Px.toElmCss)
+            , width (dimension |> Dimension.width |> Px.multiply 3 |> Px.toElmCss)
             , position absolute
             , top (coordinate |> Coordinate.y |> Px.toElmCss)
-            , left (stateData.positionX |> Px.toElmCss)
+            , left (stateData.positionX |> Px.add (Px.map negate windowWidth) |> Px.toElmCss)
             , Shadow.style showShadow
             ]
         ]

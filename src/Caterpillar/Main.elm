@@ -78,6 +78,7 @@ type alias Data =
     , fps : Fps
     , animationType : AnimationType
     , caterpillarState : Caterpillar.State
+    , sunState : Sun.State
     , cloud1State : Object.State
     , cloud2State : Object.State
     , hillFarState : Object.State
@@ -227,6 +228,7 @@ toReady data =
                 , fps = Fps.initial
                 , animationType = AnimationType.Elm
                 , caterpillarState = Caterpillar.initialState
+                , sunState = Sun.initialState
                 , cloud1State = Object.initialState
                 , cloud2State = Object.initialState
                 , hillFarState = Object.initialState
@@ -254,6 +256,7 @@ setAnimationState animationFrameDelta model =
                     , loopDuration = caterpillarLoopDuration
                     , windowDimension = data.windowDimension
                     , speed = pxPerMs -0.6
+                    , rotationSpeed = 0
                     }
             in
             case data.animationType of
@@ -265,10 +268,11 @@ setAnimationState animationFrameDelta model =
                         { data
                             | fps = Fps.update animationFrameDelta data.fps
                             , caterpillarState = Caterpillar.tick options data.caterpillarState
-                            , cloud1State = Object.tick { options | speed = pxPerMs -0.05 } data.cloud1State
-                            , cloud2State = Object.tick { options | speed = pxPerMs -0.08 } data.cloud2State
-                            , hillFarState = Object.tick { options | speed = pxPerMs -0.1 } data.hillFarState
-                            , hillNearState = Object.tick { options | speed = pxPerMs -0.2 } data.hillNearState
+                            , sunState = Sun.tick { options | rotationSpeed = 0.1 } data.sunState
+                            , cloud1State = Object.continuousTick { options | speed = pxPerMs 0.02 } data.cloud1State
+                            , cloud2State = Object.continuousTick { options | speed = pxPerMs 0.03 } data.cloud2State
+                            , hillFarState = Object.tick { options | speed = pxPerMs -0.02 } data.hillFarState
+                            , hillNearState = Object.tick { options | speed = pxPerMs -0.03 } data.hillNearState
                             , treeState = Object.tick { options | speed = pxPerMs -0.3 } data.treeState
                             , fenceState = Object.tick { options | speed = pxPerMs -0.4 } data.fenceState
                             , bushState = Object.tick { options | speed = pxPerMs -0.5 } data.bushState
@@ -342,6 +346,14 @@ view model =
 
                         AnimationType.WebAnimation ->
                             FastObject.view
+
+                sun =
+                    Sun.view data.sunState
+                        { imageUrl = data.flags.sun
+                        , windowDimension = windowDimension
+                        , time = Time.millisToPosix 0
+                        , showShadow = data.showShadow
+                        }
 
                 cloud1 =
                     objectView data.cloud1State
@@ -460,14 +472,9 @@ view model =
                     { sky = data.flags.sky
                     , windowDimension = windowDimension
                     }
-                , Sun.view
-                    { imageUrl = data.flags.sun
-                    , windowDimension = windowDimension
-                    , time = Time.millisToPosix 0
-                    , showShadow = data.showShadow
-                    }
-                , cloud1
+                , sun
                 , cloud2
+                , cloud1
                 , hillFar
                 , hillNear
                 , tree
