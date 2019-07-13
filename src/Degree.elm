@@ -1,6 +1,7 @@
 module Degree exposing
     ( Degree
     , deg
+    , toFloat
     , toString
     )
 
@@ -17,3 +18,8 @@ deg =
 toString : Degree -> String
 toString (Degree degree) =
     String.fromFloat degree ++ "deg"
+
+
+toFloat : Degree -> Float
+toFloat (Degree n) =
+    n

@@ -30,16 +30,6 @@ initialState =
         }
 
 
-type alias Options =
-    { imageUrl : String
-    , windowDimension : Dimension
-    , loopDuration : Millisecond
-    , dimension : Dimension
-    , coordinate : Coordinate
-    , showShadow : Bool
-    }
-
-
 type alias TickOptions a =
     { a
         | animationFrameDelta : Millisecond
@@ -117,6 +107,16 @@ tick { animationFrameDelta, loopDuration, windowDimension, speed } (State stateD
             | timer = timer
             , positionX = positionX
         }
+
+
+type alias Options =
+    { imageUrl : String
+    , windowDimension : Dimension
+    , loopDuration : Millisecond
+    , dimension : Dimension
+    , coordinate : Coordinate
+    , showShadow : Bool
+    }
 
 
 view : State -> Options -> Html msg

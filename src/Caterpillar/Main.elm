@@ -6,6 +6,7 @@ import Browser.Dom
 import Browser.Events
 import Caterpillar.Caterpillar as Caterpillar
 import Caterpillar.FastObject as FastObject
+import Caterpillar.Grasses as Grasses
 import Caterpillar.Object as Object
 import Caterpillar.Sky as Sky
 import Caterpillar.Sun as Sun
@@ -31,6 +32,11 @@ import Time exposing (Posix)
 
 
 -- CONSTANTS
+
+
+imageWidth : Px
+imageWidth =
+    Px.px 2048
 
 
 caterpillarLoopDuration : Millisecond
@@ -87,6 +93,7 @@ type alias Data =
     , grassState : Object.State
     , bushState : Object.State
     , fenceState : Object.State
+    , grassesState : Grasses.State
     }
 
 
@@ -129,6 +136,7 @@ type alias Flags =
     , cloud2 : String
     , tree : String
     , apples : String
+    , grasses : List String
     }
 
 
@@ -237,6 +245,7 @@ toReady data =
                 , grassState = Object.initialState
                 , bushState = Object.initialState
                 , fenceState = Object.initialState
+                , grassesState = Grasses.initialState (data.flags.grasses |> List.length)
                 }
 
         _ ->
@@ -277,6 +286,7 @@ setAnimationState animationFrameDelta model =
                             , fenceState = Object.tick { options | speed = pxPerMs -0.4 } data.fenceState
                             , bushState = Object.tick { options | speed = pxPerMs -0.5 } data.bushState
                             , grassState = Object.tick { options | speed = pxPerMs -0.6 } data.grassState
+                            , grassesState = Grasses.tick animationFrameDelta data.grassesState
                         }
 
 
@@ -439,6 +449,15 @@ view model =
                                 |> Coordinate.multiplyY 0.5
                         }
 
+                grasses =
+                    Grasses.view data.grassesState
+                        { grasses = data.flags.grasses
+                        , showShadow = data.showShadow
+                        , windowDimension = windowDimension
+                        , loopDuration = millisecond 5000
+                        , imageWidth = imageWidth
+                        }
+
                 bush =
                     objectView data.bushState
                         { imageUrl = data.flags.bush
@@ -487,6 +506,7 @@ view model =
                     , showShadow = data.showShadow
                     , state = data.caterpillarState
                     }
+                , grasses
                 , controlPanel
                     |> ControlPanel.withShowShadowCheck UserCheckShowShadowCheckBox
                     |> ControlPanel.withAnimationType UserChangeAnimationType

@@ -9,6 +9,7 @@ module Px exposing
     , px
     , randomGenerator
     , toElmCss
+    , toFloat
     , toInt
     , toString
     )
@@ -36,6 +37,11 @@ toInt (Px n) =
     n
 
 
+toFloat : Px -> Float
+toFloat =
+    toInt >> Basics.toFloat
+
+
 add : Px -> Px -> Px
 add (Px a) (Px b) =
     Px (a + b)
@@ -54,7 +60,7 @@ randomGenerator low high =
 
 toElmCss : Px -> Css.Px
 toElmCss (Px n) =
-    Css.px (toFloat n)
+    Css.px (Basics.toFloat n)
 
 
 negate : Px -> Px
@@ -64,7 +70,7 @@ negate (Px n) =
 
 multiply : Float -> Px -> Px
 multiply multiplier (Px number) =
-    toFloat number * multiplier |> round |> Px
+    Basics.toFloat number * multiplier |> round |> Px
 
 
 map : (Int -> Int) -> Px -> Px
