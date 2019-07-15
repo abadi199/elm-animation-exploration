@@ -2,7 +2,9 @@ module Degree exposing
     ( Degree
     , add
     , deg
+    , is
     , randomGenerator
+    , subtract
     , toFloat
     , toString
     )
@@ -35,7 +37,17 @@ add (Degree a) (Degree b) =
     Degree (a + b)
 
 
+subtract : Degree -> Degree -> Degree
+subtract (Degree a) (Degree b) =
+    Degree (b - a)
+
+
 randomGenerator : Degree -> Degree -> Random.Generator Degree
 randomGenerator (Degree low) (Degree high) =
     Random.float low high
         |> Random.map deg
+
+
+is : (Float -> Float -> Bool) -> Degree -> Degree -> Bool
+is comparer (Degree right) (Degree left) =
+    comparer left right

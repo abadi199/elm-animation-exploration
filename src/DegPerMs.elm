@@ -35,5 +35,5 @@ randomGenerator (DegPerMs lowDeg lowMs) (DegPerMs highDeg highMs) =
 toDegree : Millisecond -> DegPerMs -> Degree
 toDegree time (DegPerMs deg ms) =
     Degree.toFloat deg
-        * Millisecond.toFloat time
+        * (Millisecond.toFloat time / Millisecond.toFloat ms)
         |> Degree.deg

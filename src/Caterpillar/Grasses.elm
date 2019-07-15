@@ -27,7 +27,7 @@ import Random
 
 maxRotation : Degree
 maxRotation =
-    deg 15
+    deg 30
 
 
 type State
@@ -42,15 +42,20 @@ type alias Grass =
 
 type alias StateData =
     { timer : Millisecond
-    , rotations : Dict String Degree
+    , rotations : Dict String ( Degree, Direction )
     }
+
+
+type Direction
+    = Left
+    | Right
 
 
 initialState : List Grass -> State
 initialState grasses =
     State
         { timer = millisecond 0
-        , rotations = grasses |> List.map (\grass -> ( grass.imageUrl, deg 20 )) |> Dict.fromList
+        , rotations = grasses |> List.map (\grass -> ( grass.imageUrl, ( deg 0, Right ) )) |> Dict.fromList
         }
 
 
@@ -70,15 +75,46 @@ tick { animationFrameDelta, speeds } (State stateData) =
     State
         { stateData
             | timer = stateData.timer |> Millisecond.add animationFrameDelta
-
-            -- UPDATE rotations
             , rotations = stateData.rotations |> Dict.map (updateRotation speeds animationFrameDelta)
         }
 
 
-updateRotation : Dict String DegPerMs -> Millisecond -> String -> Degree -> Degree
-updateRotation speeds animationFrameDelta imageUrl rotation =
-    Debug.todo "updateRotation"
+updateRotation : Dict String DegPerMs -> Millisecond -> String -> ( Degree, Direction ) -> ( Degree, Direction )
+updateRotation speeds animationFrameDelta imageUrl ( rotation, direction ) =
+    let
+        speed =
+            speeds |> Dict.get imageUrl |> Maybe.withDefault (DegPerMs.degPerS 0)
+
+        moveToRight =
+            rotation
+                |> Degree.add (DegPerMs.toDegree animationFrameDelta speed)
+
+        moveToLeft =
+            rotation
+                |> Degree.subtract (DegPerMs.toDegree animationFrameDelta speed)
+    in
+    case direction of
+        Right ->
+            if rotation |> Degree.is (>) maxRotation then
+                ( moveToLeft
+                , Left
+                )
+
+            else
+                ( moveToRight
+                , Right
+                )
+
+        Left ->
+            if rotation |> Degree.is (<=) (Degree.deg 0) then
+                ( moveToRight
+                , Right
+                )
+
+            else
+                ( moveToLeft
+                , Left
+                )
 
 
 type alias Options =
@@ -129,6 +165,13 @@ view (State stateData) ({ grasses, windowDimension, imageWidth } as options) =
 
 viewGrass : Float -> StateData -> Options -> String -> Html msg
 viewGrass ratio stateData options imageUrl =
+    let
+        rotation =
+            stateData.rotations
+                |> Dict.get imageUrl
+                |> Maybe.map Tuple.first
+                |> Maybe.withDefault (Degree.deg 0)
+    in
     H.div
         [ HA.css
             [ backgroundImage (url imageUrl)
@@ -140,10 +183,8 @@ viewGrass ratio stateData options imageUrl =
             , Shadow.style options.showShadow
             , property "transform-origin" "50% 100%"
             , transform
-                (stateData.rotations
-                    |> Dict.get imageUrl
-                    |> Maybe.map Degree.toFloat
-                    |> Maybe.withDefault 0
+                (rotation
+                    |> Degree.toFloat
                     |> Css.deg
                     |> rotate
                 )
@@ -163,7 +204,7 @@ randomGenerator imageUrl =
             degPerS 10
 
         to =
-            degPerS 20
+            degPerS 30
     in
     Random.map (\speed -> { imageUrl = imageUrl, speed = speed })
         (DegPerMs.randomGenerator from to)
