@@ -44,8 +44,17 @@ tick { animationFrameDelta, rotationSpeed } (State stateData) =
         }
 
 
-view : State -> { a | imageUrl : String, windowDimension : Dimension, showShadow : Bool } -> Html msg
-view (State stateData) { imageUrl, windowDimension, showShadow } =
+type alias Options a =
+    { a
+        | sunUrl : String
+        , sunRaysUrl : String
+        , windowDimension : Dimension
+        , showShadow : Bool
+    }
+
+
+view : State -> Options a -> Html msg
+view (State stateData) { sunUrl, sunRaysUrl, windowDimension, showShadow } =
     let
         loopDuration =
             10000
@@ -58,9 +67,8 @@ view (State stateData) { imageUrl, windowDimension, showShadow } =
     in
     H.div
         [ HA.css
-            [ backgroundImage (url imageUrl)
+            [ backgroundImage (url sunUrl)
             , backgroundRepeat2 noRepeat noRepeat
-            , transform (rotate (deg stateData.rotation))
             , height (px 250)
             , width (px 250)
             , position absolute
@@ -70,4 +78,16 @@ view (State stateData) { imageUrl, windowDimension, showShadow } =
             , Shadow.style showShadow
             ]
         ]
-        []
+        [ H.div
+            [ HA.css
+                [ backgroundImage (url sunRaysUrl)
+                , backgroundRepeat2 noRepeat noRepeat
+                , transform (rotate (deg stateData.rotation))
+                , height (px 250)
+                , width (px 250)
+                , backgroundSize contain
+                , Shadow.style showShadow
+                ]
+            ]
+            []
+        ]

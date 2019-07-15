@@ -102,6 +102,7 @@ type alias Flags =
     , hillNear : String
     , bush : String
     , sun : String
+    , sunRays : String
     , cloud1 : String
     , cloud2 : String
     , tree : String
@@ -342,7 +343,8 @@ view model =
 
                 sun =
                     Sun.view data.sunState
-                        { imageUrl = data.flags.sun
+                        { sunUrl = data.flags.sun
+                        , sunRaysUrl = data.flags.sunRays
                         , windowDimension = windowDimension
                         , time = Time.millisToPosix 0
                         , showShadow = data.showShadow

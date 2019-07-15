@@ -11,6 +11,7 @@ import bush from "./images/bush.png";
 import cloud1 from "./images/cloud-1.png";
 import cloud2 from "./images/cloud-2.png";
 import sun from "./images/sun.png";
+import sunRays from "./images/sun-rays.png";
 import tree from "./images/tree.png";
 import grass01 from "./images/grass-01.png";
 import grass02 from "./images/grass-02.png";
@@ -42,6 +43,7 @@ Elm.Caterpillar.Main.init({
     cloud1,
     cloud2,
     sun,
+    sunRays,
     tree,
     grasses: [
       grass01,
