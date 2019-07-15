@@ -52,8 +52,8 @@ divideBy denominator (Px numerator) =
     numerator // denominator |> Px
 
 
-randomGenerator : Int -> Int -> Random.Generator Px
-randomGenerator low high =
+randomGenerator : Px -> Px -> Random.Generator Px
+randomGenerator (Px low) (Px high) =
     Random.int low high
         |> Random.map px
 

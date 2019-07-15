@@ -7,12 +7,14 @@ module Millisecond exposing
     , millisecond
     , modBy
     , multiply
+    , randomGenerator
     , toFloat
     , toInt
     , toString
     )
 
 import Json.Encode as JE
+import Random
 import Second exposing (Second)
 
 
@@ -76,3 +78,9 @@ modBy (Millisecond n) (Millisecond ms) =
 is : (Int -> Int -> Bool) -> Millisecond -> Millisecond -> Bool
 is comparer (Millisecond right) (Millisecond left) =
     comparer left right
+
+
+randomGenerator : Millisecond -> Millisecond -> Random.Generator Millisecond
+randomGenerator (Millisecond low) (Millisecond high) =
+    Random.int low high
+        |> Random.map millisecond

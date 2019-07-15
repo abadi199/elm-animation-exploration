@@ -6,7 +6,7 @@ import Browser.Dom
 import Browser.Events
 import Caterpillar.Caterpillar as Caterpillar
 import Caterpillar.FastObject as FastObject
-import Caterpillar.Grasses as Grasses
+import Caterpillar.Grasses as Grasses exposing (Grass)
 import Caterpillar.Object as Object
 import Caterpillar.Sky as Sky
 import Caterpillar.Sun as Sun
@@ -14,6 +14,7 @@ import Color exposing (Color)
 import Coordinate exposing (Coordinate, coordinate)
 import Count
 import Degree exposing (deg)
+import Dict exposing (Dict)
 import Dimension exposing (Dimension, dimension)
 import Fps exposing (Fps)
 import Html.Styled as H exposing (Html, div)
@@ -44,16 +45,6 @@ caterpillarLoopDuration =
     millisecond 1000
 
 
-constBoxDimension : Dimension
-constBoxDimension =
-    dimension { width = px 100, height = px 100 }
-
-
-constNumberOfBoxes : Int
-constNumberOfBoxes =
-    0
-
-
 main : Platform.Program Flags Model Msg
 main =
     Browser.element
@@ -72,14 +63,13 @@ type Model
 type alias NotReadyData =
     { flags : Flags
     , windowDimension : Maybe Dimension
-    , boxes : Maybe (List Box)
+    , grasses : Maybe (List Grass)
     }
 
 
 type alias Data =
     { flags : Flags
     , windowDimension : Dimension
-    , boxes : List Box
     , showShadow : Bool
     , fps : Fps
     , animationType : AnimationType
@@ -93,33 +83,13 @@ type alias Data =
     , grassState : Object.State
     , bushState : Object.State
     , fenceState : Object.State
+    , grasses : List Grass
     , grassesState : Grasses.State
     }
 
 
 type alias Box =
     { coordinate : Coordinate, spinSpeed : Float }
-
-
-randomBoxGenerator : Dimension -> Random.Generator Box
-randomBoxGenerator windowDimension =
-    let
-        fromX =
-            constBoxDimension |> Dimension.width |> Px.toInt |> (\n -> n // 2)
-
-        toX =
-            windowDimension |> Dimension.width |> Px.toInt |> (\n -> n + fromX)
-
-        fromY =
-            constBoxDimension |> Dimension.height |> Px.toInt |> (\n -> n // 2)
-
-        toY =
-            windowDimension |> Dimension.height |> Px.toInt |> (\n -> n + fromY)
-    in
-    Random.map3 (\x y spinSpeed -> { coordinate = coordinate { x = x, y = y }, spinSpeed = spinSpeed })
-        (Px.randomGenerator -fromX toX)
-        (Px.randomGenerator -fromY toY)
-        (Random.float 5 10)
 
 
 type alias Flags =
@@ -145,12 +115,28 @@ init flags =
     ( NotReady
         { flags = flags
         , windowDimension = Nothing
-        , boxes = Nothing
+        , grasses = Nothing
         }
     , Cmd.batch
         [ Browser.Dom.getViewport |> Task.perform GetViewportComplete
+        , generateGrasses flags.grasses
         ]
     )
+
+
+generateGrasses : List String -> Cmd Msg
+generateGrasses grasses =
+    let
+        numberOfGrasses =
+            List.length grasses
+
+        sequence =
+            List.foldr (Random.map2 (::)) (Random.constant [])
+    in
+    grasses
+        |> List.map Grasses.randomGenerator
+        |> sequence
+        |> Random.generate RandomGeneratorCompleteGeneratingGrasses
 
 
 subscriptions : Model -> Sub Msg
@@ -167,7 +153,7 @@ subscriptions model =
 
 type Msg
     = AnimationFrameDeltaTick Millisecond
-    | RandomGeneratorCompleteBoxes (List Box)
+    | RandomGeneratorCompleteGeneratingGrasses (List Grass)
     | UserCheckShowShadowCheckBox Bool
     | UserChangeAnimationType AnimationType
     | UserResizeWindow Int Int
@@ -191,7 +177,7 @@ update msg model =
             in
             ( model
                 |> setWindowDimension windowDimension
-            , generateBoxes windowDimension
+            , Cmd.none
             )
 
         AnimationFrameDeltaTick animationFrameDelta ->
@@ -203,8 +189,8 @@ update msg model =
         UserCheckShowShadowCheckBox checked ->
             ( model |> setShowShadow checked, Cmd.none )
 
-        RandomGeneratorCompleteBoxes boxes ->
-            ( model |> setBoxes boxes, Cmd.none )
+        RandomGeneratorCompleteGeneratingGrasses grasses ->
+            ( model |> setGrasses grasses, Cmd.none )
 
         UserResizeWindow width height ->
             let
@@ -212,26 +198,18 @@ update msg model =
                     dimension { width = px width, height = px height }
             in
             ( model |> setWindowDimension windowDimension
-            , generateBoxes windowDimension
+            , Cmd.none
             )
-
-
-generateBoxes : Dimension -> Cmd Msg
-generateBoxes dimension =
-    dimension
-        |> randomBoxGenerator
-        |> Random.list constNumberOfBoxes
-        |> Random.generate RandomGeneratorCompleteBoxes
 
 
 toReady : NotReadyData -> Model
 toReady data =
-    case ( data.windowDimension, data.boxes ) of
-        ( Just windowDimension, Just boxes ) ->
+    case ( data.windowDimension, data.grasses ) of
+        ( Just windowDimension, Just grasses ) ->
             Ready
                 { flags = data.flags
+                , grasses = grasses
                 , windowDimension = windowDimension
-                , boxes = boxes
                 , showShadow = True
                 , fps = Fps.initial
                 , animationType = AnimationType.Elm
@@ -245,7 +223,7 @@ toReady data =
                 , grassState = Object.initialState
                 , bushState = Object.initialState
                 , fenceState = Object.initialState
-                , grassesState = Grasses.initialState (data.flags.grasses |> List.length)
+                , grassesState = Grasses.initialState grasses
                 }
 
         _ ->
@@ -267,6 +245,11 @@ setAnimationState animationFrameDelta model =
                     , speed = pxPerMs -0.6
                     , rotationSpeed = 0
                     }
+
+                grassesOptions =
+                    { animationFrameDelta = animationFrameDelta
+                    , speeds = data.grasses |> List.map (\grass -> ( grass.imageUrl, grass.speed )) |> Dict.fromList
+                    }
             in
             case data.animationType of
                 AnimationType.WebAnimation ->
@@ -286,7 +269,7 @@ setAnimationState animationFrameDelta model =
                             , fenceState = Object.tick { options | speed = pxPerMs -0.4 } data.fenceState
                             , bushState = Object.tick { options | speed = pxPerMs -0.5 } data.bushState
                             , grassState = Object.tick { options | speed = pxPerMs -0.6 } data.grassState
-                            , grassesState = Grasses.tick animationFrameDelta data.grassesState
+                            , grassesState = Grasses.tick grassesOptions data.grassesState
                         }
 
 
@@ -312,15 +295,15 @@ setShowShadow showShadow model =
             Ready { data | showShadow = showShadow }
 
 
-setBoxes : List Box -> Model -> Model
-setBoxes boxes model =
+setGrasses : List Grass -> Model -> Model
+setGrasses grasses model =
     case model of
         NotReady data ->
-            { data | boxes = Just boxes }
+            { data | grasses = Just grasses }
                 |> toReady
 
         Ready data ->
-            Ready { data | boxes = boxes }
+            Ready { data | grasses = grasses }
 
 
 setWindowDimension : Dimension -> Model -> Model
@@ -451,7 +434,7 @@ view model =
 
                 grasses =
                     Grasses.view data.grassesState
-                        { grasses = data.flags.grasses
+                        { grasses = data.grasses
                         , showShadow = data.showShadow
                         , windowDimension = windowDimension
                         , loopDuration = millisecond 5000

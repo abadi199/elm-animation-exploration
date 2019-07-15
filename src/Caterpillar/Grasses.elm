@@ -1,6 +1,8 @@
 module Caterpillar.Grasses exposing
-    ( State
+    ( Grass
+    , State
     , initialState
+    , randomGenerator
     , tick
     , view
     )
@@ -8,44 +10,88 @@ module Caterpillar.Grasses exposing
 import Caterpillar.Shadow as Shadow
 import Css exposing (..)
 import Css.Grid as Grid exposing (displayGrid)
+import DegPerMs exposing (DegPerMs, degPerS)
 import Degree exposing (Degree, deg)
+import Dict exposing (Dict)
 import Dimension exposing (Dimension)
 import Html.Styled as H exposing (Html)
 import Html.Styled.Attributes as HA
 import Millisecond exposing (Millisecond, millisecond)
 import Px exposing (Px)
+import Random
+
+
+
+--STATE
+
+
+maxRotation : Degree
+maxRotation =
+    deg 15
 
 
 type State
     = State StateData
 
 
-type alias StateData =
-    { timer : Millisecond
-    , rotations : List Degree
+type alias Grass =
+    { imageUrl : String
+    , speed : DegPerMs
     }
 
 
-initialState : Int -> State
-initialState numberOfGrass =
+type alias StateData =
+    { timer : Millisecond
+    , rotations : Dict String Degree
+    }
+
+
+initialState : List Grass -> State
+initialState grasses =
     State
         { timer = millisecond 0
-        , rotations = deg 20 |> List.repeat numberOfGrass
+        , rotations = grasses |> List.map (\grass -> ( grass.imageUrl, deg 20 )) |> Dict.fromList
         }
 
 
-tick : Millisecond -> State -> State
-tick animationFrameDelta (State stateData) =
-    State stateData
+
+-- TICK
+
+
+type alias TickOptions a =
+    { a
+        | animationFrameDelta : Millisecond
+        , speeds : Dict String DegPerMs
+    }
+
+
+tick : TickOptions a -> State -> State
+tick { animationFrameDelta, speeds } (State stateData) =
+    State
+        { stateData
+            | timer = stateData.timer |> Millisecond.add animationFrameDelta
+
+            -- UPDATE rotations
+            , rotations = stateData.rotations |> Dict.map (updateRotation speeds animationFrameDelta)
+        }
+
+
+updateRotation : Dict String DegPerMs -> Millisecond -> String -> Degree -> Degree
+updateRotation speeds animationFrameDelta imageUrl rotation =
+    Debug.todo "updateRotation"
 
 
 type alias Options =
-    { grasses : List String
+    { grasses : List Grass
     , windowDimension : Dimension
     , loopDuration : Millisecond
     , showShadow : Bool
     , imageWidth : Px
     }
+
+
+
+-- VIEW
 
 
 view : State -> Options -> Html msg
@@ -66,12 +112,10 @@ view (State stateData) ({ grasses, windowDimension, imageWidth } as options) =
     H.div
         [ HA.css
             [ width (pct 100)
-
-            -- , border3 (px 1) solid (rgba 255 0 0 1)
             , height (pct 30)
             , position absolute
             , left (px 0)
-            , bottom (px -20)
+            , bottom (px -15)
             , displayGrid
             , property "grid-template-columns"
                 (grasses
@@ -80,7 +124,7 @@ view (State stateData) ({ grasses, windowDimension, imageWidth } as options) =
                 )
             ]
         ]
-        (grasses |> List.map (viewGrass ratio stateData options))
+        (grasses |> List.map (.imageUrl >> viewGrass ratio stateData options))
 
 
 viewGrass : Float -> StateData -> Options -> String -> Html msg
@@ -94,9 +138,32 @@ viewGrass ratio stateData options imageUrl =
             , backgroundSize contain
             , backgroundRepeat noRepeat
             , Shadow.style options.showShadow
-            , transform (rotate (Css.deg 20))
-
-            -- , border3 (px 1) solid (rgba 0 0 0 1)
+            , property "transform-origin" "50% 100%"
+            , transform
+                (stateData.rotations
+                    |> Dict.get imageUrl
+                    |> Maybe.map Degree.toFloat
+                    |> Maybe.withDefault 0
+                    |> Css.deg
+                    |> rotate
+                )
             ]
         ]
         []
+
+
+
+-- RANDOM
+
+
+randomGenerator : String -> Random.Generator Grass
+randomGenerator imageUrl =
+    let
+        from =
+            degPerS 10
+
+        to =
+            degPerS 20
+    in
+    Random.map (\speed -> { imageUrl = imageUrl, speed = speed })
+        (DegPerMs.randomGenerator from to)

@@ -1,9 +1,14 @@
 module Degree exposing
     ( Degree
+    , add
     , deg
+    , randomGenerator
     , toFloat
     , toString
     )
+
+import Css
+import Random
 
 
 type Degree
@@ -23,3 +28,14 @@ toString (Degree degree) =
 toFloat : Degree -> Float
 toFloat (Degree n) =
     n
+
+
+add : Degree -> Degree -> Degree
+add (Degree a) (Degree b) =
+    Degree (a + b)
+
+
+randomGenerator : Degree -> Degree -> Random.Generator Degree
+randomGenerator (Degree low) (Degree high) =
+    Random.float low high
+        |> Random.map deg
