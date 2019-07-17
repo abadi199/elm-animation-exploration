@@ -107,6 +107,7 @@ type alias Flags =
     , cloud2 : String
     , tree : String
     , apples : String
+    , grassAll : String
     , grasses : List String
     }
 
@@ -249,7 +250,14 @@ setAnimationState animationFrameDelta model =
 
                 grassesOptions =
                     { animationFrameDelta = animationFrameDelta
-                    , speeds = data.grasses |> List.map (\grass -> ( grass.imageUrl, grass.speed )) |> Dict.fromList
+                    , speeds =
+                        data.grasses
+                            |> List.map (\grass -> ( grass.imageUrl, grass.speed ))
+                            |> Dict.fromList
+                    , loopDuration = caterpillarLoopDuration
+                    , windowDimension = data.windowDimension
+                    , speed = pxPerMs -0.7
+                    , rotationSpeed = 0
                     }
             in
             case data.animationType of
@@ -437,6 +445,7 @@ view model =
                 grasses =
                     Grasses.view data.grassesState
                         { grasses = data.grasses
+                        , grassAllUrl = data.flags.grassAll
                         , showShadow = data.showShadow
                         , windowDimension = windowDimension
                         , loopDuration = millisecond 5000
@@ -449,7 +458,7 @@ view model =
                         , showShadow = data.showShadow
                         , windowDimension = windowDimension
                         , loopDuration = millisecond 9000
-                        , dimension = windowDimension |> Dimension.setHeight (px 170)
+                        , dimension = windowDimension |> Dimension.setHeight (px 200)
                         , coordinate =
                             windowDimension
                                 |> Dimension.toCoordinate

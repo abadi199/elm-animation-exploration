@@ -40,13 +40,8 @@ type alias TickOptions a =
 
 
 continuousTick : TickOptions a -> State -> State
-continuousTick { animationFrameDelta, loopDuration, windowDimension, speed } (State stateData) =
+continuousTick { animationFrameDelta, windowDimension, speed } (State stateData) =
     let
-        timer =
-            stateData.timer
-                |> Millisecond.add animationFrameDelta
-                |> Millisecond.modBy loopDuration
-
         positionX =
             let
                 windowWidth =
@@ -67,8 +62,7 @@ continuousTick { animationFrameDelta, loopDuration, windowDimension, speed } (St
     in
     State
         { stateData
-            | timer = timer
-            , positionX = positionX
+            | positionX = positionX
         }
 
 
@@ -125,11 +119,6 @@ view (State stateData) { imageUrl, windowDimension, dimension, coordinate, showS
         windowWidth =
             windowDimension
                 |> Dimension.width
-
-        timer =
-            stateData.timer
-                |> Millisecond.toInt
-                |> toFloat
     in
     H.div
         [ HA.css
