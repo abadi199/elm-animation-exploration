@@ -1,8 +1,11 @@
 module Shared.ControlPanel exposing
-    ( controlPanel
+    ( State
+    , animationType
+    , initialState
+    , showShadow
     , view
     , withAnimationType
-    , withShowShadowCheck
+    , withShowShadow
     )
 
 import AnimationType exposing (AnimationType)
@@ -12,40 +15,36 @@ import Html.Styled.Attributes as HA
 import Html.Styled.Events as HE
 
 
-type alias State a =
-    { a | showShadow : Bool, animationType : AnimationType }
+type State
+    = State StateData
 
 
-type ControlPanel msg
-    = ControlPanel (Options msg)
-
-
-type alias Options msg =
-    { onShowShadowCheck : Maybe (Bool -> msg)
-    , onAnimationType : Maybe (AnimationType -> msg)
-    }
-
-
-controlPanel : ControlPanel msg
-controlPanel =
-    ControlPanel
-        { onShowShadowCheck = Nothing
-        , onAnimationType = Nothing
+initialState : State
+initialState =
+    State
+        { showShadow = Nothing
+        , animationType = Nothing
         }
 
 
-withShowShadowCheck : (Bool -> msg) -> ControlPanel msg -> ControlPanel msg
-withShowShadowCheck handler (ControlPanel options) =
-    ControlPanel { options | onShowShadowCheck = Just handler }
+type alias StateData =
+    { showShadow : Maybe Bool
+    , animationType : Maybe AnimationType
+    }
 
 
-withAnimationType : (AnimationType -> msg) -> ControlPanel msg -> ControlPanel msg
-withAnimationType handler (ControlPanel options) =
-    ControlPanel { options | onAnimationType = Just handler }
+withShowShadow : Bool -> State -> State
+withShowShadow value (State state) =
+    State { state | showShadow = Just value }
 
 
-view : State a -> ControlPanel msg -> Html msg
-view state (ControlPanel handler) =
+withAnimationType : AnimationType -> State -> State
+withAnimationType value (State state) =
+    State { state | animationType = Just value }
+
+
+view : (State -> msg) -> State -> Html msg
+view handler (State state) =
     div
         [ HA.css
             [ backgroundColor transparent
@@ -56,26 +55,30 @@ view state (ControlPanel handler) =
             , flexDirection column
             ]
         ]
-        [ handler.onShowShadowCheck |> Maybe.map (showShadowCheckBox state) |> Maybe.withDefault (H.text "")
-        , handler.onAnimationType |> Maybe.map (showAnimationType state) |> Maybe.withDefault (H.text "")
+        [ state.showShadow
+            |> Maybe.map (showShadowCheckBox handler (State state))
+            |> Maybe.withDefault (H.text "")
+        , state.animationType
+            |> Maybe.map (showAnimationType handler (State state))
+            |> Maybe.withDefault (H.text "")
         ]
 
 
-showAnimationType : State a -> (AnimationType -> msg) -> Html msg
-showAnimationType state handler =
+showAnimationType : (State -> msg) -> State -> AnimationType -> Html msg
+showAnimationType handler (State state) value =
     H.label []
         [ H.input
             [ HA.type_ "checkbox"
             , HE.onCheck
                 (\checked ->
                     if checked then
-                        handler AnimationType.WebAnimation
+                        handler (State { state | animationType = Just AnimationType.WebAnimation })
 
                     else
-                        handler AnimationType.Elm
+                        handler (State { state | animationType = Just AnimationType.Elm })
                 )
             , HA.checked
-                (case state.animationType of
+                (case value of
                     AnimationType.Elm ->
                         False
 
@@ -88,14 +91,24 @@ showAnimationType state handler =
         ]
 
 
-showShadowCheckBox : State a -> (Bool -> msg) -> Html msg
-showShadowCheckBox state handler =
+showShadowCheckBox : (State -> msg) -> State -> Bool -> Html msg
+showShadowCheckBox handler (State state) value =
     H.label []
         [ H.input
             [ HA.type_ "checkbox"
-            , HE.onCheck handler
-            , HA.checked state.showShadow
+            , HE.onCheck (\newValue -> handler (State { state | showShadow = Just newValue }))
+            , HA.checked value
             ]
             []
         , H.text "Show Shadow"
         ]
+
+
+animationType : State -> Maybe AnimationType
+animationType (State state) =
+    state.animationType
+
+
+showShadow : State -> Maybe Bool
+showShadow (State state) =
+    state.showShadow

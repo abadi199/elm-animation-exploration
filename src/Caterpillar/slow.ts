@@ -1,4 +1,4 @@
-import { Elm } from "./Main.elm";
+import { Elm } from "./SlowMain.elm";
 import apple from "./images/apple.png";
 import apples from "./images/apples.png";
 import caterpillar from "./images/caterpillar.png";
@@ -29,7 +29,7 @@ import grass12 from "./images/grass-12.png";
 import grass13 from "./images/grass-13.png";
 import grass14 from "./images/grass-14.png";
 
-Elm.Caterpillar.Main.init({
+Elm.Caterpillar.SlowMain.init({
   node: document.querySelector("main"),
   flags: {
     apple,

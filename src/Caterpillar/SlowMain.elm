@@ -1,4 +1,4 @@
-module Caterpillar.Main exposing (main)
+module Caterpillar.SlowMain exposing (main)
 
 import AnimationType exposing (AnimationType)
 import Browser
@@ -26,7 +26,7 @@ import Px exposing (Px, px)
 import PxPerMs exposing (PxPerMs, pxPerMs)
 import Random
 import Second exposing (second)
-import Shared.ControlPanel as ControlPanel exposing (controlPanel)
+import Shared.ControlPanel as ControlPanel
 import Task
 import Time exposing (Posix)
 
@@ -68,9 +68,9 @@ type alias NotReadyData =
 
 
 type alias Data =
-    { flags : Flags
+    { controlPanelState : ControlPanel.State
+    , flags : Flags
     , windowDimension : Dimension
-    , showShadow : Bool
     , fps : Fps
     , animationType : AnimationType
     , caterpillarState : Caterpillar.State
@@ -156,8 +156,7 @@ subscriptions model =
 type Msg
     = AnimationFrameDeltaTick Millisecond
     | RandomGeneratorCompleteGeneratingGrasses (List Grass)
-    | UserCheckShowShadowCheckBox Bool
-    | UserChangeAnimationType AnimationType
+    | UserUpdateControlPanel ControlPanel.State
     | UserResizeWindow Int Int
     | GetViewportComplete Browser.Dom.Viewport
 
@@ -185,11 +184,8 @@ update msg model =
         AnimationFrameDeltaTick animationFrameDelta ->
             ( model |> setAnimationState animationFrameDelta, Cmd.none )
 
-        UserChangeAnimationType animationType ->
-            ( model |> setAnimationType animationType, Cmd.none )
-
-        UserCheckShowShadowCheckBox checked ->
-            ( model |> setShowShadow checked, Cmd.none )
+        UserUpdateControlPanel controlPanelState ->
+            ( model |> setControlPanelState controlPanelState, Cmd.none )
 
         RandomGeneratorCompleteGeneratingGrasses grasses ->
             ( model |> setGrasses grasses, Cmd.none )
@@ -209,10 +205,12 @@ toReady data =
     case ( data.windowDimension, data.grasses ) of
         ( Just windowDimension, Just grasses ) ->
             Ready
-                { flags = data.flags
+                { controlPanelState =
+                    ControlPanel.initialState
+                        |> ControlPanel.withShowShadow True
+                , flags = data.flags
                 , grasses = grasses
                 , windowDimension = windowDimension
-                , showShadow = True
                 , fps = Fps.initial
                 , animationType = AnimationType.Elm
                 , caterpillarState = Caterpillar.initialState
@@ -282,26 +280,15 @@ setAnimationState animationFrameDelta model =
                         }
 
 
-setAnimationType : AnimationType -> Model -> Model
-setAnimationType animationType model =
+setControlPanelState : ControlPanel.State -> Model -> Model
+setControlPanelState controlPanelState model =
     case model of
         NotReady data ->
             data
                 |> toReady
 
         Ready data ->
-            Ready { data | animationType = animationType }
-
-
-setShowShadow : Bool -> Model -> Model
-setShowShadow showShadow model =
-    case model of
-        NotReady data ->
-            data
-                |> toReady
-
-        Ready data ->
-            Ready { data | showShadow = showShadow }
+            Ready { data | controlPanelState = controlPanelState }
 
 
 setGrasses : List Grass -> Model -> Model
@@ -338,6 +325,11 @@ view model =
 
         Ready data ->
             let
+                showShadow =
+                    data.controlPanelState
+                        |> ControlPanel.showShadow
+                        |> Maybe.withDefault True
+
                 windowDimension =
                     data.windowDimension
 
@@ -355,13 +347,13 @@ view model =
                         , sunRaysUrl = data.flags.sunRays
                         , windowDimension = windowDimension
                         , time = Time.millisToPosix 0
-                        , showShadow = data.showShadow
+                        , showShadow = showShadow
                         }
 
                 cloud1 =
                     objectView data.cloud1State
                         { imageUrl = data.flags.cloud1
-                        , showShadow = data.showShadow
+                        , showShadow = showShadow
                         , windowDimension = windowDimension
                         , loopDuration = millisecond 60000
                         , dimension = windowDimension |> Dimension.setHeight (px 200)
@@ -375,7 +367,7 @@ view model =
                 cloud2 =
                     objectView data.cloud2State
                         { imageUrl = data.flags.cloud2
-                        , showShadow = data.showShadow
+                        , showShadow = showShadow
                         , windowDimension = windowDimension
                         , loopDuration = millisecond 60000
                         , dimension = windowDimension |> Dimension.setHeight (px 200)
@@ -389,7 +381,7 @@ view model =
                 hillFar =
                     objectView data.hillFarState
                         { imageUrl = data.flags.hillFar
-                        , showShadow = data.showShadow
+                        , showShadow = showShadow
                         , windowDimension = windowDimension
                         , loopDuration = millisecond 40000
                         , dimension = windowDimension |> Dimension.multiplyHeight 0.75
@@ -403,7 +395,7 @@ view model =
                 hillNear =
                     objectView data.hillNearState
                         { imageUrl = data.flags.hillNear
-                        , showShadow = data.showShadow
+                        , showShadow = showShadow
                         , windowDimension = windowDimension
                         , loopDuration = millisecond 30000
                         , dimension = windowDimension |> Dimension.multiplyHeight 0.75
@@ -417,7 +409,7 @@ view model =
                 tree =
                     objectView data.treeState
                         { imageUrl = data.flags.tree
-                        , showShadow = data.showShadow
+                        , showShadow = showShadow
                         , windowDimension = windowDimension
                         , loopDuration = millisecond 15000
                         , dimension = windowDimension |> Dimension.multiplyHeight 0.75
@@ -446,7 +438,7 @@ view model =
                     Grasses.view data.grassesState
                         { grasses = data.grasses
                         , grassAllUrl = data.flags.grassAll
-                        , showShadow = data.showShadow
+                        , showShadow = showShadow
                         , windowDimension = windowDimension
                         , loopDuration = millisecond 5000
                         , imageWidth = imageWidth
@@ -455,7 +447,7 @@ view model =
                 bush =
                     objectView data.bushState
                         { imageUrl = data.flags.bush
-                        , showShadow = data.showShadow
+                        , showShadow = showShadow
                         , windowDimension = windowDimension
                         , loopDuration = millisecond 9000
                         , dimension = windowDimension |> Dimension.setHeight (px 200)
@@ -469,7 +461,7 @@ view model =
                 fence =
                     objectView data.fenceState
                         { imageUrl = data.flags.fence
-                        , showShadow = data.showShadow
+                        , showShadow = showShadow
                         , windowDimension = windowDimension
                         , loopDuration = millisecond 10000
                         , dimension = windowDimension |> Dimension.setHeight (px 150)
@@ -497,13 +489,10 @@ view model =
                 , Caterpillar.view
                     { caterpillar = data.flags.caterpillar
                     , windowDimension = windowDimension
-                    , showShadow = data.showShadow
+                    , showShadow = showShadow
                     , state = data.caterpillarState
                     }
                 , grasses
-                , controlPanel
-                    |> ControlPanel.withShowShadowCheck UserCheckShowShadowCheckBox
-                    |> ControlPanel.withAnimationType UserChangeAnimationType
-                    |> ControlPanel.view data
+                , ControlPanel.view UserUpdateControlPanel data.controlPanelState
                 , Fps.view data
                 ]
