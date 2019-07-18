@@ -41,7 +41,7 @@ class ElmAnimation extends HTMLElement {
     }
 
     if (this.currentAnimation) {
-      this.currentAnimation.pause();
+      this.currentAnimation.cancel();
     }
 
     if (animationData.keyframes.length === 0) {

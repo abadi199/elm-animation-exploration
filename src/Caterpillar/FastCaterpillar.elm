@@ -21,8 +21,8 @@ import Js.Animation.Options as Options
 import Json.Decode as JD
 import Millisecond exposing (Millisecond, millisecond)
 import Px
-import PxPerMs exposing (PxPerMs)
 import Time exposing (Posix)
+import Velocity exposing (Velocity)
 
 
 caterpillarDimension : Dimension
@@ -70,29 +70,42 @@ type alias Options msg =
 
 view : Options msg -> State -> Html msg
 view { imageUrl, windowDimension, showShadow, loopDuration, onFinishExpanding, onFinishContracting } state =
-    Animation.styledNode
-        (case state of
-            Expanding ->
-                [ Animation.backgroundPosition "0 0"
-                , Animation.backgroundPosition "0 -500%"
-                ]
+    let
+        keyframes =
+            case state of
+                Expanding ->
+                    [ Animation.backgroundPosition "0 0"
+                    , Animation.backgroundPosition "0 -600%"
+                    ]
 
-            Contracting ->
-                [ Animation.backgroundPosition "0 -500%"
-                , Animation.backgroundPosition "0 -1000%"
-                ]
-        )
+                Contracting ->
+                    [ Animation.backgroundPosition "0 -600%"
+                    , Animation.backgroundPosition "0 -1000%"
+                    ]
+
+        easing =
+            case state of
+                Expanding ->
+                    Easing.steps 6
+
+                Contracting ->
+                    Easing.steps 4
+
+        onFinish =
+            case state of
+                Expanding ->
+                    HE.on "finish" <| JD.succeed onFinishExpanding
+
+                Contracting ->
+                    HE.on "finish" <| JD.succeed onFinishContracting
+    in
+    Animation.styledNode
+        keyframes
         (Options.default { duration = loopDuration }
-            |> Options.withEasing (Easing.steps 5)
+            |> Options.withEasing easing
             |> Options.withFill Fill.forwards
         )
-        [ case state of
-            Expanding ->
-                HE.on "finish" <| JD.succeed onFinishExpanding
-
-            Contracting ->
-                HE.on "finish" <| JD.succeed onFinishContracting
-        ]
+        [ onFinish ]
         (H.div
             [ HA.css
                 [ position absolute
@@ -102,7 +115,18 @@ view { imageUrl, windowDimension, showShadow, loopDuration, onFinishExpanding, o
                     (windowDimension
                         |> Dimension.width
                         |> Px.divideBy 2
-                        |> Px.add (Px.px ((caterpillarDimension |> Dimension.width |> Px.toInt |> toFloat |> negate |> Basics.round) // 2))
+                        |> Px.add
+                            (Px.px
+                                ((caterpillarDimension
+                                    |> Dimension.width
+                                    |> Px.toInt
+                                    |> toFloat
+                                    |> negate
+                                    |> Basics.round
+                                 )
+                                    // 2
+                                )
+                            )
                         |> Px.toElmCss
                     )
                 , bottom (px 200)

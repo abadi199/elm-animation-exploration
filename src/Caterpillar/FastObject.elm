@@ -12,12 +12,13 @@ import Js.Animation.Options as Options
 import Millisecond exposing (Millisecond)
 import Px
 import Time exposing (Posix)
+import Velocity exposing (Velocity)
 
 
 type alias Options =
     { imageUrl : String
     , windowDimension : Dimension
-    , loopDuration : Millisecond
+    , speed : Velocity
     , dimension : Dimension
     , coordinate : Coordinate
     , showShadow : Bool
@@ -26,15 +27,25 @@ type alias Options =
 
 
 view : Options -> Html msg
-view { isPaused, imageUrl, windowDimension, loopDuration, dimension, coordinate, showShadow } =
+view { isPaused, imageUrl, windowDimension, speed, dimension, coordinate, showShadow } =
     let
+        loopDuration =
+            speed |> Velocity.duration windowWidth |> Debug.log "loopDuration"
+
         windowWidth =
             windowDimension
                 |> Dimension.width
+
+        translationTarget =
+            if Velocity.isNegative speed then
+                windowWidth |> Px.map negate
+
+            else
+                windowWidth
     in
     Animation.styledNode
         [ Animation.translate { x = Px.px 0, y = Px.px 0 }
-        , Animation.translate { x = windowWidth |> Px.map negate, y = Px.px 0 }
+        , Animation.translate { x = translationTarget, y = Px.px 0 }
         ]
         (Options.default { duration = loopDuration } |> Options.withIterations Count.infinite)
         [ if isPaused then

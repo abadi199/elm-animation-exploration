@@ -21,12 +21,12 @@ import Js.Animation as Animation
 import Js.Animation.Options as Options
 import Millisecond exposing (Millisecond, millisecond)
 import Px exposing (Px, px)
-import PxPerMs exposing (PxPerMs, pxPerMs)
 import Random
 import Second exposing (second)
 import Shared.ControlPanel as ControlPanel
 import Task
 import Time exposing (Posix)
+import Velocity exposing (Velocity, pxPerMs, pxPerS)
 
 
 
@@ -352,7 +352,7 @@ view model =
                         , isPaused = False
                         , showShadow = showShadow
                         , windowDimension = windowDimension
-                        , loopDuration = millisecond 60000
+                        , speed = pxPerS 20
                         , dimension = windowDimension |> Dimension.setHeight (px 200)
                         , coordinate =
                             windowDimension
@@ -367,7 +367,7 @@ view model =
                         , isPaused = False
                         , showShadow = showShadow
                         , windowDimension = windowDimension
-                        , loopDuration = millisecond 60000
+                        , speed = pxPerS 30
                         , dimension = windowDimension |> Dimension.setHeight (px 200)
                         , coordinate =
                             windowDimension
@@ -382,7 +382,7 @@ view model =
                         , isPaused = data.isPaused
                         , showShadow = showShadow
                         , windowDimension = windowDimension
-                        , loopDuration = millisecond 40000
+                        , speed = pxPerS -30
                         , dimension = windowDimension |> Dimension.multiplyHeight 0.75
                         , coordinate =
                             windowDimension
@@ -397,7 +397,7 @@ view model =
                         , isPaused = data.isPaused
                         , showShadow = showShadow
                         , windowDimension = windowDimension
-                        , loopDuration = millisecond 30000
+                        , speed = pxPerS -50
                         , dimension = windowDimension |> Dimension.multiplyHeight 0.75
                         , coordinate =
                             windowDimension
@@ -412,7 +412,7 @@ view model =
                         , isPaused = data.isPaused
                         , showShadow = showShadow
                         , windowDimension = windowDimension
-                        , loopDuration = millisecond 15000
+                        , speed = pxPerS -100
                         , dimension = windowDimension |> Dimension.multiplyHeight 0.75
                         , coordinate =
                             windowDimension
@@ -427,7 +427,7 @@ view model =
                         , isPaused = data.isPaused
                         , showShadow = False
                         , windowDimension = windowDimension
-                        , loopDuration = millisecond 5000
+                        , speed = pxPerS -400
                         , dimension = windowDimension |> Dimension.multiplyHeight 0.5
                         , coordinate =
                             windowDimension
@@ -452,7 +452,7 @@ view model =
                         , isPaused = data.isPaused
                         , showShadow = showShadow
                         , windowDimension = windowDimension
-                        , loopDuration = millisecond 9000
+                        , speed = pxPerS -300
                         , dimension = windowDimension |> Dimension.setHeight (px 200)
                         , coordinate =
                             windowDimension
@@ -467,7 +467,7 @@ view model =
                         , isPaused = data.isPaused
                         , showShadow = showShadow
                         , windowDimension = windowDimension
-                        , loopDuration = millisecond 10000
+                        , speed = pxPerS -200
                         , dimension = windowDimension |> Dimension.setHeight (px 150)
                         , coordinate =
                             windowDimension
