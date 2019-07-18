@@ -7,8 +7,8 @@ class ElmAnimation extends HTMLElement {
     return ["animate"];
   }
 
-  attributeChangedCallack(name: string, oldValue: string, newValue: string) {
-    console.log(name);
+  attributeChangedCallback(name: string, oldValue: string, newValue: string) {
+    console.log("attributeChangedCallback", name);
     switch (name) {
       case "animate":
         this.animateContent(newValue);
@@ -26,17 +26,23 @@ class ElmAnimation extends HTMLElement {
       this.currentAnimation.finish();
     }
 
-    return this.children[0].animate(
+    this.currentAnimation = this.children[0].animate(
       animationData.keyframes,
       animationData.options
     );
+
+    this.currentAnimation.onfinish = () => {
+      console.log("finish");
+      this.dispatchEvent(new Event("finish"));
+    };
+
+    return this.currentAnimation;
   }
 
   connectedCallback() {
     const animateJson = this.getAttribute("animate");
-    console.log("connectedCallback", animateJson);
     if (animateJson) {
-      this.currentAnimation = this.animateContent(animateJson);
+      this.animateContent(animateJson);
     }
   }
 }

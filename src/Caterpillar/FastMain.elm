@@ -73,6 +73,7 @@ type alias Data =
     , sunState : Sun.State
     , grasses : List Grass
     , grassesState : Grasses.State
+    , caterpillarState : Caterpillar.State
     }
 
 
@@ -147,6 +148,8 @@ type Msg
     | UserUpdateControlPanel ControlPanel.State
     | UserResizeWindow Int Int
     | GetViewportComplete Browser.Dom.Viewport
+    | CaterpillarFinishExpanding
+    | CaterpillarFinishContracting
 
 
 
@@ -187,6 +190,16 @@ update msg model =
             , Cmd.none
             )
 
+        CaterpillarFinishExpanding ->
+            ( model |> setCaterpillarState (Debug.log "nextState" Caterpillar.contracting)
+            , Cmd.none
+            )
+
+        CaterpillarFinishContracting ->
+            ( model |> setCaterpillarState (Debug.log "nextState" Caterpillar.expanding)
+            , Cmd.none
+            )
+
 
 toReady : NotReadyData -> Model
 toReady data =
@@ -202,6 +215,7 @@ toReady data =
                 , fps = Fps.initial
                 , sunState = Sun.initialState
                 , grassesState = Grasses.initialState grasses
+                , caterpillarState = Caterpillar.expanding
                 }
 
         _ ->
@@ -242,6 +256,16 @@ setAnimationState animationFrameDelta model =
                     , sunState = Sun.tick { options | rotationSpeed = 0.1 } data.sunState
                     , grassesState = Grasses.tick grassesOptions data.grassesState
                 }
+
+
+setCaterpillarState : Caterpillar.State -> Model -> Model
+setCaterpillarState caterpillarState model =
+    case model of
+        NotReady _ ->
+            model
+
+        Ready data ->
+            Ready { data | caterpillarState = caterpillarState }
 
 
 setControlPanelState : ControlPanel.State -> Model -> Model
@@ -448,7 +472,10 @@ view model =
                     , windowDimension = windowDimension
                     , showShadow = showShadow
                     , loopDuration = millisecond 1000
+                    , onFinishExpanding = CaterpillarFinishExpanding
+                    , onFinishContracting = CaterpillarFinishContracting
                     }
+                    data.caterpillarState
 
                 -- , grasses
                 , ControlPanel.view UserUpdateControlPanel data.controlPanelState
