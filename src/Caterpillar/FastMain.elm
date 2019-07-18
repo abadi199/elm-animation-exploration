@@ -3,10 +3,9 @@ module Caterpillar.FastMain exposing (main)
 import Browser
 import Browser.Dom
 import Browser.Events
-import Caterpillar.Caterpillar as Caterpillar
-import Caterpillar.FastObject as FastObject
+import Caterpillar.FastCaterpillar as Caterpillar
+import Caterpillar.FastObject as Object
 import Caterpillar.Grasses as Grasses exposing (Grass)
-import Caterpillar.Object as Object
 import Caterpillar.Sky as Sky
 import Caterpillar.Sun as Sun
 import Color exposing (Color)
@@ -71,16 +70,7 @@ type alias Data =
     , flags : Flags
     , windowDimension : Dimension
     , fps : Fps
-    , caterpillarState : Caterpillar.State
     , sunState : Sun.State
-    , cloud1State : Object.State
-    , cloud2State : Object.State
-    , hillFarState : Object.State
-    , hillNearState : Object.State
-    , treeState : Object.State
-    , grassState : Object.State
-    , bushState : Object.State
-    , fenceState : Object.State
     , grasses : List Grass
     , grassesState : Grasses.State
     }
@@ -210,16 +200,7 @@ toReady data =
                 , grasses = grasses
                 , windowDimension = windowDimension
                 , fps = Fps.initial
-                , caterpillarState = Caterpillar.initialState
                 , sunState = Sun.initialState
-                , cloud1State = Object.initialState
-                , cloud2State = Object.initialState
-                , hillFarState = Object.initialState
-                , hillNearState = Object.initialState
-                , treeState = Object.initialState
-                , grassState = Object.initialState
-                , bushState = Object.initialState
-                , fenceState = Object.initialState
                 , grassesState = Grasses.initialState grasses
                 }
 
@@ -258,16 +239,7 @@ setAnimationState animationFrameDelta model =
             Ready
                 { data
                     | fps = Fps.update animationFrameDelta data.fps
-                    , caterpillarState = Caterpillar.tick options data.caterpillarState
                     , sunState = Sun.tick { options | rotationSpeed = 0.1 } data.sunState
-                    , cloud1State = Object.continuousTick { options | speed = pxPerMs 0.02 } data.cloud1State
-                    , cloud2State = Object.continuousTick { options | speed = pxPerMs 0.03 } data.cloud2State
-                    , hillFarState = Object.tick { options | speed = pxPerMs -0.02 } data.hillFarState
-                    , hillNearState = Object.tick { options | speed = pxPerMs -0.03 } data.hillNearState
-                    , treeState = Object.tick { options | speed = pxPerMs -0.3 } data.treeState
-                    , fenceState = Object.tick { options | speed = pxPerMs -0.4 } data.fenceState
-                    , bushState = Object.tick { options | speed = pxPerMs -0.5 } data.bushState
-                    , grassState = Object.tick { options | speed = pxPerMs -0.6 } data.grassState
                     , grassesState = Grasses.tick grassesOptions data.grassesState
                 }
 
@@ -335,7 +307,7 @@ view model =
                         }
 
                 cloud1 =
-                    Object.view data.cloud1State
+                    Object.view
                         { imageUrl = data.flags.cloud1
                         , showShadow = showShadow
                         , windowDimension = windowDimension
@@ -349,7 +321,7 @@ view model =
                         }
 
                 cloud2 =
-                    Object.view data.cloud2State
+                    Object.view
                         { imageUrl = data.flags.cloud2
                         , showShadow = showShadow
                         , windowDimension = windowDimension
@@ -363,7 +335,7 @@ view model =
                         }
 
                 hillFar =
-                    Object.view data.hillFarState
+                    Object.view
                         { imageUrl = data.flags.hillFar
                         , showShadow = showShadow
                         , windowDimension = windowDimension
@@ -377,7 +349,7 @@ view model =
                         }
 
                 hillNear =
-                    Object.view data.hillNearState
+                    Object.view
                         { imageUrl = data.flags.hillNear
                         , showShadow = showShadow
                         , windowDimension = windowDimension
@@ -391,7 +363,7 @@ view model =
                         }
 
                 tree =
-                    Object.view data.treeState
+                    Object.view
                         { imageUrl = data.flags.tree
                         , showShadow = showShadow
                         , windowDimension = windowDimension
@@ -405,7 +377,7 @@ view model =
                         }
 
                 grass =
-                    Object.view data.grassState
+                    Object.view
                         { imageUrl = data.flags.grass
                         , showShadow = False
                         , windowDimension = windowDimension
@@ -429,7 +401,7 @@ view model =
                         }
 
                 bush =
-                    Object.view data.bushState
+                    Object.view
                         { imageUrl = data.flags.bush
                         , showShadow = showShadow
                         , windowDimension = windowDimension
@@ -443,7 +415,7 @@ view model =
                         }
 
                 fence =
-                    Object.view data.fenceState
+                    Object.view
                         { imageUrl = data.flags.fence
                         , showShadow = showShadow
                         , windowDimension = windowDimension
@@ -461,7 +433,8 @@ view model =
                     { sky = data.flags.sky
                     , windowDimension = windowDimension
                     }
-                , sun
+
+                -- , sun
                 , cloud2
                 , cloud1
                 , hillFar
@@ -471,12 +444,13 @@ view model =
                 , fence
                 , bush
                 , Caterpillar.view
-                    { caterpillar = data.flags.caterpillar
+                    { imageUrl = data.flags.caterpillar
                     , windowDimension = windowDimension
                     , showShadow = showShadow
-                    , state = data.caterpillarState
+                    , loopDuration = millisecond 1000
                     }
-                , grasses
+
+                -- , grasses
                 , ControlPanel.view UserUpdateControlPanel data.controlPanelState
                 , Fps.view data
                 ]

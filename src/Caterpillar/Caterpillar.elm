@@ -45,15 +45,16 @@ backgroundPositions : Array Style
 backgroundPositions =
     Array.fromList
         [ backgroundPosition2 zero zero
-        , backgroundPosition2 (pct -100) zero
-        , backgroundPosition2 (pct -200) zero
         , backgroundPosition2 zero (pct -100)
-        , backgroundPosition2 (pct -100) (pct -100)
-        , backgroundPosition2 (pct -200) (pct -100)
         , backgroundPosition2 zero (pct -200)
-        , backgroundPosition2 (pct -100) (pct -200)
-        , backgroundPosition2 (pct -200) (pct -200)
         , backgroundPosition2 zero (pct -300)
+        , backgroundPosition2 zero (pct -400)
+        , backgroundPosition2 zero (pct -500)
+        , backgroundPosition2 zero (pct -600)
+        , backgroundPosition2 zero (pct -700)
+        , backgroundPosition2 zero (pct -800)
+        , backgroundPosition2 zero (pct -900)
+        , backgroundPosition2 zero (pct -1000)
         ]
 
 
@@ -97,7 +98,7 @@ view { caterpillar, windowDimension, showShadow, state } =
         [ HA.css
             [ position absolute
             , backgroundImage (url caterpillar)
-            , backgroundSize (pct 300)
+            , backgroundSize (pct 100)
             , backgroundPositions |> Array.get positionIndex |> Maybe.withDefault (backgroundPosition2 zero zero)
             , left
                 (windowDimension

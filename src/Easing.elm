@@ -6,8 +6,12 @@ module Easing exposing
     , easeIn
     , easeInOut
     , easeOut
+    , encode
     , linear
+    , steps
     )
+
+import Json.Encode as JE
 
 
 type Easing
@@ -17,6 +21,7 @@ type Easing
     | EaseOut
     | EaseInOut
     | CubicBezier
+    | Steps Int
 
 
 default : Easing
@@ -52,3 +57,33 @@ easeInOut =
 cubicBezier : Easing
 cubicBezier =
     CubicBezier
+
+
+steps : Int -> Easing
+steps =
+    Steps
+
+
+encode : Easing -> JE.Value
+encode easing =
+    case easing of
+        Linear ->
+            JE.string "linear"
+
+        Ease ->
+            JE.string "ease"
+
+        EaseIn ->
+            JE.string "ease-in"
+
+        EaseOut ->
+            JE.string "ease-out"
+
+        EaseInOut ->
+            JE.string "ease-in-out"
+
+        CubicBezier ->
+            Debug.todo "cubicBezier"
+
+        Steps n ->
+            JE.string <| "steps(" ++ String.fromInt n ++ ")"

@@ -72,4 +72,5 @@ encode (Options options) =
         [ ( "duration", Millisecond.encode options.duration )
         , ( "iterations", Count.encode options.iterations )
         , ( "fill", Fill.encode options.fill )
+        , ( "easing", Easing.encode options.easing )
         ]

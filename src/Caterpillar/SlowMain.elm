@@ -5,7 +5,6 @@ import Browser
 import Browser.Dom
 import Browser.Events
 import Caterpillar.Caterpillar as Caterpillar
-import Caterpillar.FastObject as FastObject
 import Caterpillar.Grasses as Grasses exposing (Grass)
 import Caterpillar.Object as Object
 import Caterpillar.Sky as Sky
@@ -333,14 +332,6 @@ view model =
                 windowDimension =
                     data.windowDimension
 
-                objectView state =
-                    case data.animationType of
-                        AnimationType.Elm ->
-                            Object.view state
-
-                        AnimationType.WebAnimation ->
-                            FastObject.view
-
                 sun =
                     Sun.view data.sunState
                         { sunUrl = data.flags.sun
@@ -351,7 +342,7 @@ view model =
                         }
 
                 cloud1 =
-                    objectView data.cloud1State
+                    Object.view data.cloud1State
                         { imageUrl = data.flags.cloud1
                         , showShadow = showShadow
                         , windowDimension = windowDimension
@@ -365,7 +356,7 @@ view model =
                         }
 
                 cloud2 =
-                    objectView data.cloud2State
+                    Object.view data.cloud2State
                         { imageUrl = data.flags.cloud2
                         , showShadow = showShadow
                         , windowDimension = windowDimension
@@ -379,7 +370,7 @@ view model =
                         }
 
                 hillFar =
-                    objectView data.hillFarState
+                    Object.view data.hillFarState
                         { imageUrl = data.flags.hillFar
                         , showShadow = showShadow
                         , windowDimension = windowDimension
@@ -393,7 +384,7 @@ view model =
                         }
 
                 hillNear =
-                    objectView data.hillNearState
+                    Object.view data.hillNearState
                         { imageUrl = data.flags.hillNear
                         , showShadow = showShadow
                         , windowDimension = windowDimension
@@ -407,7 +398,7 @@ view model =
                         }
 
                 tree =
-                    objectView data.treeState
+                    Object.view data.treeState
                         { imageUrl = data.flags.tree
                         , showShadow = showShadow
                         , windowDimension = windowDimension
@@ -421,7 +412,7 @@ view model =
                         }
 
                 grass =
-                    objectView data.grassState
+                    Object.view data.grassState
                         { imageUrl = data.flags.grass
                         , showShadow = False
                         , windowDimension = windowDimension
@@ -445,7 +436,7 @@ view model =
                         }
 
                 bush =
-                    objectView data.bushState
+                    Object.view data.bushState
                         { imageUrl = data.flags.bush
                         , showShadow = showShadow
                         , windowDimension = windowDimension
@@ -459,7 +450,7 @@ view model =
                         }
 
                 fence =
-                    objectView data.fenceState
+                    Object.view data.fenceState
                         { imageUrl = data.flags.fence
                         , showShadow = showShadow
                         , windowDimension = windowDimension

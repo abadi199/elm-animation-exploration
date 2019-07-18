@@ -34,6 +34,7 @@ class ElmAnimation extends HTMLElement {
 
   connectedCallback() {
     const animateJson = this.getAttribute("animate");
+    console.log("connectedCallback", animateJson);
     if (animateJson) {
       this.currentAnimation = this.animateContent(animateJson);
     }

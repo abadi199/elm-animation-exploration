@@ -1,5 +1,7 @@
 module Js.Animation exposing
-    ( animation
+    ( Keyframe
+    , animation
+    , backgroundPosition
     , encodeKeyframe
     , jsonToString
     , node
@@ -16,7 +18,6 @@ import Coordinate exposing (Coordinate, coordinate)
 import Count exposing (Count)
 import Degree exposing (Degree)
 import Direction exposing (Direction)
-import Easing exposing (Easing)
 import Fill exposing (Fill)
 import Html as H
 import Html.Attributes as HA
@@ -37,6 +38,7 @@ type Keyframe
     = Translate Coordinate Offset
     | Opacity Percentage Offset
     | Rotate Degree Offset
+    | BackgroundPosition String Offset
 
 
 getCoordinate : Keyframe -> Maybe Coordinate
@@ -51,6 +53,9 @@ getCoordinate keyframe =
         Rotate _ _ ->
             Nothing
 
+        BackgroundPosition _ _ ->
+            Nothing
+
 
 rotate : Degree -> Keyframe
 rotate degree =
@@ -60,6 +65,11 @@ rotate degree =
 translate : { x : Px, y : Px } -> Keyframe
 translate coord =
     Translate (coordinate coord) Offset.none
+
+
+backgroundPosition : String -> Keyframe
+backgroundPosition value =
+    BackgroundPosition value Offset.none
 
 
 opacity : Percentage -> Keyframe
@@ -77,6 +87,9 @@ getOffset keyframe =
             offset
 
         Rotate _ offset ->
+            offset
+
+        BackgroundPosition _ offset ->
             offset
 
 
@@ -134,6 +147,9 @@ encodeKeyframe keyframe =
         Opacity percentage _ ->
             JE.object [ ( "opacity", JE.string <| "rotate" ++ (percentage |> Percentage.toFloat |> String.fromFloat) ) ]
 
+        BackgroundPosition value _ ->
+            JE.object [ ( "backgroundPosition", JE.string value ) ]
+
 
 
 -- WITH MODIFIER
@@ -150,3 +166,6 @@ withOffset offset keyframe =
 
         Rotate a _ ->
             Rotate a offset
+
+        BackgroundPosition a _ ->
+            BackgroundPosition a offset
