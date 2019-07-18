@@ -78,7 +78,7 @@ view { imageUrl, windowDimension, showShadow, loopDuration, onFinishExpanding, o
                 ]
 
             Contracting ->
-                [ Animation.backgroundPosition "0 -500"
+                [ Animation.backgroundPosition "0 -500%"
                 , Animation.backgroundPosition "0 -1000%"
                 ]
         )

@@ -4,14 +4,32 @@ class ElmAnimation extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ["animate"];
+    return ["animate", "playback"];
   }
 
   attributeChangedCallback(name: string, oldValue: string, newValue: string) {
-    console.log("attributeChangedCallback", name);
     switch (name) {
       case "animate":
         this.animateContent(newValue);
+        break;
+      case "playback":
+        this.playback(newValue);
+        break;
+    }
+  }
+
+  playback(value: string): void {
+    if (!this.currentAnimation) {
+      return;
+    }
+
+    switch (value) {
+      case "play":
+        this.currentAnimation.play();
+        break;
+      case "pause":
+        this.currentAnimation.pause();
+        break;
     }
   }
 
@@ -23,7 +41,11 @@ class ElmAnimation extends HTMLElement {
     }
 
     if (this.currentAnimation) {
-      this.currentAnimation.finish();
+      this.currentAnimation.pause();
+    }
+
+    if (animationData.keyframes.length === 0) {
+      return null;
     }
 
     this.currentAnimation = this.children[0].animate(
@@ -32,7 +54,6 @@ class ElmAnimation extends HTMLElement {
     );
 
     this.currentAnimation.onfinish = () => {
-      console.log("finish");
       this.dispatchEvent(new Event("finish"));
     };
 
@@ -41,8 +62,14 @@ class ElmAnimation extends HTMLElement {
 
   connectedCallback() {
     const animateJson = this.getAttribute("animate");
+
     if (animateJson) {
       this.animateContent(animateJson);
+    }
+
+    const playbackValue = this.getAttribute("playback");
+    if (playbackValue) {
+      this.playback(playbackValue);
     }
   }
 }

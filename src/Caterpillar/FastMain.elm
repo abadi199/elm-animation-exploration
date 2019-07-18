@@ -74,6 +74,7 @@ type alias Data =
     , grasses : List Grass
     , grassesState : Grasses.State
     , caterpillarState : Caterpillar.State
+    , isPaused : Bool
     }
 
 
@@ -191,12 +192,16 @@ update msg model =
             )
 
         CaterpillarFinishExpanding ->
-            ( model |> setCaterpillarState (Debug.log "nextState" Caterpillar.contracting)
+            ( model
+                |> setCaterpillarState Caterpillar.contracting
+                |> setPaused False
             , Cmd.none
             )
 
         CaterpillarFinishContracting ->
-            ( model |> setCaterpillarState (Debug.log "nextState" Caterpillar.expanding)
+            ( model
+                |> setCaterpillarState Caterpillar.expanding
+                |> setPaused True
             , Cmd.none
             )
 
@@ -216,6 +221,7 @@ toReady data =
                 , sunState = Sun.initialState
                 , grassesState = Grasses.initialState grasses
                 , caterpillarState = Caterpillar.expanding
+                , isPaused = True
                 }
 
         _ ->
@@ -256,6 +262,16 @@ setAnimationState animationFrameDelta model =
                     , sunState = Sun.tick { options | rotationSpeed = 0.1 } data.sunState
                     , grassesState = Grasses.tick grassesOptions data.grassesState
                 }
+
+
+setPaused : Bool -> Model -> Model
+setPaused isPaused model =
+    case model of
+        NotReady _ ->
+            model
+
+        Ready data ->
+            Ready { data | isPaused = isPaused }
 
 
 setCaterpillarState : Caterpillar.State -> Model -> Model
@@ -333,6 +349,7 @@ view model =
                 cloud1 =
                     Object.view
                         { imageUrl = data.flags.cloud1
+                        , isPaused = False
                         , showShadow = showShadow
                         , windowDimension = windowDimension
                         , loopDuration = millisecond 60000
@@ -347,6 +364,7 @@ view model =
                 cloud2 =
                     Object.view
                         { imageUrl = data.flags.cloud2
+                        , isPaused = False
                         , showShadow = showShadow
                         , windowDimension = windowDimension
                         , loopDuration = millisecond 60000
@@ -361,6 +379,7 @@ view model =
                 hillFar =
                     Object.view
                         { imageUrl = data.flags.hillFar
+                        , isPaused = data.isPaused
                         , showShadow = showShadow
                         , windowDimension = windowDimension
                         , loopDuration = millisecond 40000
@@ -375,6 +394,7 @@ view model =
                 hillNear =
                     Object.view
                         { imageUrl = data.flags.hillNear
+                        , isPaused = data.isPaused
                         , showShadow = showShadow
                         , windowDimension = windowDimension
                         , loopDuration = millisecond 30000
@@ -389,6 +409,7 @@ view model =
                 tree =
                     Object.view
                         { imageUrl = data.flags.tree
+                        , isPaused = data.isPaused
                         , showShadow = showShadow
                         , windowDimension = windowDimension
                         , loopDuration = millisecond 15000
@@ -403,6 +424,7 @@ view model =
                 grass =
                     Object.view
                         { imageUrl = data.flags.grass
+                        , isPaused = data.isPaused
                         , showShadow = False
                         , windowDimension = windowDimension
                         , loopDuration = millisecond 5000
@@ -427,6 +449,7 @@ view model =
                 bush =
                     Object.view
                         { imageUrl = data.flags.bush
+                        , isPaused = data.isPaused
                         , showShadow = showShadow
                         , windowDimension = windowDimension
                         , loopDuration = millisecond 9000
@@ -441,6 +464,7 @@ view model =
                 fence =
                     Object.view
                         { imageUrl = data.flags.fence
+                        , isPaused = data.isPaused
                         , showShadow = showShadow
                         , windowDimension = windowDimension
                         , loopDuration = millisecond 10000

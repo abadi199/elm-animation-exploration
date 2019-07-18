@@ -21,11 +21,12 @@ type alias Options =
     , dimension : Dimension
     , coordinate : Coordinate
     , showShadow : Bool
+    , isPaused : Bool
     }
 
 
 view : Options -> Html msg
-view { imageUrl, windowDimension, loopDuration, dimension, coordinate, showShadow } =
+view { isPaused, imageUrl, windowDimension, loopDuration, dimension, coordinate, showShadow } =
     let
         windowWidth =
             windowDimension
@@ -36,7 +37,12 @@ view { imageUrl, windowDimension, loopDuration, dimension, coordinate, showShado
         , Animation.translate { x = windowWidth |> Px.map negate, y = Px.px 0 }
         ]
         (Options.default { duration = loopDuration } |> Options.withIterations Count.infinite)
-        []
+        [ if isPaused then
+            HA.attribute "playback" "pause"
+
+          else
+            HA.attribute "playback" "play"
+        ]
         (H.div
             [ HA.css
                 [ backgroundImage (url imageUrl)
