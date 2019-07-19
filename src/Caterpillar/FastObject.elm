@@ -36,17 +36,19 @@ viewWithChildren { isPaused, imageUrl, windowDimension, speed, dimension, coordi
             windowDimension
                 |> Dimension.width
 
-        translationTarget =
+        keyframes =
             if Speed.isNegative speed then
-                windowWidth |> Px.map negate
+                [ Animation.translate { x = Px.px 0, y = Px.px 0 }
+                , Animation.translate { x = windowWidth |> Px.map negate, y = Px.px 0 }
+                ]
 
             else
-                windowWidth
+                [ Animation.translate { x = windowWidth |> Px.map negate, y = Px.px 0 }
+                , Animation.translate { x = Px.px 0, y = Px.px 0 }
+                ]
     in
     Animation.styledNode
-        [ Animation.translate { x = Px.px 0, y = Px.px 0 }
-        , Animation.translate { x = translationTarget, y = Px.px 0 }
-        ]
+        keyframes
         (Options.default { duration = loopDuration } |> Options.withIterations Count.infinite)
         [ if isPaused then
             HA.attribute "playback" "pause"

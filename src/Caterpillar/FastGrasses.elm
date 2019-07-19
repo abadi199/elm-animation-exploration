@@ -100,6 +100,7 @@ view ({ speed, grasses, grassAllUrl, windowDimension, imageWidth, isPaused } as 
                 , bottom (px -15)
                 , displayGrid
                 , backgroundImage (url grassAllUrl)
+                , Shadow.style options.showShadow
                 , property "grid-template-columns" <|
                     gridColumns
                         ++ " "
@@ -150,10 +151,10 @@ randomGenerator : String -> Random.Generator Grass
 randomGenerator imageUrl =
     let
         from =
-            degPerS 1
+            degPerS 2
 
         to =
-            degPerS 5
+            degPerS 10
     in
     Random.map (\rotationSpeed -> { imageUrl = imageUrl, rotationSpeed = rotationSpeed })
         (RotationSpeed.randomGenerator from to)
