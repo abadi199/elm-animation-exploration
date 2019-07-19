@@ -1,4 +1,4 @@
-module Caterpillar.FastObject exposing (view)
+module Caterpillar.FastObject exposing (view, viewWithChildren)
 
 import Caterpillar.Shadow as Shadow
 import Coordinate exposing (Coordinate)
@@ -26,8 +26,8 @@ type alias Options =
     }
 
 
-view : Options -> Html msg
-view { isPaused, imageUrl, windowDimension, speed, dimension, coordinate, showShadow } =
+viewWithChildren : Options -> List (Html msg) -> Html msg
+viewWithChildren { isPaused, imageUrl, windowDimension, speed, dimension, coordinate, showShadow } children =
     let
         loopDuration =
             speed |> Speed.toDuration windowWidth
@@ -67,5 +67,10 @@ view { isPaused, imageUrl, windowDimension, speed, dimension, coordinate, showSh
                 , Shadow.style showShadow
                 ]
             ]
-            []
+            children
         )
+
+
+view : Options -> Html msg
+view options =
+    viewWithChildren options []

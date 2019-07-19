@@ -3,6 +3,7 @@ module Degree exposing
     , add
     , deg
     , is
+    , multiply
     , randomGenerator
     , subtract
     , toFloat
@@ -30,6 +31,11 @@ toString (Degree degree) =
 toFloat : Degree -> Float
 toFloat (Degree n) =
     n
+
+
+multiply : Float -> Degree -> Degree
+multiply multiplier (Degree n) =
+    Degree (n * multiplier)
 
 
 add : Degree -> Degree -> Degree

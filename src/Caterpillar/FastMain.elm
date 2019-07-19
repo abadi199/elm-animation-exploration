@@ -4,9 +4,9 @@ import Browser
 import Browser.Dom
 import Browser.Events
 import Caterpillar.FastCaterpillar as Caterpillar
+import Caterpillar.FastGrasses as Grasses exposing (Grass)
 import Caterpillar.FastObject as Object
 import Caterpillar.FastSun as Sun
-import Caterpillar.Grasses as Grasses exposing (Grass)
 import Caterpillar.Sky as Sky
 import Color exposing (Color)
 import Coordinate exposing (Coordinate, coordinate)
@@ -72,7 +72,6 @@ type alias Data =
     , windowDimension : Dimension
     , fps : Fps
     , grasses : List Grass
-    , grassesState : Grasses.State
     , caterpillarState : Caterpillar.State
     , isPaused : Bool
     }
@@ -218,7 +217,6 @@ toReady data =
                 , grasses = grasses
                 , windowDimension = windowDimension
                 , fps = Fps.initial
-                , grassesState = Grasses.initialState grasses
                 , caterpillarState = Caterpillar.expanding
                 , isPaused = True
                 }
@@ -234,31 +232,9 @@ setAnimationState animationFrameDelta model =
             model
 
         Ready data ->
-            let
-                options =
-                    { animationFrameDelta = animationFrameDelta
-                    , loopDuration = caterpillarLoopDuration
-                    , windowDimension = data.windowDimension
-                    , speed = pxPerMs -0.6
-                    , rotationSpeed = 0
-                    }
-
-                grassesOptions =
-                    { animationFrameDelta = animationFrameDelta
-                    , speeds =
-                        data.grasses
-                            |> List.map (\grass -> ( grass.imageUrl, grass.speed ))
-                            |> Dict.fromList
-                    , loopDuration = caterpillarLoopDuration
-                    , windowDimension = data.windowDimension
-                    , speed = pxPerMs -0.7
-                    , rotationSpeed = 0
-                    }
-            in
             Ready
                 { data
                     | fps = Fps.update animationFrameDelta data.fps
-                    , grassesState = Grasses.tick grassesOptions data.grassesState
                 }
 
 
@@ -436,13 +412,14 @@ view model =
                         }
 
                 grasses =
-                    Grasses.view data.grassesState
+                    Grasses.view
                         { grasses = data.grasses
                         , grassAllUrl = data.flags.grassAll
                         , showShadow = showShadow
                         , windowDimension = windowDimension
-                        , loopDuration = millisecond 5000
                         , imageWidth = imageWidth
+                        , speed = pxPerS -450
+                        , isPaused = data.isPaused
                         }
 
                 bush =
@@ -504,8 +481,7 @@ view model =
                 , fence
                 , bush
                 , caterpillar
-
-                -- , grasses
+                , grasses
                 , ControlPanel.view UserUpdateControlPanel data.controlPanelState
                 , Fps.view data
                 ]
