@@ -5,9 +5,9 @@ import Browser.Dom
 import Browser.Events
 import Caterpillar.FastCaterpillar as Caterpillar
 import Caterpillar.FastObject as Object
+import Caterpillar.FastSun as Sun
 import Caterpillar.Grasses as Grasses exposing (Grass)
 import Caterpillar.Sky as Sky
-import Caterpillar.Sun as Sun
 import Color exposing (Color)
 import Coordinate exposing (Coordinate, coordinate)
 import Count
@@ -22,11 +22,12 @@ import Js.Animation.Options as Options
 import Millisecond exposing (Millisecond, millisecond)
 import Px exposing (Px, px)
 import Random
+import RotationSpeed
 import Second exposing (second)
 import Shared.ControlPanel as ControlPanel
+import Speed exposing (Speed, pxPerMs, pxPerS)
 import Task
 import Time exposing (Posix)
-import Velocity exposing (Velocity, pxPerMs, pxPerS)
 
 
 
@@ -70,7 +71,6 @@ type alias Data =
     , flags : Flags
     , windowDimension : Dimension
     , fps : Fps
-    , sunState : Sun.State
     , grasses : List Grass
     , grassesState : Grasses.State
     , caterpillarState : Caterpillar.State
@@ -218,7 +218,6 @@ toReady data =
                 , grasses = grasses
                 , windowDimension = windowDimension
                 , fps = Fps.initial
-                , sunState = Sun.initialState
                 , grassesState = Grasses.initialState grasses
                 , caterpillarState = Caterpillar.expanding
                 , isPaused = True
@@ -259,7 +258,6 @@ setAnimationState animationFrameDelta model =
             Ready
                 { data
                     | fps = Fps.update animationFrameDelta data.fps
-                    , sunState = Sun.tick { options | rotationSpeed = 0.1 } data.sunState
                     , grassesState = Grasses.tick grassesOptions data.grassesState
                 }
 
@@ -338,12 +336,13 @@ view model =
                     data.windowDimension
 
                 sun =
-                    Sun.view data.sunState
+                    Sun.view
                         { sunUrl = data.flags.sun
                         , sunRaysUrl = data.flags.sunRays
                         , windowDimension = windowDimension
                         , time = Time.millisToPosix 0
                         , showShadow = showShadow
+                        , rotationSpeed = RotationSpeed.degPerS 10
                         }
 
                 cloud1 =
@@ -475,14 +474,27 @@ view model =
                                 |> Coordinate.setX (px 0)
                                 |> Coordinate.multiplyY 0.42
                         }
+
+                sky =
+                    Sky.view
+                        { sky = data.flags.sky
+                        , windowDimension = windowDimension
+                        }
+
+                caterpillar =
+                    Caterpillar.view
+                        { imageUrl = data.flags.caterpillar
+                        , windowDimension = windowDimension
+                        , showShadow = showShadow
+                        , loopDuration = millisecond 1000
+                        , onFinishExpanding = CaterpillarFinishExpanding
+                        , onFinishContracting = CaterpillarFinishContracting
+                        }
+                        data.caterpillarState
             in
             div []
-                [ Sky.view
-                    { sky = data.flags.sky
-                    , windowDimension = windowDimension
-                    }
-
-                -- , sun
+                [ sky
+                , sun
                 , cloud2
                 , cloud1
                 , hillFar
@@ -491,15 +503,7 @@ view model =
                 , grass
                 , fence
                 , bush
-                , Caterpillar.view
-                    { imageUrl = data.flags.caterpillar
-                    , windowDimension = windowDimension
-                    , showShadow = showShadow
-                    , loopDuration = millisecond 1000
-                    , onFinishExpanding = CaterpillarFinishExpanding
-                    , onFinishContracting = CaterpillarFinishContracting
-                    }
-                    data.caterpillarState
+                , caterpillar
 
                 -- , grasses
                 , ControlPanel.view UserUpdateControlPanel data.controlPanelState

@@ -21,8 +21,8 @@ import Js.Animation.Options as Options
 import Json.Decode as JD
 import Millisecond exposing (Millisecond, millisecond)
 import Px
+import Speed exposing (Speed)
 import Time exposing (Posix)
-import Velocity exposing (Velocity)
 
 
 caterpillarDimension : Dimension

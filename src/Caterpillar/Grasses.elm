@@ -10,7 +10,6 @@ module Caterpillar.Grasses exposing
 import Caterpillar.Shadow as Shadow
 import Css exposing (..)
 import Css.Grid as Grid exposing (displayGrid)
-import DegPerMs exposing (DegPerMs, degPerS)
 import Degree exposing (Degree, deg)
 import Dict exposing (Dict)
 import Dimension exposing (Dimension)
@@ -19,7 +18,8 @@ import Html.Styled.Attributes as HA
 import Millisecond exposing (Millisecond, millisecond)
 import Px exposing (Px)
 import Random
-import Velocity exposing (Velocity)
+import RotationSpeed exposing (RotationSpeed, degPerS)
+import Speed exposing (Speed)
 
 
 
@@ -37,7 +37,7 @@ type State
 
 type alias Grass =
     { imageUrl : String
-    , speed : DegPerMs
+    , speed : RotationSpeed
     }
 
 
@@ -69,10 +69,10 @@ initialState grasses =
 type alias TickOptions a =
     { a
         | animationFrameDelta : Millisecond
-        , speeds : Dict String DegPerMs
+        , speeds : Dict String RotationSpeed
         , windowDimension : Dimension
         , loopDuration : Millisecond
-        , speed : Velocity
+        , speed : Speed
     }
 
 
@@ -95,7 +95,7 @@ tick { animationFrameDelta, windowDimension, speed, speeds, loopDuration } (Stat
 
                     newPositionX =
                         stateData.positionX
-                            |> Px.add (speed |> Velocity.distance animationFrameDelta)
+                            |> Px.add (speed |> Speed.toDistance animationFrameDelta)
                 in
                 if newPositionX |> Px.is (<) (Px.map negate windowWidth) then
                     Px.px 0
@@ -114,19 +114,19 @@ tick { animationFrameDelta, windowDimension, speed, speeds, loopDuration } (Stat
         }
 
 
-updateRotation : Dict String DegPerMs -> Millisecond -> String -> ( Degree, Direction ) -> ( Degree, Direction )
+updateRotation : Dict String RotationSpeed -> Millisecond -> String -> ( Degree, Direction ) -> ( Degree, Direction )
 updateRotation speeds animationFrameDelta imageUrl ( rotation, direction ) =
     let
         speed =
-            speeds |> Dict.get imageUrl |> Maybe.withDefault (DegPerMs.degPerS 0)
+            speeds |> Dict.get imageUrl |> Maybe.withDefault (RotationSpeed.degPerS 0)
 
         moveToRight =
             rotation
-                |> Degree.add (DegPerMs.toDegree animationFrameDelta speed)
+                |> Degree.add (RotationSpeed.toDegree animationFrameDelta speed)
 
         moveToLeft =
             rotation
-                |> Degree.subtract (DegPerMs.toDegree animationFrameDelta speed)
+                |> Degree.subtract (RotationSpeed.toDegree animationFrameDelta speed)
     in
     case direction of
         Right ->
@@ -313,4 +313,4 @@ randomGenerator imageUrl =
             degPerS 30
     in
     Random.map (\speed -> { imageUrl = imageUrl, speed = speed })
-        (DegPerMs.randomGenerator from to)
+        (RotationSpeed.randomGenerator from to)

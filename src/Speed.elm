@@ -1,45 +1,45 @@
-module Velocity exposing
-    ( Velocity
-    , distance
-    , duration
+module Speed exposing
+    ( Speed
     , isNegative
     , pxPerMs
     , pxPerS
+    , toDistance
+    , toDuration
     )
 
 import Millisecond exposing (Millisecond)
 import Px exposing (Px)
 
 
-type Velocity
+type Speed
     = PxPerS Float
 
 
-pxPerS : Float -> Velocity
+pxPerS : Float -> Speed
 pxPerS =
     PxPerS
 
 
-pxPerMs : Float -> Velocity
+pxPerMs : Float -> Speed
 pxPerMs n =
     PxPerS (n / 1000)
 
 
-distance : Millisecond -> Velocity -> Px
-distance ms (PxPerS speed) =
+toDistance : Millisecond -> Speed -> Px
+toDistance ms (PxPerS speed) =
     (speed / 1000)
         * (ms |> Millisecond.toFloat)
         |> round
         |> Px.px
 
 
-isNegative : Velocity -> Bool
+isNegative : Speed -> Bool
 isNegative (PxPerS velocity) =
     velocity < 0
 
 
-duration : Px -> Velocity -> Millisecond
-duration px (PxPerS speed) =
+toDuration : Px -> Speed -> Millisecond
+toDuration px (PxPerS speed) =
     px
         |> Px.toFloat
         |> (\n -> n * 1000 / abs speed)

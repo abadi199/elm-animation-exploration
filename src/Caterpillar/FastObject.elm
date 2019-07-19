@@ -11,14 +11,14 @@ import Js.Animation as Animation
 import Js.Animation.Options as Options
 import Millisecond exposing (Millisecond)
 import Px
+import Speed exposing (Speed)
 import Time exposing (Posix)
-import Velocity exposing (Velocity)
 
 
 type alias Options =
     { imageUrl : String
     , windowDimension : Dimension
-    , speed : Velocity
+    , speed : Speed
     , dimension : Dimension
     , coordinate : Coordinate
     , showShadow : Bool
@@ -30,14 +30,14 @@ view : Options -> Html msg
 view { isPaused, imageUrl, windowDimension, speed, dimension, coordinate, showShadow } =
     let
         loopDuration =
-            speed |> Velocity.duration windowWidth |> Debug.log "loopDuration"
+            speed |> Speed.toDuration windowWidth
 
         windowWidth =
             windowDimension
                 |> Dimension.width
 
         translationTarget =
-            if Velocity.isNegative speed then
+            if Speed.isNegative speed then
                 windowWidth |> Px.map negate
 
             else
