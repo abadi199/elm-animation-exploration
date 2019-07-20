@@ -22,7 +22,7 @@ pxPerS =
 
 pxPerMs : Float -> Speed
 pxPerMs n =
-    PxPerS (n / 1000)
+    PxPerS (n * 1000)
 
 
 toDistance : Millisecond -> Speed -> Px

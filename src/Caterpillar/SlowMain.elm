@@ -22,10 +22,11 @@ import Js.Animation as Animation
 import Js.Animation.Options as Options
 import Millisecond exposing (Millisecond, millisecond)
 import Px exposing (Px, px)
-import PxPerMs exposing (PxPerMs, pxPerMs)
 import Random
+import RotationSpeed exposing (RotationSpeed, degPerS)
 import Second exposing (second)
 import Shared.ControlPanel as ControlPanel
+import Speed exposing (Speed, pxPerMs, pxPerS)
 import Task
 import Time exposing (Posix)
 
@@ -241,8 +242,8 @@ setAnimationState animationFrameDelta model =
                     { animationFrameDelta = animationFrameDelta
                     , loopDuration = caterpillarLoopDuration
                     , windowDimension = data.windowDimension
-                    , speed = pxPerMs -0.6
-                    , rotationSpeed = 0
+                    , speed = pxPerMs 0
+                    , rotationSpeed = degPerS 0
                     }
 
                 grassesOptions =
@@ -253,8 +254,8 @@ setAnimationState animationFrameDelta model =
                             |> Dict.fromList
                     , loopDuration = caterpillarLoopDuration
                     , windowDimension = data.windowDimension
-                    , speed = pxPerMs -0.7
-                    , rotationSpeed = 0
+                    , speed = pxPerS -450
+                    , rotationSpeed = degPerS 0
                     }
             in
             case data.animationType of
@@ -266,15 +267,15 @@ setAnimationState animationFrameDelta model =
                         { data
                             | fps = Fps.update animationFrameDelta data.fps
                             , caterpillarState = Caterpillar.tick options data.caterpillarState
-                            , sunState = Sun.tick { options | rotationSpeed = 0.1 } data.sunState
-                            , cloud1State = Object.continuousTick { options | speed = pxPerMs 0.02 } data.cloud1State
-                            , cloud2State = Object.continuousTick { options | speed = pxPerMs 0.03 } data.cloud2State
-                            , hillFarState = Object.tick { options | speed = pxPerMs -0.02 } data.hillFarState
-                            , hillNearState = Object.tick { options | speed = pxPerMs -0.03 } data.hillNearState
-                            , treeState = Object.tick { options | speed = pxPerMs -0.3 } data.treeState
-                            , fenceState = Object.tick { options | speed = pxPerMs -0.4 } data.fenceState
-                            , bushState = Object.tick { options | speed = pxPerMs -0.5 } data.bushState
-                            , grassState = Object.tick { options | speed = pxPerMs -0.6 } data.grassState
+                            , sunState = Sun.tick { options | rotationSpeed = degPerS 10 } data.sunState
+                            , cloud1State = Object.continuousTick { options | speed = pxPerS 20 } data.cloud1State
+                            , cloud2State = Object.continuousTick { options | speed = pxPerS 30 } data.cloud2State
+                            , hillFarState = Object.tick { options | speed = pxPerS -30 } data.hillFarState
+                            , hillNearState = Object.tick { options | speed = pxPerS -50 } data.hillNearState
+                            , treeState = Object.tick { options | speed = pxPerS -100 } data.treeState
+                            , fenceState = Object.tick { options | speed = pxPerS -200 } data.fenceState
+                            , bushState = Object.tick { options | speed = pxPerS -300 } data.bushState
+                            , grassState = Object.tick { options | speed = pxPerS -400 } data.grassState
                             , grassesState = Grasses.tick grassesOptions data.grassesState
                         }
 

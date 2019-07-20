@@ -8,7 +8,7 @@ import Html.Styled as H exposing (Html)
 import Html.Styled.Attributes as HA
 import Millisecond exposing (Millisecond, millisecond)
 import Px
-import PxPerMs exposing (PxPerMs)
+import Speed exposing (Speed)
 import Time exposing (Posix)
 
 
@@ -72,7 +72,7 @@ type alias TickOptions a =
         | animationFrameDelta : Millisecond
         , loopDuration : Millisecond
         , windowDimension : Dimension
-        , speed : PxPerMs
+        , speed : Speed
     }
 
 

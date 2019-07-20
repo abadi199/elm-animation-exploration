@@ -2,11 +2,13 @@ module Caterpillar.Sun exposing (State, initialState, tick, view)
 
 import Caterpillar.Shadow as Shadow
 import Css exposing (..)
+import Degree exposing (Degree)
 import Dimension exposing (Dimension)
 import Html.Styled as H exposing (Html)
 import Html.Styled.Attributes as HA
 import Millisecond exposing (Millisecond, millisecond)
 import Px
+import RotationSpeed exposing (RotationSpeed)
 import Time exposing (Posix)
 
 
@@ -15,23 +17,21 @@ type State
 
 
 type alias StateData =
-    { timer : Millisecond
-    , rotation : Float
+    { rotation : Degree
     }
 
 
 initialState : State
 initialState =
     State
-        { timer = millisecond 0
-        , rotation = 0
+        { rotation = Degree.deg 0
         }
 
 
 type alias TickOptions a =
     { a
         | animationFrameDelta : Millisecond
-        , rotationSpeed : Float
+        , rotationSpeed : RotationSpeed
     }
 
 
@@ -39,8 +39,9 @@ tick : TickOptions a -> State -> State
 tick { animationFrameDelta, rotationSpeed } (State stateData) =
     State
         { stateData
-            | timer = stateData.timer |> Millisecond.add animationFrameDelta
-            , rotation = stateData.rotation + (rotationSpeed * Millisecond.toFloat animationFrameDelta)
+            | rotation =
+                stateData.rotation
+                    |> Degree.add (rotationSpeed |> RotationSpeed.toDegree animationFrameDelta)
         }
 
 
@@ -82,7 +83,7 @@ view (State stateData) { sunUrl, sunRaysUrl, windowDimension, showShadow } =
             [ HA.css
                 [ backgroundImage (url sunRaysUrl)
                 , backgroundRepeat2 noRepeat noRepeat
-                , transform (rotate (deg stateData.rotation))
+                , transform (rotate (deg <| Degree.toFloat stateData.rotation))
                 , height (px 250)
                 , width (px 250)
                 , backgroundSize contain

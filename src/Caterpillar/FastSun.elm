@@ -14,18 +14,6 @@ import RotationSpeed exposing (RotationSpeed)
 import Time exposing (Posix)
 
 
-
-{--
-tick : TickOptions a -> State -> State
-tick { animationFrameDelta, rotationSpeed } (State stateData) =
-    State
-        { stateData
-            | timer = stateData.timer |> Millisecond.add animationFrameDelta
-            , rotation = stateData.rotation + (rotationSpeed * Millisecond.toFloat animationFrameDelta)
-        }
---}
-
-
 type alias Options a =
     { a
         | sunUrl : String

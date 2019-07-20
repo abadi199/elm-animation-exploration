@@ -94,7 +94,6 @@ view ({ speed, grasses, grassAllUrl, windowDimension, imageWidth, isPaused } as 
                 [ width (pct 200)
                 , height (pct 30)
                 , position absolute
-                , backgroundPosition2 zero (pct -100)
                 , backgroundRepeat2 repeat noRepeat
                 , backgroundSize (Px.toElmCss windowWidth)
                 , bottom (px -15)
@@ -135,7 +134,6 @@ viewGrass ratio options { imageUrl, rotationSpeed } =
                 , width (px (200 * ratio))
                 , backgroundSize contain
                 , backgroundRepeat noRepeat
-                , Shadow.style options.showShadow
                 , property "transform-origin" "50% 100%"
                 , property "justify-self" "center"
                 ]

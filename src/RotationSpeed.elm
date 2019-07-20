@@ -34,7 +34,7 @@ randomGenerator (DegPerS low) (DegPerS high) =
 
 toDegree : Millisecond -> RotationSpeed -> Degree
 toDegree ms (DegPerS speed) =
-    (speed / 100)
+    (speed / 1000)
         * (ms |> Millisecond.toFloat)
         |> Degree.deg
 

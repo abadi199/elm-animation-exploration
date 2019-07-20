@@ -181,66 +181,6 @@ view (State stateData) ({ grasses, grassAllUrl, windowDimension, imageWidth } as
         columnWidth =
             windowWidth |> Px.divideBy grassCount
 
-        grassAll =
-            H.div
-                [ HA.css
-                    [ position absolute
-                    , width (pct 100)
-                    , height (pct 100)
-                    , top (px 0)
-                    , left (pct 0)
-                    ]
-                ]
-                [ H.div
-                    [ HA.css
-                        [ position absolute
-                        , width (pct 100)
-                        , height (pct 100)
-                        , backgroundImage (url grassAllUrl)
-                        , Shadow.style options.showShadow
-                        , backgroundRepeat2 repeat noRepeat
-                        , backgroundPosition2 zero (pct -50)
-                        ]
-                    ]
-                    []
-                , H.div
-                    [ HA.css
-                        [ position absolute
-                        , width (pct 100)
-                        , height (pct 100)
-                        , backgroundImage (url grassAllUrl)
-                        , Shadow.style options.showShadow
-                        , backgroundRepeat2 repeat noRepeat
-                        , backgroundPosition2 (pct 25) (pct -50)
-                        ]
-                    ]
-                    []
-                , H.div
-                    [ HA.css
-                        [ position absolute
-                        , width (pct 100)
-                        , height (pct 100)
-                        , backgroundImage (url grassAllUrl)
-                        , Shadow.style options.showShadow
-                        , backgroundRepeat2 repeat noRepeat
-                        , backgroundPosition2 (pct 75) (pct -50)
-                        ]
-                    ]
-                    []
-                , H.div
-                    [ HA.css
-                        [ position absolute
-                        , width (pct 100)
-                        , height (pct 100)
-                        , backgroundImage (url grassAllUrl)
-                        , Shadow.style options.showShadow
-                        , backgroundRepeat2 repeat noRepeat
-                        , backgroundPosition2 (pct 50) (pct -50)
-                        ]
-                    ]
-                    []
-                ]
-
         gridColumns =
             grasses
                 |> List.map (always (columnWidth |> Px.toString))
@@ -251,11 +191,15 @@ view (State stateData) ({ grasses, grassAllUrl, windowDimension, imageWidth } as
     in
     H.div
         [ HA.css
-            [ width (pct 300)
+            [ width (pct 200)
             , height (pct 30)
             , position absolute
-            , left (stateData.positionX |> Px.add (Px.map negate windowWidth) |> Px.toElmCss)
+            , left (stateData.positionX |> Px.toElmCss)
+            , backgroundRepeat2 repeat noRepeat
+            , backgroundSize (Px.toElmCss windowWidth)
             , bottom (px -15)
+            , backgroundImage (url grassAllUrl)
+            , Shadow.style options.showShadow
             , displayGrid
             , property "grid-template-columns" <|
                 gridColumns
@@ -265,7 +209,7 @@ view (State stateData) ({ grasses, grassAllUrl, windowDimension, imageWidth } as
                     ++ gridColumns
             ]
         ]
-        (grassAll :: grassesView ++ grassesView ++ grassesView)
+        (grassesView ++ grassesView)
 
 
 viewGrass : Float -> StateData -> Options -> String -> Html msg
@@ -285,7 +229,7 @@ viewGrass ratio stateData options imageUrl =
             , width (px (200 * ratio))
             , backgroundSize contain
             , backgroundRepeat noRepeat
-            , Shadow.style options.showShadow
+            , Shadow.style False
             , property "transform-origin" "50% 100%"
             , property "justify-self" "center"
             , transform
@@ -307,10 +251,10 @@ randomGenerator : String -> Random.Generator Grass
 randomGenerator imageUrl =
     let
         from =
-            degPerS 10
+            degPerS 2
 
         to =
-            degPerS 30
+            degPerS 10
     in
     Random.map (\speed -> { imageUrl = imageUrl, speed = speed })
         (RotationSpeed.randomGenerator from to)

@@ -8,7 +8,7 @@ import Html.Styled as H exposing (Html)
 import Html.Styled.Attributes as HA
 import Millisecond exposing (Millisecond, millisecond)
 import Px exposing (Px)
-import PxPerMs exposing (PxPerMs)
+import Speed exposing (Speed)
 import Time exposing (Posix)
 
 
@@ -35,7 +35,7 @@ type alias TickOptions a =
         | animationFrameDelta : Millisecond
         , loopDuration : Millisecond
         , windowDimension : Dimension
-        , speed : PxPerMs
+        , speed : Speed
     }
 
 
@@ -49,7 +49,7 @@ continuousTick { animationFrameDelta, windowDimension, speed } (State stateData)
 
                 newPositionX =
                     stateData.positionX
-                        |> Px.add (speed |> PxPerMs.toPx animationFrameDelta)
+                        |> Px.add (speed |> Speed.toDistance animationFrameDelta)
             in
             if newPositionX |> Px.is (<) (Px.map negate windowWidth) then
                 Px.px 0
@@ -85,7 +85,7 @@ tick { animationFrameDelta, loopDuration, windowDimension, speed } (State stateD
 
                     newPositionX =
                         stateData.positionX
-                            |> Px.add (speed |> PxPerMs.toPx animationFrameDelta)
+                            |> Px.add (speed |> Speed.toDistance animationFrameDelta)
                 in
                 if newPositionX |> Px.is (<) (Px.map negate windowWidth) then
                     Px.px 0
