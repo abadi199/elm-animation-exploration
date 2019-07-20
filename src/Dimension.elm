@@ -8,11 +8,15 @@ module Dimension exposing
     , setWidth
     , toCoordinate
     , toElmCss
+    , toString
+    , view
     , width
     )
 
 import Coordinate exposing (Coordinate, coordinate)
-import Css
+import Css exposing (..)
+import Html.Styled as H
+import Html.Styled.Attributes as HA
 import Px exposing (Px)
 
 
@@ -65,3 +69,24 @@ multiplyWidth multiplier (Dimension dim) =
 toCoordinate : Dimension -> Coordinate
 toCoordinate (Dimension dim) =
     coordinate { x = dim.width, y = dim.height }
+
+
+toString : Dimension -> String
+toString (Dimension dim) =
+    "(width: "
+        ++ Px.toString dim.width
+        ++ ", height: "
+        ++ Px.toString dim.height
+        ++ ")"
+
+
+view : Dimension -> H.Html msg
+view dim =
+    H.div
+        [ HA.css
+            [ position absolute
+            , bottom (px 0)
+            , right (px 0)
+            ]
+        ]
+        [ H.text <| toString dim ]
