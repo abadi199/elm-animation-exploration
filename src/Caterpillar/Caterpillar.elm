@@ -93,6 +93,13 @@ view { caterpillar, windowDimension, showShadow, state } =
     let
         positionIndex =
             calculateBackgroundPositionIndex state
+
+        scaleFactor =
+            (windowDimension |> Dimension.width |> Px.toFloat) / 1920
+
+        caterpillarScaledDimension =
+            caterpillarDimension
+                |> Dimension.scale scaleFactor
     in
     H.div
         [ HA.css
@@ -104,12 +111,23 @@ view { caterpillar, windowDimension, showShadow, state } =
                 (windowDimension
                     |> Dimension.width
                     |> Px.divideBy 2
-                    |> Px.add (Px.px ((caterpillarDimension |> Dimension.width |> Px.toInt |> toFloat |> negate |> Basics.round) // 2))
+                    |> Px.add
+                        (Px.px
+                            ((caterpillarScaledDimension
+                                |> Dimension.width
+                                |> Px.toInt
+                                |> toFloat
+                                |> negate
+                                |> Basics.round
+                             )
+                                // 2
+                            )
+                        )
                     |> Px.toElmCss
                 )
-            , bottom (px 200)
-            , width (caterpillarDimension |> Dimension.width |> Px.toElmCss)
-            , height (caterpillarDimension |> Dimension.height |> Px.toElmCss)
+            , bottom (pct 20)
+            , width (caterpillarScaledDimension |> Dimension.width |> Px.toElmCss)
+            , height (caterpillarScaledDimension |> Dimension.height |> Px.toElmCss)
             , Shadow.style showShadow
             ]
         ]

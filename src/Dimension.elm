@@ -2,8 +2,10 @@ module Dimension exposing
     ( Dimension
     , dimension
     , height
+    , multiply
     , multiplyHeight
     , multiplyWidth
+    , scale
     , setHeight
     , setWidth
     , toCoordinate
@@ -64,6 +66,18 @@ multiplyHeight multiplier (Dimension dim) =
 multiplyWidth : Float -> Dimension -> Dimension
 multiplyWidth multiplier (Dimension dim) =
     { dim | width = dim.width |> Px.multiply multiplier } |> Dimension
+
+
+multiply : Float -> Dimension -> Dimension
+multiply =
+    scale
+
+
+scale : Float -> Dimension -> Dimension
+scale scaleFactor dim =
+    dim
+        |> multiplyWidth scaleFactor
+        |> multiplyHeight scaleFactor
 
 
 toCoordinate : Dimension -> Coordinate

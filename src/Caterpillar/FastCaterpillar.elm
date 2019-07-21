@@ -98,6 +98,13 @@ view { imageUrl, windowDimension, showShadow, loopDuration, onFinishExpanding, o
 
                 Contracting ->
                     HE.on "finish" <| JD.succeed onFinishContracting
+
+        scaleFactor =
+            (windowDimension |> Dimension.width |> Px.toFloat) / 1920
+
+        caterpillarScaledDimension =
+            caterpillarDimension
+                |> Dimension.scale scaleFactor
     in
     Animation.styledNode
         keyframes
@@ -117,7 +124,7 @@ view { imageUrl, windowDimension, showShadow, loopDuration, onFinishExpanding, o
                         |> Px.divideBy 2
                         |> Px.add
                             (Px.px
-                                ((caterpillarDimension
+                                ((caterpillarScaledDimension
                                     |> Dimension.width
                                     |> Px.toInt
                                     |> toFloat
@@ -129,9 +136,9 @@ view { imageUrl, windowDimension, showShadow, loopDuration, onFinishExpanding, o
                             )
                         |> Px.toElmCss
                     )
-                , bottom (px 200)
-                , width (caterpillarDimension |> Dimension.width |> Px.toElmCss)
-                , height (caterpillarDimension |> Dimension.height |> Px.toElmCss)
+                , bottom (pct 25)
+                , width (caterpillarScaledDimension |> Dimension.width |> Px.toElmCss)
+                , height (caterpillarScaledDimension |> Dimension.height |> Px.toElmCss)
                 , Shadow.style showShadow
                 ]
             ]

@@ -12,6 +12,14 @@ import RotationSpeed exposing (RotationSpeed)
 import Time exposing (Posix)
 
 
+sunDimension : Dimension
+sunDimension =
+    Dimension.dimension
+        { width = Px.px 250
+        , height = Px.px 250
+        }
+
+
 type State
     = State StateData
 
@@ -65,13 +73,20 @@ view (State stateData) { sunUrl, sunRaysUrl, windowDimension, showShadow } =
                 |> Dimension.width
                 |> Px.toInt
                 |> toFloat
+
+        scaleFactor =
+            (windowDimension |> Dimension.width |> Px.toFloat) / 1920
+
+        sunScaledDimension =
+            sunDimension
+                |> Dimension.scale scaleFactor
     in
     H.div
         [ HA.css
             [ backgroundImage (url sunUrl)
             , backgroundRepeat2 noRepeat noRepeat
-            , height (px 250)
-            , width (px 250)
+            , height (sunScaledDimension |> Dimension.height |> Px.toElmCss)
+            , width (sunScaledDimension |> Dimension.width |> Px.toElmCss)
             , position absolute
             , left (vw 80)
             , top (vh 5)
@@ -84,8 +99,8 @@ view (State stateData) { sunUrl, sunRaysUrl, windowDimension, showShadow } =
                 [ backgroundImage (url sunRaysUrl)
                 , backgroundRepeat2 noRepeat noRepeat
                 , transform (rotate (deg <| Degree.toFloat stateData.rotation))
-                , height (px 250)
-                , width (px 250)
+                , height (sunScaledDimension |> Dimension.height |> Px.toElmCss)
+                , width (sunScaledDimension |> Dimension.width |> Px.toElmCss)
                 , backgroundSize contain
                 , Shadow.style showShadow
                 ]
