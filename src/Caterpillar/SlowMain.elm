@@ -42,7 +42,7 @@ imageWidth =
 
 caterpillarLoopDuration : Millisecond
 caterpillarLoopDuration =
-    millisecond 1000
+    millisecond 2000
 
 
 main : Platform.Program Flags Model Msg
@@ -463,6 +463,14 @@ view model =
                                 |> Coordinate.setX (px 0)
                                 |> Coordinate.multiplyY 0.42
                         }
+
+                caterpillar =
+                    Caterpillar.view
+                        { caterpillar = data.flags.caterpillar
+                        , windowDimension = windowDimension
+                        , showShadow = showShadow
+                        , state = data.caterpillarState
+                        }
             in
             div []
                 [ Sky.view
@@ -478,12 +486,7 @@ view model =
                 , grass
                 , fence
                 , bush
-                , Caterpillar.view
-                    { caterpillar = data.flags.caterpillar
-                    , windowDimension = windowDimension
-                    , showShadow = showShadow
-                    , state = data.caterpillarState
-                    }
+                , caterpillar
                 , grasses
                 , ControlPanel.view UserUpdateControlPanel data.controlPanelState
                 , Fps.view data

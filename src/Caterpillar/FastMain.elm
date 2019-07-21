@@ -41,7 +41,7 @@ imageWidth =
 
 caterpillarLoopDuration : Millisecond
 caterpillarLoopDuration =
-    millisecond 1000
+    millisecond 2000
 
 
 main : Platform.Program Flags Model Msg
@@ -463,7 +463,7 @@ view model =
                         { imageUrl = data.flags.caterpillar
                         , windowDimension = windowDimension
                         , showShadow = showShadow
-                        , loopDuration = millisecond 1000
+                        , loopDuration = caterpillarLoopDuration
                         , onFinishExpanding = CaterpillarFinishExpanding
                         , onFinishContracting = CaterpillarFinishContracting
                         }

@@ -108,7 +108,7 @@ view { imageUrl, windowDimension, showShadow, loopDuration, onFinishExpanding, o
     in
     Animation.styledNode
         keyframes
-        (Options.default { duration = loopDuration }
+        (Options.default { duration = loopDuration |> Millisecond.multiply 0.5 }
             |> Options.withEasing easing
             |> Options.withFill Fill.forwards
         )
