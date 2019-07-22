@@ -15,6 +15,9 @@ view { sky, windowDimension } =
             , backgroundPosition2 (px 200) zero
             , height (vh 50)
             , width (vw 100)
+            , position absolute
+            , left (px 0)
+            , top (px 0)
             ]
         ]
         []

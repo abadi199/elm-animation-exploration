@@ -18,6 +18,8 @@
     "elm-hot": "^1.0.1",
     "node-elm-compiler": "^5.0.3",
     "parcel-bundler": "^1.12.3",
-    "typescript": "^3.5.1"
+    "sass": "^1.22.7",
+    "typescript": "^3.5.1",
+    "webslides": "^1.5.0"
   }
 }

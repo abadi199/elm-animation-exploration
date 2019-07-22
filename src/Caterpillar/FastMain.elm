@@ -1,4 +1,4 @@
-module Caterpillar.FastMain exposing (main)
+port module Caterpillar.FastMain exposing (main)
 
 import Browser
 import Browser.Dom
@@ -73,7 +73,8 @@ type alias Data =
     , fps : Fps
     , grasses : List Grass
     , caterpillarState : Caterpillar.State
-    , isPaused : Bool
+    , isAnimationPaused : Bool
+    , isAppPaused : Bool
     }
 
 
@@ -132,10 +133,23 @@ generateGrasses grasses =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.batch
-        [ Browser.Events.onAnimationFrameDelta (round >> millisecond >> AnimationFrameDeltaTick)
-        , Browser.Events.onResize UserResizeWindow
-        ]
+    case model of
+        NotReady _ ->
+            Sub.none
+
+        Ready data ->
+            if data.isAppPaused then
+                pause PortPauseApp
+
+            else
+                Sub.batch
+                    [ Browser.Events.onAnimationFrameDelta (round >> millisecond >> AnimationFrameDeltaTick)
+                    , Browser.Events.onResize UserResizeWindow
+                    , pause PortPauseApp
+                    ]
+
+
+port pause : (Bool -> msg) -> Sub msg
 
 
 
@@ -150,6 +164,7 @@ type Msg
     | GetViewportComplete Browser.Dom.Viewport
     | CaterpillarFinishExpanding
     | CaterpillarFinishContracting
+    | PortPauseApp Bool
 
 
 
@@ -193,16 +208,29 @@ update msg model =
         CaterpillarFinishExpanding ->
             ( model
                 |> setCaterpillarState Caterpillar.contracting
-                |> setPaused False
+                |> setAnimationPaused False
             , Cmd.none
             )
 
         CaterpillarFinishContracting ->
             ( model
                 |> setCaterpillarState Caterpillar.expanding
-                |> setPaused True
+                |> setAnimationPaused True
             , Cmd.none
             )
+
+        PortPauseApp isAppPaused ->
+            ( model |> pauseApp isAppPaused, Cmd.none )
+
+
+pauseApp : Bool -> Model -> Model
+pauseApp isAppPaused model =
+    case model of
+        NotReady _ ->
+            model
+
+        Ready data ->
+            Ready { data | isAppPaused = isAppPaused }
 
 
 toReady : NotReadyData -> Model
@@ -218,7 +246,8 @@ toReady data =
                 , windowDimension = windowDimension
                 , fps = Fps.initial
                 , caterpillarState = Caterpillar.expanding
-                , isPaused = True
+                , isAnimationPaused = True
+                , isAppPaused = False
                 }
 
         _ ->
@@ -238,14 +267,14 @@ setAnimationState animationFrameDelta model =
                 }
 
 
-setPaused : Bool -> Model -> Model
-setPaused isPaused model =
+setAnimationPaused : Bool -> Model -> Model
+setAnimationPaused isAnimationPaused model =
     case model of
         NotReady _ ->
             model
 
         Ready data ->
-            Ready { data | isPaused = isPaused }
+            Ready { data | isAnimationPaused = isAnimationPaused }
 
 
 setCaterpillarState : Caterpillar.State -> Model -> Model
@@ -354,7 +383,7 @@ view model =
                 hillFar =
                     Object.view
                         { imageUrl = data.flags.hillFar
-                        , isPaused = data.isPaused
+                        , isPaused = data.isAnimationPaused
                         , showShadow = showShadow
                         , windowDimension = windowDimension
                         , speed = pxPerS -30
@@ -369,7 +398,7 @@ view model =
                 hillNear =
                     Object.view
                         { imageUrl = data.flags.hillNear
-                        , isPaused = data.isPaused
+                        , isPaused = data.isAnimationPaused
                         , showShadow = showShadow
                         , windowDimension = windowDimension
                         , speed = pxPerS -50
@@ -384,7 +413,7 @@ view model =
                 tree =
                     Object.view
                         { imageUrl = data.flags.tree
-                        , isPaused = data.isPaused
+                        , isPaused = data.isAnimationPaused
                         , showShadow = showShadow
                         , windowDimension = windowDimension
                         , speed = pxPerS -100
@@ -399,7 +428,7 @@ view model =
                 grass =
                     Object.view
                         { imageUrl = data.flags.grass
-                        , isPaused = data.isPaused
+                        , isPaused = data.isAnimationPaused
                         , showShadow = False
                         , windowDimension = windowDimension
                         , speed = pxPerS -400
@@ -419,13 +448,13 @@ view model =
                         , windowDimension = windowDimension
                         , imageWidth = imageWidth
                         , speed = pxPerS -450
-                        , isPaused = data.isPaused
+                        , isPaused = data.isAnimationPaused
                         }
 
                 bush =
                     Object.view
                         { imageUrl = data.flags.bush
-                        , isPaused = data.isPaused
+                        , isPaused = data.isAnimationPaused
                         , showShadow = showShadow
                         , windowDimension = windowDimension
                         , speed = pxPerS -300
@@ -440,7 +469,7 @@ view model =
                 fence =
                     Object.view
                         { imageUrl = data.flags.fence
-                        , isPaused = data.isPaused
+                        , isPaused = data.isAnimationPaused
                         , showShadow = showShadow
                         , windowDimension = windowDimension
                         , speed = pxPerS -200

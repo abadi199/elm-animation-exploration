@@ -1,27 +1,180 @@
-<html>
+<!DOCTYPE html>
+<html lang="en" prefix="og: http://ogp.me/ns#">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Elm Animation</title>
-    <style>
-      html {
-        box-sizing: border-box;
-      }
-      body {
-        margin: 0;
-        overflow: hidden;
-        font-family: "sans serif";
-      }
-      *,
-      *:before,
-      *:after {
-        box-sizing: inherit;
-      }
-    </style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- CLEAN MARKUP = GOOD KARMA.
+      Hi source code lover,
+
+      you're a curious person and a fast learner ;)
+      Let's make something beautiful together. Contribute on Github:
+      https://github.com/webslides/webslides
+
+      Thanks!
+      -->
+
+    <!-- SEO -->
+    <title>Building Highly Performant Animation in Elm</title>
+    <meta
+      name="description"
+      content="WebSlides is the easiest way to create HTML presentations and landings. 120+ free slides ready to use."
+    />
+
+    <!-- URL CANONICAL -->
+    <!-- <link rel="canonical" href="http://your-url.com/permalink"> -->
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,700,700i%7CMaitree:200,300,400,600,700&amp;subset=latin-ext"
+      rel="stylesheet"
+    />
+    <!-- CSS Base -->
+    <link rel="stylesheet" type="text/css" href="main.scss" />
+
+    <!-- SOCIAL CARDS (ADD YOUR INFO) -->
+
+    <!-- FACEBOOK -->
+    <meta property="og:url" content="http://your-url.com/permalink" />
+    <!-- EDIT -->
+    <meta property="og:type" content="article" />
+    <meta
+      property="og:title"
+      content="WebSlides Landings: Create your web presence easily"
+    />
+    <!-- EDIT -->
+    <meta
+      property="og:description"
+      content="Create simple, beautiful landing pages with WebSlides. 120+ free slides ready to use."
+    />
+    <!-- EDIT -->
+    <meta property="og:updated_time" content="2017-01-04T16:54:27" />
+    <!-- EDIT -->
+    <meta property="og:image" content="../static/images/share-webslides.jpg" />
+    <!-- EDIT -->
+
+    <!-- TWITTER -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@webslides" />
+    <!-- EDIT -->
+    <meta name="twitter:creator" content="@jlantunez" />
+    <!-- EDIT -->
+    <meta
+      name="twitter:title"
+      content="WebSlides Landings: Create your web presence easily"
+    />
+    <!-- EDIT -->
+    <meta
+      name="twitter:description"
+      content="Create simple, beautiful landing pages with WebSlides. 120+ free slides ready to use."
+    />
+    <!-- EDIT -->
+    <meta name="twitter:image" content="../static/images/share-webslides.jpg" />
+    <!-- EDIT -->
+
+    <!-- FAVICONS -->
+    <link
+      rel="shortcut icon"
+      sizes="16x16"
+      href="../static/images/favicons/favicon.png"
+    />
+    <link
+      rel="shortcut icon"
+      sizes="32x32"
+      href="../static/images/favicons/favicon-32.png"
+    />
+    <link
+      rel="apple-touch-icon icon"
+      sizes="76x76"
+      href="../static/images/favicons/favicon-76.png"
+    />
+    <link
+      rel="apple-touch-icon icon"
+      sizes="120x120"
+      href="../static/images/favicons/favicon-120.png"
+    />
+    <link
+      rel="apple-touch-icon icon"
+      sizes="152x152"
+      href="../static/images/favicons/favicon-152.png"
+    />
+    <link
+      rel="apple-touch-icon icon"
+      sizes="180x180"
+      href="../static/images/favicons/favicon-180.png"
+    />
+    <link
+      rel="apple-touch-icon icon"
+      sizes="192x192"
+      href="../static/images/favicons/favicon-192.png"
+    />
+
+    <!-- Android -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="theme-color" content="#333333" />
   </head>
   <body>
-    <main></main>
+    <main role="main">
+      <article id="webslides">
+        <!-- Quick Guide
+          - Each parent <section> in the <article id="webslides"> element is an individual slide.
+          - Vertical sliding = <article id="webslides" class="vertical">
+          - <div class="wrap"> = container 90% / <div class="wrap size-50"> = 45%;
+        -->
+
+        <section class="bg-blue aligncenter">
+          <span class="background dark"></span>
+          <div class="wrap">
+            <h1>
+              Building Highly Performant Animation in Elm
+            </h1>
+            <h3>by Abadi Kurniawan</h3>
+            <h4>Elm Conf 2019</h4>
+          </div>
+        </section>
+        <section class="aligncenter">
+          <div id="slowCaterpillar"></div>
+        </section>
+        <section class="aligncenter">
+          <div class="wrap"><h1>Background</h1></div>
+        </section>
+        <section class="aligncenter">
+          <div class="wrap"><h1>Animation in Pure Elm</h1></div>
+        </section>
+        <section class="aligncenter">
+          <div class="wrap"><h2>Challenges</h2></div>
+        </section>
+        <section class="aligncenter">
+          <div class="wrap"><h1>Animation as Side Effect</h1></div>
+        </section>
+        <section class="aligncenter">
+          <div class="wrap"><h1>CSS Animation</h1></div>
+        </section>
+        <section class="aligncenter">
+          <div class="wrap"><h1>CSS Animation</h1></div>
+          <div class="wrap"><h2>Pros & Cons</h2></div>
+        </section>
+        <section class="aligncenter">
+          <div class="wrap"><h1>Web Animation API</h1></div>
+        </section>
+        <section class="aligncenter">
+          <div class="wrap"><h1>Web Animation API</h1></div>
+          <div class="wrap"><h2>Pros & Cons</h2></div>
+        </section>
+        <section>
+          <div id="fastCaterpillar"></div>
+        </section>
+      </article>
+    </main>
+    <!--main-->
+
+    <!-- Required -->
+    <!-- <script src="../static/js/webslides.js"></script> -->
+
+    <!-- <script>
+         window.ws = new WebSlides();
+         </script>
+    -->
     <script src="../Js/elmAnimation.ts"></script>
     <script src="./index.ts"></script>
   </body>

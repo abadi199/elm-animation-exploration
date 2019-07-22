@@ -1,4 +1,4 @@
-module Caterpillar.SlowMain exposing (main)
+port module Caterpillar.SlowMain exposing (main)
 
 import AnimationType exposing (AnimationType)
 import Browser
@@ -85,6 +85,7 @@ type alias Data =
     , fenceState : Object.State
     , grasses : List Grass
     , grassesState : Grasses.State
+    , isPaused : Bool
     }
 
 
@@ -143,10 +144,23 @@ generateGrasses grasses =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.batch
-        [ Browser.Events.onAnimationFrameDelta (round >> millisecond >> AnimationFrameDeltaTick)
-        , Browser.Events.onResize UserResizeWindow
-        ]
+    case model of
+        NotReady _ ->
+            Sub.none
+
+        Ready data ->
+            if data.isPaused then
+                pause PortPauseApp
+
+            else
+                Sub.batch
+                    [ Browser.Events.onAnimationFrameDelta (round >> millisecond >> AnimationFrameDeltaTick)
+                    , Browser.Events.onResize UserResizeWindow
+                    , pause PortPauseApp
+                    ]
+
+
+port pause : (Bool -> msg) -> Sub msg
 
 
 
@@ -159,6 +173,7 @@ type Msg
     | UserUpdateControlPanel ControlPanel.State
     | UserResizeWindow Int Int
     | GetViewportComplete Browser.Dom.Viewport
+    | PortPauseApp Bool
 
 
 
@@ -199,6 +214,19 @@ update msg model =
             , Cmd.none
             )
 
+        PortPauseApp isPaused ->
+            ( model |> pauseApp isPaused, Cmd.none )
+
+
+pauseApp : Bool -> Model -> Model
+pauseApp isPaused model =
+    case model of
+        NotReady _ ->
+            model
+
+        Ready data ->
+            Ready { data | isPaused = isPaused }
+
 
 toReady : NotReadyData -> Model
 toReady data =
@@ -224,6 +252,7 @@ toReady data =
                 , bushState = Object.initialState
                 , fenceState = Object.initialState
                 , grassesState = Grasses.initialState grasses
+                , isPaused = False
                 }
 
         _ ->
