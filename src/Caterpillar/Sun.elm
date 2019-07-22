@@ -80,6 +80,9 @@ view (State stateData) { sunUrl, sunRaysUrl, windowDimension, showShadow } =
         sunScaledDimension =
             sunDimension
                 |> Dimension.scale scaleFactor
+
+        bottomPosition =
+            800 * scaleFactor |> px
     in
     H.div
         [ HA.css
@@ -89,7 +92,7 @@ view (State stateData) { sunUrl, sunRaysUrl, windowDimension, showShadow } =
             , width (sunScaledDimension |> Dimension.width |> Px.toElmCss)
             , position absolute
             , left (vw 80)
-            , top (vh 5)
+            , bottom bottomPosition
             , backgroundSize contain
             , Shadow.style showShadow
             ]

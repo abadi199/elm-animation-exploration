@@ -365,6 +365,9 @@ view model =
                 windowDimension =
                     data.windowDimension
 
+                viewport =
+                    dimension { width = px 1920, height = px 1080 }
+
                 sun =
                     Sun.view data.sunState
                         { sunUrl = data.flags.sun
@@ -377,68 +380,73 @@ view model =
                 cloud1 =
                     Object.view data.cloud1State
                         { imageUrl = data.flags.cloud1
+                        , name = "cloud1"
                         , showShadow = showShadow
                         , windowDimension = windowDimension
                         , loopDuration = millisecond 60000
                         , dimension = windowDimension |> Dimension.setHeight (px 200)
                         , coordinate =
-                            windowDimension
+                            viewport
                                 |> Dimension.toCoordinate
                                 |> Coordinate.setX (px 0)
-                                |> Coordinate.multiplyY 0.15
+                                |> Coordinate.multiplyY 0.8
                         }
 
                 cloud2 =
                     Object.view data.cloud2State
                         { imageUrl = data.flags.cloud2
+                        , name = "cloud2"
                         , showShadow = showShadow
                         , windowDimension = windowDimension
                         , loopDuration = millisecond 60000
                         , dimension = windowDimension |> Dimension.setHeight (px 200)
                         , coordinate =
-                            windowDimension
+                            viewport
                                 |> Dimension.toCoordinate
                                 |> Coordinate.setX (px 0)
-                                |> Coordinate.multiplyY 0.05
+                                |> Coordinate.multiplyY 0.65
                         }
 
                 hillFar =
                     Object.view data.hillFarState
                         { imageUrl = data.flags.hillFar
+                        , name = "hillFar"
                         , showShadow = showShadow
                         , windowDimension = windowDimension
                         , loopDuration = millisecond 40000
-                        , dimension = windowDimension |> Dimension.multiplyHeight 0.75
+                        , dimension = windowDimension |> Dimension.setHeight (px 350)
                         , coordinate =
-                            windowDimension
+                            viewport
                                 |> Dimension.toCoordinate
                                 |> Coordinate.setX (px 0)
-                                |> Coordinate.multiplyY 0.3
+                                |> Coordinate.multiplyY 0.4
                         }
 
                 hillNear =
                     Object.view data.hillNearState
                         { imageUrl = data.flags.hillNear
+                        , name = "hillNear"
                         , showShadow = showShadow
                         , windowDimension = windowDimension
                         , loopDuration = millisecond 30000
-                        , dimension = windowDimension |> Dimension.multiplyHeight 0.75
+                        , dimension = windowDimension |> Dimension.setHeight (px 350)
                         , coordinate =
-                            windowDimension
+                            viewport
                                 |> Dimension.toCoordinate
                                 |> Coordinate.setX (px 0)
-                                |> Coordinate.multiplyY 0.3
+                                |> Coordinate.multiplyY 0.4
                         }
 
                 tree =
                     Object.view data.treeState
                         { imageUrl = data.flags.tree
+                        , name = "tree"
                         , showShadow = showShadow
                         , windowDimension = windowDimension
                         , loopDuration = millisecond 15000
-                        , dimension = windowDimension |> Dimension.multiplyHeight 0.75
+                        , dimension = windowDimension |> Dimension.setHeight (px 300)
                         , coordinate =
-                            windowDimension
+                            viewport
                                 |> Dimension.toCoordinate
                                 |> Coordinate.setX (px 0)
                                 |> Coordinate.multiplyY -0.05
@@ -447,15 +455,16 @@ view model =
                 grass =
                     Object.view data.grassState
                         { imageUrl = data.flags.grass
+                        , name = "grass"
                         , showShadow = False
                         , windowDimension = windowDimension
                         , loopDuration = millisecond 5000
-                        , dimension = windowDimension |> Dimension.multiplyHeight 0.5
+                        , dimension = windowDimension |> Dimension.setHeight (px 540)
                         , coordinate =
-                            windowDimension
+                            viewport
                                 |> Dimension.toCoordinate
                                 |> Coordinate.setX (px 0)
-                                |> Coordinate.multiplyY 0.5
+                                |> Coordinate.setY (px 0)
                         }
 
                 grasses =
@@ -471,29 +480,31 @@ view model =
                 bush =
                     Object.view data.bushState
                         { imageUrl = data.flags.bush
+                        , name = "bush"
                         , showShadow = showShadow
                         , windowDimension = windowDimension
                         , loopDuration = millisecond 9000
                         , dimension = windowDimension |> Dimension.setHeight (px 200)
                         , coordinate =
-                            windowDimension
+                            viewport
                                 |> Dimension.toCoordinate
                                 |> Coordinate.setX (px 0)
-                                |> Coordinate.multiplyY 0.46
+                                |> Coordinate.multiplyY 0.35
                         }
 
                 fence =
                     Object.view data.fenceState
                         { imageUrl = data.flags.fence
+                        , name = "fence"
                         , showShadow = showShadow
                         , windowDimension = windowDimension
                         , loopDuration = millisecond 10000
                         , dimension = windowDimension |> Dimension.setHeight (px 150)
                         , coordinate =
-                            windowDimension
+                            viewport
                                 |> Dimension.toCoordinate
                                 |> Coordinate.setX (px 0)
-                                |> Coordinate.multiplyY 0.42
+                                |> Coordinate.multiplyY 0.48
                         }
 
                 caterpillar =
@@ -514,7 +525,8 @@ view model =
                 , cloud1
                 , hillFar
                 , hillNear
-                , tree
+
+                -- , tree
                 , grass
                 , fence
                 , bush

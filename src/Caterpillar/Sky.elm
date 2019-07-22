@@ -11,9 +11,8 @@ view { sky, windowDimension } =
     H.div
         [ HA.css
             [ backgroundImage (url sky)
-            , backgroundRepeat repeatX
-            , backgroundPosition2 (px 200) zero
-            , height (vh 50)
+            , backgroundRepeat repeat
+            , height (vh 100)
             , width (vw 100)
             , position absolute
             , left (px 0)

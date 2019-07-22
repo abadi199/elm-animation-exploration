@@ -100,6 +100,9 @@ view { caterpillar, windowDimension, showShadow, state } =
         caterpillarScaledDimension =
             caterpillarDimension
                 |> Dimension.scale scaleFactor
+
+        bottomPosition =
+            216 * scaleFactor |> px
     in
     H.div
         [ HA.css
@@ -125,7 +128,7 @@ view { caterpillar, windowDimension, showShadow, state } =
                         )
                     |> Px.toElmCss
                 )
-            , bottom (pct 20)
+            , bottom bottomPosition
             , width (caterpillarScaledDimension |> Dimension.width |> Px.toElmCss)
             , height (caterpillarScaledDimension |> Dimension.height |> Px.toElmCss)
             , Shadow.style showShadow

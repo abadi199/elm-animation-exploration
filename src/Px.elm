@@ -8,6 +8,8 @@ module Px exposing
     , negate
     , px
     , randomGenerator
+    , scale
+    , subtract
     , toElmCss
     , toFloat
     , toInt
@@ -47,6 +49,11 @@ add (Px a) (Px b) =
     Px (a + b)
 
 
+subtract : Px -> Px -> Px
+subtract (Px a) (Px b) =
+    Px (b - a)
+
+
 divideBy : Int -> Px -> Px
 divideBy denominator (Px numerator) =
     numerator // denominator |> Px
@@ -71,6 +78,11 @@ negate (Px n) =
 multiply : Float -> Px -> Px
 multiply multiplier (Px number) =
     Basics.toFloat number * multiplier |> round |> Px
+
+
+scale : Float -> Px -> Px
+scale =
+    multiply
 
 
 map : (Int -> Int) -> Px -> Px

@@ -175,6 +175,9 @@ view (State stateData) ({ grasses, grassAllUrl, windowDimension, imageWidth } as
         ratio =
             Px.toFloat imageWidth / Px.toFloat windowWidth
 
+        scaleFactor =
+            (windowDimension |> Dimension.width |> Px.toFloat) / 1920
+
         grassCount =
             List.length grasses
 
@@ -188,11 +191,14 @@ view (State stateData) ({ grasses, grassAllUrl, windowDimension, imageWidth } as
 
         grassesView =
             grasses |> List.map (.imageUrl >> viewGrass ratio stateData options)
+
+        grassesHeight =
+            300 * scaleFactor |> px
     in
     H.div
         [ HA.css
             [ width (pct 200)
-            , height (pct 30)
+            , height grassesHeight
             , position absolute
             , left (stateData.positionX |> Px.toElmCss)
             , backgroundRepeat2 repeat noRepeat

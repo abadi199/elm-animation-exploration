@@ -110,27 +110,40 @@ type alias Options =
     , dimension : Dimension
     , coordinate : Coordinate
     , showShadow : Bool
+    , name : String
     }
 
 
 view : State -> Options -> Html msg
-view (State stateData) { imageUrl, windowDimension, dimension, coordinate, showShadow } =
+view (State stateData) { name, imageUrl, windowDimension, dimension, coordinate, showShadow } =
     let
         windowWidth =
             windowDimension
                 |> Dimension.width
+
+        scaleFactor =
+            (windowDimension |> Dimension.width |> Px.toFloat) / 1920
+
+        objectHeight =
+            dimension |> Dimension.height |> Px.scale scaleFactor
+
+        bottomCoordinate =
+            coordinate
+                |> Coordinate.y
+                |> Px.scale scaleFactor
     in
     H.div
         [ HA.css
             [ backgroundImage (url imageUrl)
             , backgroundSize (windowWidth |> Px.toElmCss)
             , backgroundRepeat2 repeat noRepeat
-            , height (dimension |> Dimension.height |> Px.toElmCss)
+            , height (objectHeight |> Px.toElmCss)
             , width (dimension |> Dimension.width |> Px.multiply 3 |> Px.toElmCss)
             , position absolute
-            , top (coordinate |> Coordinate.y |> Px.toElmCss)
+            , bottom (bottomCoordinate |> Px.toElmCss)
             , left (stateData.positionX |> Px.add (Px.map negate windowWidth) |> Px.toElmCss)
             , Shadow.style showShadow
             ]
+        , HA.attribute "data-name" name
         ]
-        []
+        [ H.text <| Px.toString bottomCoordinate ]
