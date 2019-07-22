@@ -444,12 +444,12 @@ view model =
                         , showShadow = showShadow
                         , windowDimension = windowDimension
                         , loopDuration = millisecond 15000
-                        , dimension = windowDimension |> Dimension.setHeight (px 300)
+                        , dimension = windowDimension |> Dimension.setHeight (px 750)
                         , coordinate =
                             viewport
                                 |> Dimension.toCoordinate
                                 |> Coordinate.setX (px 0)
-                                |> Coordinate.multiplyY -0.05
+                                |> Coordinate.multiplyY 0.35
                         }
 
                 grass =
@@ -504,7 +504,7 @@ view model =
                             viewport
                                 |> Dimension.toCoordinate
                                 |> Coordinate.setX (px 0)
-                                |> Coordinate.multiplyY 0.48
+                                |> Coordinate.multiplyY 0.45
                         }
 
                 caterpillar =
@@ -525,8 +525,7 @@ view model =
                 , cloud1
                 , hillFar
                 , hillNear
-
-                -- , tree
+                , tree
                 , grass
                 , fence
                 , bush
