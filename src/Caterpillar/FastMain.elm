@@ -139,7 +139,10 @@ subscriptions model =
 
         Ready data ->
             if data.isAppPaused then
-                pause PortPauseApp
+                Sub.batch
+                    [ Browser.Events.onResize UserResizeWindow
+                    , pause PortPauseApp
+                    ]
 
             else
                 Sub.batch
