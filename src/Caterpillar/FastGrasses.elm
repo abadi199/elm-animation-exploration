@@ -77,6 +77,12 @@ view ({ speed, grasses, grassAllUrl, windowDimension, imageWidth, isPaused } as 
 
         duration =
             speed |> Speed.toDuration windowWidth
+
+        scaleFactor =
+            (windowDimension |> Dimension.width |> Px.toFloat) / 1920
+
+        grassesHeight =
+            300 * scaleFactor |> px
     in
     Animation.styledNode
         [ Animation.translate { x = Px.px 0, y = Px.px 0 }
@@ -92,7 +98,7 @@ view ({ speed, grasses, grassAllUrl, windowDimension, imageWidth, isPaused } as 
         (H.div
             [ HA.css
                 [ width (pct 200)
-                , height (pct 30)
+                , height grassesHeight
                 , position absolute
                 , backgroundRepeat2 repeat noRepeat
                 , backgroundSize (Px.toElmCss windowWidth)
@@ -107,6 +113,7 @@ view ({ speed, grasses, grassAllUrl, windowDimension, imageWidth, isPaused } as 
                         ++ " "
                         ++ gridColumns
                 ]
+            , HA.attribute "data-name" "grasses"
             ]
             (grassesView ++ grassesView)
         )

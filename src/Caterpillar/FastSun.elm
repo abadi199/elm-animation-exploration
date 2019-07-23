@@ -50,6 +50,9 @@ view { rotationSpeed, sunUrl, sunRaysUrl, windowDimension, showShadow } =
         sunScaledDimension =
             sunDimension
                 |> Dimension.scale scaleFactor
+
+        bottomPosition =
+            800 * scaleFactor |> px
     in
     H.div
         [ HA.css
@@ -59,10 +62,11 @@ view { rotationSpeed, sunUrl, sunRaysUrl, windowDimension, showShadow } =
             , width (sunScaledDimension |> Dimension.width |> Px.toElmCss)
             , position absolute
             , left (vw 80)
-            , top (vh 5)
+            , bottom bottomPosition
             , backgroundSize contain
             , Shadow.style showShadow
             ]
+        , HA.attribute "data-name" "sky"
         ]
         [ Animation.styledNode
             [ Animation.rotate (Degree.deg 0)

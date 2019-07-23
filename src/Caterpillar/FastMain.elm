@@ -343,6 +343,9 @@ view model =
                 windowDimension =
                     data.windowDimension
 
+                viewport =
+                    dimension { width = px 1920, height = px 1080 }
+
                 sun =
                     Sun.view
                         { sunUrl = data.flags.sun
@@ -356,91 +359,97 @@ view model =
                 cloud1 =
                     Object.view
                         { imageUrl = data.flags.cloud1
+                        , name = "cloud1"
                         , isPaused = False
                         , showShadow = showShadow
                         , windowDimension = windowDimension
                         , speed = pxPerS 20
                         , dimension = windowDimension |> Dimension.setHeight (px 200)
                         , coordinate =
-                            windowDimension
+                            viewport
                                 |> Dimension.toCoordinate
                                 |> Coordinate.setX (px 0)
-                                |> Coordinate.multiplyY 0.15
+                                |> Coordinate.multiplyY 0.8
                         }
 
                 cloud2 =
                     Object.view
                         { imageUrl = data.flags.cloud2
+                        , name = "cloud2"
                         , isPaused = False
                         , showShadow = showShadow
                         , windowDimension = windowDimension
                         , speed = pxPerS 30
                         , dimension = windowDimension |> Dimension.setHeight (px 200)
                         , coordinate =
-                            windowDimension
+                            viewport
                                 |> Dimension.toCoordinate
                                 |> Coordinate.setX (px 0)
-                                |> Coordinate.multiplyY 0.05
+                                |> Coordinate.multiplyY 0.65
                         }
 
                 hillFar =
                     Object.view
                         { imageUrl = data.flags.hillFar
+                        , name = "hillFar"
                         , isPaused = data.isAnimationPaused
                         , showShadow = showShadow
                         , windowDimension = windowDimension
                         , speed = pxPerS -30
-                        , dimension = windowDimension |> Dimension.multiplyHeight 0.75
+                        , dimension = windowDimension |> Dimension.setHeight (px 350)
                         , coordinate =
-                            windowDimension
+                            viewport
                                 |> Dimension.toCoordinate
                                 |> Coordinate.setX (px 0)
-                                |> Coordinate.multiplyY 0.3
+                                |> Coordinate.multiplyY 0.4
                         }
 
                 hillNear =
                     Object.view
                         { imageUrl = data.flags.hillNear
+                        , name = "hillNear"
                         , isPaused = data.isAnimationPaused
                         , showShadow = showShadow
                         , windowDimension = windowDimension
                         , speed = pxPerS -50
-                        , dimension = windowDimension |> Dimension.multiplyHeight 0.75
+                        , dimension = windowDimension |> Dimension.setHeight (px 350)
                         , coordinate =
-                            windowDimension
+                            viewport
                                 |> Dimension.toCoordinate
                                 |> Coordinate.setX (px 0)
-                                |> Coordinate.multiplyY 0.3
+                                |> Coordinate.multiplyY 0.4
                         }
 
                 tree =
                     Object.view
                         { imageUrl = data.flags.tree
+                        , name = "tree"
                         , isPaused = data.isAnimationPaused
                         , showShadow = showShadow
                         , windowDimension = windowDimension
                         , speed = pxPerS -100
                         , dimension = windowDimension |> Dimension.multiplyHeight 0.75
                         , coordinate =
-                            windowDimension
+                            viewport
                                 |> Dimension.toCoordinate
                                 |> Coordinate.setX (px 0)
-                                |> Coordinate.multiplyY -0.05
+                                |> Coordinate.multiplyY 0.35
                         }
 
                 grass =
                     Object.view
                         { imageUrl = data.flags.grass
+                        , name = "grass"
                         , isPaused = data.isAnimationPaused
                         , showShadow = False
                         , windowDimension = windowDimension
                         , speed = pxPerS -400
                         , dimension = windowDimension |> Dimension.multiplyHeight 0.5
                         , coordinate =
-                            windowDimension
+                            viewport
                                 |> Dimension.toCoordinate
                                 |> Coordinate.setX (px 0)
-                                |> Coordinate.multiplyY 0.5
+                                |> Coordinate.setY (px 0)
                         }
 
                 grasses =
@@ -457,31 +466,33 @@ view model =
                 bush =
                     Object.view
                         { imageUrl = data.flags.bush
+                        , name = "bush"
                         , isPaused = data.isAnimationPaused
                         , showShadow = showShadow
                         , windowDimension = windowDimension
                         , speed = pxPerS -300
                         , dimension = windowDimension |> Dimension.setHeight (px 200)
                         , coordinate =
-                            windowDimension
+                            viewport
                                 |> Dimension.toCoordinate
                                 |> Coordinate.setX (px 0)
-                                |> Coordinate.multiplyY 0.46
+                                |> Coordinate.multiplyY 0.35
                         }
 
                 fence =
                     Object.view
                         { imageUrl = data.flags.fence
+                        , name = "fence"
                         , isPaused = data.isAnimationPaused
                         , showShadow = showShadow
                         , windowDimension = windowDimension
                         , speed = pxPerS -200
                         , dimension = windowDimension |> Dimension.setHeight (px 150)
                         , coordinate =
-                            windowDimension
+                            viewport
                                 |> Dimension.toCoordinate
                                 |> Coordinate.setX (px 0)
-                                |> Coordinate.multiplyY 0.42
+                                |> Coordinate.multiplyY 0.45
                         }
 
                 sky =

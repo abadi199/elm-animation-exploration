@@ -18,5 +18,6 @@ view { sky, windowDimension } =
             , left (px 0)
             , top (px 0)
             ]
+        , HA.attribute "data-name" "sky"
         ]
         []

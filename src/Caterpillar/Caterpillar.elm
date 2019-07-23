@@ -133,5 +133,6 @@ view { caterpillar, windowDimension, showShadow, state } =
             , height (caterpillarScaledDimension |> Dimension.height |> Px.toElmCss)
             , Shadow.style showShadow
             ]
+        , HA.attribute "data-name" "caterpillar"
         ]
         []

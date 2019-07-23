@@ -105,6 +105,9 @@ view { imageUrl, windowDimension, showShadow, loopDuration, onFinishExpanding, o
         caterpillarScaledDimension =
             caterpillarDimension
                 |> Dimension.scale scaleFactor
+
+        bottomPosition =
+            216 * scaleFactor |> px
     in
     Animation.styledNode
         keyframes
@@ -136,11 +139,12 @@ view { imageUrl, windowDimension, showShadow, loopDuration, onFinishExpanding, o
                             )
                         |> Px.toElmCss
                     )
-                , bottom (pct 25)
+                , bottom bottomPosition
                 , width (caterpillarScaledDimension |> Dimension.width |> Px.toElmCss)
                 , height (caterpillarScaledDimension |> Dimension.height |> Px.toElmCss)
                 , Shadow.style showShadow
                 ]
+            , HA.attribute "data-name" "caterpillar"
             ]
             []
         )

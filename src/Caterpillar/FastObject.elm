@@ -17,6 +17,7 @@ import Time exposing (Posix)
 
 type alias Options =
     { imageUrl : String
+    , name : String
     , windowDimension : Dimension
     , speed : Speed
     , dimension : Dimension
@@ -27,7 +28,7 @@ type alias Options =
 
 
 viewWithChildren : Options -> List (Html msg) -> Html msg
-viewWithChildren { isPaused, imageUrl, windowDimension, speed, dimension, coordinate, showShadow } children =
+viewWithChildren { name, isPaused, imageUrl, windowDimension, speed, dimension, coordinate, showShadow } children =
     let
         loopDuration =
             speed |> Speed.toDuration windowWidth
@@ -46,6 +47,17 @@ viewWithChildren { isPaused, imageUrl, windowDimension, speed, dimension, coordi
                 [ Animation.translate { x = windowWidth |> Px.map negate, y = Px.px 0 }
                 , Animation.translate { x = Px.px 0, y = Px.px 0 }
                 ]
+
+        scaleFactor =
+            (windowDimension |> Dimension.width |> Px.toFloat) / 1920
+
+        objectHeight =
+            dimension |> Dimension.height |> Px.scale scaleFactor
+
+        bottomCoordinate =
+            coordinate
+                |> Coordinate.y
+                |> Px.scale scaleFactor
     in
     Animation.styledNode
         keyframes
@@ -61,13 +73,14 @@ viewWithChildren { isPaused, imageUrl, windowDimension, speed, dimension, coordi
                 [ backgroundImage (url imageUrl)
                 , backgroundSize (Px.toElmCss windowWidth)
                 , backgroundRepeat2 repeat noRepeat
-                , height (dimension |> Dimension.height |> Px.toElmCss)
+                , height (objectHeight |> Px.toElmCss)
                 , width (windowWidth |> Px.multiply 2 |> Px.toElmCss)
                 , position absolute
-                , top (coordinate |> Coordinate.y |> Px.toElmCss)
+                , bottom (bottomCoordinate |> Px.toElmCss)
                 , left (coordinate |> Coordinate.x |> Px.toElmCss)
                 , Shadow.style showShadow
                 ]
+            , HA.attribute "data-name" name
             ]
             children
         )

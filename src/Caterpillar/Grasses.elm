@@ -214,6 +214,7 @@ view (State stateData) ({ grasses, grassAllUrl, windowDimension, imageWidth } as
                     ++ " "
                     ++ gridColumns
             ]
+        , HA.attribute "data-name" "grasses"
         ]
         (grassesView ++ grassesView)
 
