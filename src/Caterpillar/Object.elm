@@ -146,4 +146,4 @@ view (State stateData) { name, imageUrl, windowDimension, dimension, coordinate,
             ]
         , HA.attribute "data-name" name
         ]
-        [ H.text <| Px.toString bottomCoordinate ]
+        []
