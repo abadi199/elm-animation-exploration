@@ -29,7 +29,7 @@ caterpillarDimension : Dimension
 caterpillarDimension =
     let
         width =
-            1000
+            500
 
         ratio =
             452

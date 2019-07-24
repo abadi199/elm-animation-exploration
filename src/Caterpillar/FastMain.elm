@@ -395,7 +395,7 @@ view model =
                         , isPaused = data.isAnimationPaused
                         , showShadow = showShadow
                         , windowDimension = windowDimension
-                        , speed = pxPerS -30
+                        , speed = pxPerS -40
                         , dimension = windowDimension |> Dimension.setHeight (px 350)
                         , coordinate =
                             viewport
@@ -411,7 +411,7 @@ view model =
                         , isPaused = data.isAnimationPaused
                         , showShadow = showShadow
                         , windowDimension = windowDimension
-                        , speed = pxPerS -50
+                        , speed = pxPerS -40
                         , dimension = windowDimension |> Dimension.setHeight (px 350)
                         , coordinate =
                             viewport

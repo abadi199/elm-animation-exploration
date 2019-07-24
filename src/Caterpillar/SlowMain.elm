@@ -428,7 +428,7 @@ view model =
                         , name = "hillNear"
                         , showShadow = showShadow
                         , windowDimension = windowDimension
-                        , loopDuration = millisecond 30000
+                        , loopDuration = millisecond 40000
                         , dimension = windowDimension |> Dimension.setHeight (px 350)
                         , coordinate =
                             viewport
