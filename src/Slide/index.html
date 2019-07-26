@@ -3,23 +3,9 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <!-- CLEAN MARKUP = GOOD KARMA.
-      Hi source code lover,
-
-      you're a curious person and a fast learner ;)
-      Let's make something beautiful together. Contribute on Github:
-      https://github.com/webslides/webslides
-
-      Thanks!
-      -->
-
     <!-- SEO -->
     <title>Building Highly Performant Animation in Elm</title>
-    <meta
-      name="description"
-      content="WebSlides is the easiest way to create HTML presentations and landings. 120+ free slides ready to use."
-    />
+    <meta name="description" content="Elm Conf 2019 Talk by Abadi Kurniawan" />
 
     <!-- URL CANONICAL -->
     <!-- <link rel="canonical" href="http://your-url.com/permalink"> -->
@@ -38,14 +24,11 @@
     <meta property="og:url" content="http://your-url.com/permalink" />
     <!-- EDIT -->
     <meta property="og:type" content="article" />
-    <meta
-      property="og:title"
-      content="WebSlides Landings: Create your web presence easily"
-    />
+    <meta property="og:title" content="Elm Conf 2019 Talk by Abadi Kurniawan" />
     <!-- EDIT -->
     <meta
       property="og:description"
-      content="Create simple, beautiful landing pages with WebSlides. 120+ free slides ready to use."
+      content="Elm Conf 2019 Talk by Abadi Kurniawan"
     />
     <!-- EDIT -->
     <meta property="og:updated_time" content="2017-01-04T16:54:27" />
@@ -61,12 +44,12 @@
     <!-- EDIT -->
     <meta
       name="twitter:title"
-      content="WebSlides Landings: Create your web presence easily"
+      content="Elm Conf 2019 Talk by Abadi Kurniawan"
     />
     <!-- EDIT -->
     <meta
       name="twitter:description"
-      content="Create simple, beautiful landing pages with WebSlides. 120+ free slides ready to use."
+      content="Elm Conf 2019 Talk by Abadi Kurniawan"
     />
     <!-- EDIT -->
     <meta name="twitter:image" content="../static/images/share-webslides.jpg" />
@@ -136,45 +119,143 @@
           <div id="slowCaterpillar"></div>
         </section>
         <section class="aligncenter">
-          <div class="wrap"><h1>Background</h1></div>
+          <div class="wrap"><h1>Journey Through the Animation Lands</h1></div>
         </section>
         <section class="aligncenter">
-          <div class="wrap"><h1>Animation in Pure Elm</h1></div>
+          <div class="wrap">
+            <h1>Goal of Our Journey</h1>
+            <ul class="flexblock features">
+              <li>Explore ways of doing animation</li>
+              <li>High performant animation</li>
+              <li>Make our caterpillar happy</li>
+            </ul>
+          </div>
         </section>
         <section class="aligncenter">
-          <div class="wrap"><h2>Challenges</h2></div>
+          <div class="wrap">
+            <h1>NOT the Goal of Our Journey</h1>
+            <ul class="flexblock features">
+              <li>Build a complete solution</li>
+              <li>Teach you best practice</li>
+            </ul>
+          </div>
+        </section>
+        <section class="aligncenter">
+          <div class="wrap"><h1>The Land of Pure Elm</h1></div>
+        </section>
+        <section class="aligncenter">
+          <div class="wrap">
+            <h1>Request Animation Frame</h1>
+            <code>Code Here</code>
+          </div>
+        </section>
+        <section class="aligncenter">
+          <div class="wrap">
+            <h1>Update your state</h1>
+            <code>Code Here</code>
+          </div>
+        </section>
+        <section class="aligncenter">
+          <div class="wrap">
+            <h1>Render your view</h1>
+            <code>Code Here</code>
+          </div>
+        </section>
+        <section class="aligncenter">
+          <div class="wrap"><h1>Pros</h1></div>
+        </section>
+        <section class="aligncenter">
+          <div class="wrap"><h1>Cons</h1></div>
         </section>
         <section class="aligncenter">
           <div class="wrap"><h1>Animation as Side Effect</h1></div>
         </section>
         <section class="aligncenter">
-          <div class="wrap"><h1>CSS Animation</h1></div>
+          <div class="wrap">
+            <h1>CSS Animation Land</h1>
+            <p>
+              Keyframe Animations
+            </p>
+          </div>
         </section>
         <section class="aligncenter">
-          <div class="wrap"><h1>CSS Animation</h1></div>
-          <div class="wrap"><h2>Pros & Cons</h2></div>
+          <div class="wrap">
+            <p>
+              Code
+            </p>
+          </div>
         </section>
         <section class="aligncenter">
-          <div class="wrap"><h1>Web Animation API</h1></div>
+          <div class="wrap">
+            <p>
+              Code with multiple animations
+            </p>
+          </div>
         </section>
-        <section class="aligncenter">
-          <div class="wrap"><h1>Web Animation API</h1></div>
-          <div class="wrap"><h2>Pros & Cons</h2></div>
+        <section class="aligncenter bg-green">
+          <div class="wrap">
+            <h1>Pros</h1>
+            <ul class="flexblock features">
+              <li>Highly performant</li>
+              <li>Declarative</li>
+            </ul>
+          </div>
+        </section>
+        <section class="aligncenter bg-green">
+          <div class="wrap">
+            <h1>Cons</h1>
+            <ul class="flexblock features">
+              <li>Fire and forget type of animation</li>
+              <li>Difficult to coordinate multiple animations</li>
+            </ul>
+          </div>
+        </section>
+        <section class="aligncenter bg-purple">
+          <div class="wrap"><h1>Web Animations Land</h1></div>
+        </section>
+        <section class="aligncenter bg-purple">
+          <div class="wrap">
+            <h1>Web Animations API</h1>
+            <p>JavaScript API for accessing browser's animation engine</p>
+          </div>
+        </section>
+        <section class="aligncenter bg-purple">
+          <div class="wrap">
+            <h1>JS Interop</h1>
+            <ul class="flexblock features">
+              <li>Port</li>
+              <li>Web Component</li>
+            </ul>
+          </div>
+        </section>
+        <section class="aligncenter bg-purple">
+          <div class="wrap">
+            <h1>Port</h1>
+            Diagram
+          </div>
+        </section>
+        <section class="aligncenter bg-purple">
+          <div class="wrap">
+            <h1>Web Component</h1>
+            <p>( Custom Element )</p>
+            Diagram
+          </div>
+        </section>
+        <section class="aligncenter bg-purple">
+          <div class="wrap">
+            <p>Code</p>
+          </div>
+        </section>
+        <section class="aligncenter bg-purple">
+          <div class="wrap">
+            <p>Code with multiple animations</p>
+          </div>
         </section>
         <section>
           <div id="fastCaterpillar"></div>
         </section>
       </article>
     </main>
-    <!--main-->
-
-    <!-- Required -->
-    <!-- <script src="../static/js/webslides.js"></script> -->
-
-    <!-- <script>
-         window.ws = new WebSlides();
-         </script>
-    -->
     <script src="../Js/elmAnimation.ts"></script>
     <script src="./index.ts"></script>
   </body>

@@ -32,7 +32,7 @@ import grass13 from "../Caterpillar/images/grass-13.png";
 import grass14 from "../Caterpillar/images/grass-14.png";
 
 const SLOW_CATERPILLAR_INDEX = 2;
-const FAST_CATERPILLAR_INDEX = 11;
+const FAST_CATERPILLAR_INDEX = 25;
 const flags = {
   apple,
   apples,
