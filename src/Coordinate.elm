@@ -1,6 +1,8 @@
 module Coordinate exposing
     ( Coordinate
     , add
+    , addX
+    , addY
     , coordinate
     , multiplyX
     , multiplyY
@@ -36,6 +38,16 @@ x (Coordinate coord) =
 toString : Coordinate -> String
 toString (Coordinate coord) =
     "(" ++ Px.toString coord.x ++ "," ++ Px.toString coord.y ++ ")"
+
+
+addX : Px -> Coordinate -> Coordinate
+addX n (Coordinate a) =
+    Coordinate { a | x = Px.add n a.x }
+
+
+addY : Px -> Coordinate -> Coordinate
+addY n (Coordinate a) =
+    Coordinate { a | y = Px.add n a.y }
 
 
 add : Coordinate -> Coordinate -> Coordinate

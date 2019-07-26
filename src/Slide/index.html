@@ -146,7 +146,9 @@
         <section class="aligncenter">
           <div class="wrap">
             <h1>Request Animation Frame</h1>
-            <code>Code Here</code>
+            <code class="alignleft">
+              main = text "Hello World"
+            </code>
           </div>
         </section>
         <section class="aligncenter">
@@ -157,8 +159,23 @@
         </section>
         <section class="aligncenter">
           <div class="wrap">
-            <h1>Render your view</h1>
-            <code>Code Here</code>
+            <div class="content-left">
+              <h1>Single Animation</h1>
+              <code
+                ><pre>
+subscriptions model =
+    Browser.Events.onAnimationFrameDelta AnimationFrameTick
+
+update (AnimationFrameTick delta) model =
+    ( { model | x = x + (delta * speed) }, Cmd.none )
+
+view model =
+    div [ HA.css [ Css.left (Css.px model.x) ] ] []
+              </pre
+                ></code
+              >
+            </div>
+            <div class="content-left"><div id="elmOneApple"></div></div>
           </div>
         </section>
         <section class="aligncenter">
@@ -195,6 +212,8 @@
         <section class="aligncenter bg-green">
           <div class="wrap">
             <h1>Pros</h1>
+          </div>
+          <div class="wrap-50">
             <ul class="flexblock features">
               <li>Highly performant</li>
               <li>Declarative</li>
