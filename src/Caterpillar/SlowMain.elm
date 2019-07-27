@@ -302,8 +302,8 @@ setAnimationState animationFrameDelta model =
                             , sunState = Sun.tick { options | rotationSpeed = degPerS 10 } data.sunState
                             , cloud1State = Object.continuousTick { options | speed = pxPerS 20 } data.cloud1State
                             , cloud2State = Object.continuousTick { options | speed = pxPerS 30 } data.cloud2State
-                            , hillFarState = Object.tick { options | speed = pxPerS -30 } data.hillFarState
-                            , hillNearState = Object.tick { options | speed = pxPerS -50 } data.hillNearState
+                            , hillFarState = Object.tick { options | speed = pxPerS -40 } data.hillFarState
+                            , hillNearState = Object.tick { options | speed = pxPerS -40 } data.hillNearState
                             , treeState = Object.tick { options | speed = pxPerS -100 } data.treeState
                             , fenceState = Object.tick { options | speed = pxPerS -200 } data.fenceState
                             , bushState = Object.tick { options | speed = pxPerS -300 } data.bushState

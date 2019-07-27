@@ -1,2 +1,26 @@
 @import "webslides/static/css/webslides.css";
 @import "webslides/static/css/svg-icons.css";
+
+figure {
+  padding: 2em;
+}
+pre {
+  font-size: 1.4em;
+  box-shadow: none;
+  background: none;
+  border: none;
+  font-weight: bold;
+  &:hover {
+    box-shadow: none;
+  }
+}
+
+.preview {
+  background-color: #fff;
+  display: flex;
+  justify-content: center;
+  & > div {
+    position: relative;
+    height: 200px;
+  }
+}

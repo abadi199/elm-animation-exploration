@@ -84,7 +84,7 @@ const ws: any = new WebSlides();
 ws.el.addEventListener("ws:init", console.log);
 
 let slowCaterpillar: any = null;
-function startSlowCaterpillar(node) {
+function startSlowCaterpillar(node: HTMLElement) {
   if (slowCaterpillar) {
     slowCaterpillar.ports.pause.send(false);
   } else {

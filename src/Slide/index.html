@@ -143,39 +143,38 @@
         <section class="aligncenter">
           <div class="wrap"><h1>The Land of Pure Elm</h1></div>
         </section>
-        <section class="aligncenter">
-          <div class="wrap">
-            <h1>Request Animation Frame</h1>
-            <code class="alignleft">
-              main = text "Hello World"
-            </code>
-          </div>
-        </section>
-        <section class="aligncenter">
-          <div class="wrap">
-            <h1>Update your state</h1>
-            <code>Code Here</code>
-          </div>
-        </section>
-        <section class="aligncenter">
-          <div class="wrap">
-            <div class="content-left">
-              <h1>Single Animation</h1>
-              <code
+        <section class="fullscreen">
+          <div class="card-50">
+            <figure class="">
+              <h3>Single Animation (Simplify)</h3>
+              <code class="elm"
                 ><pre>
-subscriptions model =
-    Browser.Events.onAnimationFrameDelta AnimationFrameTick
+type alias Model = { x : Float }
 
-update (AnimationFrameTick delta) model =
-    ( { model | x = x + (delta * speed) }, Cmd.none )
+type Msg = Tick Float
+
+
+subscriptions model =
+    onAnimationFrameDelta Tick
+
+
+update (Tick delta) model =
+    let
+        speed = 0.2 -- pixel per ms
+    in
+    ( { model | x = x + (delta * speed) }
+    , Cmd.none
+    )
+
 
 view model =
-    div [ HA.css [ Css.left (Css.px model.x) ] ] []
+    div [ HA.css [ Css.left (Css.px model.x) ] ]
+        []
               </pre
                 ></code
               >
-            </div>
-            <div class="content-left"><div id="elmOneApple"></div></div>
+            </figure>
+            <div class="flex-content preview"><div id="elmOneApple"></div></div>
           </div>
         </section>
         <section class="aligncenter">
