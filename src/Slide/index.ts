@@ -3,6 +3,7 @@ import WebSlides from "webslides/src/js/modules/webslides";
 import Slow from "../Caterpillar/SlowMain.elm";
 import Fast from "../Caterpillar/FastMain.elm";
 import { Elm as ElmOneApple } from "../Elm/OneApple.elm";
+import { Elm as ElmTwoApples } from "../Elm/TwoApples.elm";
 
 // JavaScript
 import hljs from "highlight.js";
@@ -115,6 +116,12 @@ function startElmOneApple(node: HTMLElement) {
   }
 }
 
+function startElmApp(node: HTMLElement, elmApp: any = null, elmModule: any) {
+  if (!elmApp && elmModule) {
+    return elmModule.init({ node, flags: { apple } });
+  }
+}
+
 function pauseAll() {
   if (slowCaterpillar) {
     slowCaterpillar.ports.pause.send(true);
@@ -130,6 +137,7 @@ function enableSyntaxHighlight() {
   });
 }
 
+let elmTwoApples: any = null;
 function runElmApps() {
   enableSyntaxHighlight();
 
@@ -146,6 +154,11 @@ function runElmApps() {
   node = document.getElementById("elmOneApple");
   if (node) {
     startElmOneApple(node);
+  }
+
+  node = document.getElementById("elmTwoApples");
+  if (node) {
+    elmTwoApples = startElmApp(node, elmTwoApples, ElmTwoApples.Elm.TwoApples);
   }
 
   if (!node) {

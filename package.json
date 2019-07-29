@@ -10,7 +10,8 @@
     "slide": "parcel src/Slide/index.html --no-cache",
     "slow": "parcel src/Caterpillar/slow.html --no-cache --no-hmr",
     "fast": "parcel src/Caterpillar/fast.html --no-cache --no-hmr",
-    "elmOne": "parcel src/Elm/oneApple.html --no-cache"
+    "elmOne": "parcel src/Elm/oneApple.html --no-cache",
+    "elmTwo": "parcel src/Elm/twoApples.html --no-cache"
   },
   "author": "",
   "license": "ISC",

@@ -11,6 +11,7 @@
     <!-- <link rel="canonical" href="http://your-url.com/permalink"> -->
 
     <!-- Google Fonts -->
+    <link href="../fonts/FantasqueSansMono-Regular.woff2" />
     <link
       href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,700,700i%7CMaitree:200,300,400,600,700&amp;subset=latin-ext"
       rel="stylesheet"
@@ -146,7 +147,7 @@
         <section class="fullscreen">
           <div class="card-50">
             <figure class="">
-              <h3>Single Animation (Simplify)</h3>
+              <h3>One Apple</h3>
               <code class="elm"
                 ><pre>
 type alias Model = { x : Float }
@@ -168,13 +169,61 @@ update (Tick delta) model =
 
 
 view model =
-    div [ HA.css [ Css.left (Css.px model.x) ] ]
-        []
-              </pre
+    div []
+        [
+    apple [ css
+            [ left (Css.px model.x)
+            , backgroundImage (url "apple.png")
+            ]
+        ]
+                    </pre
                 ></code
               >
             </figure>
             <div class="flex-content preview"><div id="elmOneApple"></div></div>
+          </div>
+        </section>
+
+        <section class="fullscreen">
+          <div class="card-50">
+            <figure class="">
+              <h3>Two Apples</h3>
+              <code class="elm"
+                ><pre>
+type alias Model = { x1 : Float, x2: Float }
+
+type Msg = Tick Float
+
+
+subscriptions model =
+    onAnimationFrameDelta Tick
+
+
+update (Tick delta) model =
+    let
+        speed = 0.2 -- pixel per ms
+    in
+    ( { model | x = x + (delta * speed) }
+    , Cmd.none
+    )
+
+
+view model =
+    div []
+        [ div
+            [ css
+                [ left (Css.px model.x)
+                , backgroundImage (url "apple.png")
+                ]
+            ] []
+        ]
+              </pre
+                ></code
+              >
+            </figure>
+            <div class="flex-content preview">
+              <div id="elmTwoApples"></div>
+            </div>
           </div>
         </section>
         <section class="aligncenter">

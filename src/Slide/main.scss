@@ -4,14 +4,19 @@
 figure {
   padding: 2em;
 }
-pre {
-  font-size: 1.4em;
-  box-shadow: none;
-  background: none;
-  border: none;
-  font-weight: bold;
-  &:hover {
+code {
+  margin-top: 2em;
+
+  pre {
+    font-size: 1.5em;
+    font-family: "fantasque sans mono";
     box-shadow: none;
+    background: none;
+    border: none;
+    font-weight: bold;
+    &:hover {
+      box-shadow: none;
+    }
   }
 }
 
@@ -21,6 +26,5 @@ pre {
   justify-content: center;
   & > div {
     position: relative;
-    height: 200px;
   }
 }
