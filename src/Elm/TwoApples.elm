@@ -23,6 +23,11 @@ targetX =
     Px.px 500
 
 
+speed : Float
+speed =
+    0.2
+
+
 main =
     Browser.element
         { init = init
@@ -72,22 +77,40 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         AnimationFrameTick delta ->
+            let
+                timeElapsed =
+                    model.timeElapsed + delta
+
+                targetTime =
+                    Px.toFloat targetX / speed
+            in
             ( { model
-                | timeElapsed = model.timeElapsed + delta
-                , coordinate1 = move1 delta model.coordinate1
+                | timeElapsed = timeElapsed
+                , coordinate1 =
+                    if timeElapsed < targetTime then
+                        move delta model.coordinate1
+
+                    else
+                        model.coordinate1
+                , coordinate2 =
+                    if timeElapsed > targetTime then
+                        move delta model.coordinate2
+
+                    else
+                        model.coordinate2
               }
             , Cmd.none
             )
 
 
-move1 : Float -> Coordinate -> Coordinate
-move1 delta coordinate =
+move : Float -> Coordinate -> Coordinate
+move delta coordinate =
     let
         newCoordinate =
-            coordinate |> Coordinate.addX (Px.px <| round (delta * 0.2))
+            coordinate |> Coordinate.addX (Px.px <| round (delta * speed))
     in
     if newCoordinate |> Coordinate.x |> Px.is (>) targetX then
-        coordinate |> Coordinate.setX (Px.px 0)
+        coordinate
 
     else
         newCoordinate

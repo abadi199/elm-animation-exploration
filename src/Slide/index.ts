@@ -161,9 +161,9 @@ function runElmApps() {
     elmTwoApples = startElmApp(node, elmTwoApples, ElmTwoApples.Elm.TwoApples);
   }
 
-  if (!node) {
-    pauseAll();
-  }
+  //   if (!node) {
+  //     pauseAll();
+  //   }
 }
 
 ws.el.addEventListener("ws:slide-change", runElmApps);

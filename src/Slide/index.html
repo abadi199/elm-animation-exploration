@@ -161,7 +161,7 @@ subscriptions model =
 
 update (Tick delta) model =
     let
-        speed = 0.2 -- pixel per ms
+        speed = 0.2 
     in
     ( { model | x = x + (delta * speed) }
     , Cmd.none
@@ -169,13 +169,7 @@ update (Tick delta) model =
 
 
 view model =
-    div []
-        [
-    apple [ css
-            [ left (Css.px model.x)
-            , backgroundImage (url "apple.png")
-            ]
-        ]
+    div [] [ apple [ css [ left (Css.px model.x) ] ]
                     </pre
                 ></code
               >
@@ -190,32 +184,39 @@ view model =
               <h3>Two Apples</h3>
               <code class="elm"
                 ><pre>
-type alias Model = { x1 : Float, x2: Float }
-
-type Msg = Tick Float
-
-
-subscriptions model =
-    onAnimationFrameDelta Tick
+type alias Model =
+    { timeElapsed: Float, x1 : Float, x2: Float }
 
 
 update (Tick delta) model =
     let
-        speed = 0.2 -- pixel per ms
+        speed =
+            0.2 -- pixel per ms
+
+        timeElapsed =
+            model.timeElapsed + delta
     in
-    ( { model | x = x + (delta * speed) }
+    ( { model
+        | timeElapsed = timeElapsed
+        , x1 =
+            if timeElapsed < 1000 then
+                x1 + (delta * speed)
+            else
+                x1
+        , x2 =
+            if timeElapsed > 1000 then
+                x2 + (delta * speed)
+            else
+                x2
+      }
     , Cmd.none
     )
 
 
 view model =
     div []
-        [ div
-            [ css
-                [ left (Css.px model.x)
-                , backgroundImage (url "apple.png")
-                ]
-            ] []
+        [ apple [ css [ left (Css.px model.x1) ]
+        , apple [ css [ left (Css.px model.x2) ]
         ]
               </pre
                 ></code
@@ -227,10 +228,22 @@ view model =
           </div>
         </section>
         <section class="aligncenter">
-          <div class="wrap"><h1>Pros</h1></div>
+          <div class="wrap">
+            <h1>What's Great</h1>
+            <ul class="flexblock features">
+              <li>Pure functional</li>
+            </ul>
+          </div>
         </section>
         <section class="aligncenter">
-          <div class="wrap"><h1>Cons</h1></div>
+          <div class="wrap">
+            <h1>What's not so great</h1>
+            <ul class="flexblock features">
+              <li>Cumbersome to synchronize multiple animations</li>
+              <li>No browser/hardware optimization</li>
+              <li>Break elm debugger</li>
+            </ul>
+          </div>
         </section>
         <section class="aligncenter">
           <div class="wrap"><h1>Animation as Side Effect</h1></div>
@@ -238,9 +251,9 @@ view model =
         <section class="aligncenter">
           <div class="wrap">
             <h1>CSS Animation Land</h1>
-            <p>
+            <h3>
               Keyframe Animations
-            </p>
+            </h3>
           </div>
         </section>
         <section class="aligncenter">
