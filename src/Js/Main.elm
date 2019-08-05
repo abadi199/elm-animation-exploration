@@ -16,7 +16,7 @@ import Percentage
 import Px exposing (Px, px)
 import Random
 import Second exposing (second)
-import Shared.ControlPanel exposing (controlPanel)
+import Shared.ControlPanel as ControlPanel
 import Svg as S exposing (..)
 import Svg.Attributes as SA exposing (..)
 
@@ -62,8 +62,8 @@ randomColorGenerator =
 randomBoxGenerator : Random.Generator Box
 randomBoxGenerator =
     Random.map3 (\x y color -> { coordinate = coordinate { x = x, y = y }, color = color })
-        (Px.randomGenerator 10 2000)
-        (Px.randomGenerator 10 1000)
+        (Px.randomGenerator (Px.px 10) (Px.px 2000))
+        (Px.randomGenerator (Px.px 10) (Px.px 1000))
         randomColorGenerator
 
 
@@ -146,7 +146,6 @@ view model =
         Ready data ->
             div []
                 [ div [] (List.map (animatedBox data) data.boxes)
-                , controlPanel data { onShowShadowCheck = UserCheckShowShadowCheckBox }
                 ]
 
 
@@ -173,7 +172,7 @@ viewBox data box children =
             Coordinate.y box.coordinate
     in
     div
-        [ shadow data.showShadow
+        [ shadow True
         , HA.style "background" (Color.toCssString box.color)
         , HA.style "width" "50px"
         , HA.style "height" "50px"

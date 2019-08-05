@@ -1,15 +1,63 @@
 @import "webslides/static/css/webslides.css";
 @import "webslides/static/css/svg-icons.css";
 
-figure {
-  padding: 2em;
+.space-small {
+  height: 5rem;
+  display: block;
 }
+
+.card-50 {
+  &.flip {
+    flex-direction: row-reverse;
+  }
+  .code {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    padding: 2em;
+  }
+}
+#fpsCounter {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 5px;
+  top: 0;
+  right: 0;
+  font-size: 3em;
+  font-weight: bold;
+}
+.fullscreen figure {
+  padding: 2em;
+
+  &.diagram {
+    background-color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    img {
+      height: unset;
+      max-width: 80%;
+      position: unset;
+    }
+  }
+}
+.card-50 {
+  .aligncenter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+}
+
 code {
-  margin-top: 2em;
+  width: 100%;
 
   pre {
     font-size: 1.5em;
     font-family: "fantasque sans mono";
+    text-shadow: none;
     box-shadow: none;
     background: none;
     border: none;

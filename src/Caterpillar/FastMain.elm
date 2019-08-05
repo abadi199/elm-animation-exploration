@@ -146,8 +146,7 @@ subscriptions model =
 
             else
                 Sub.batch
-                    [ Browser.Events.onAnimationFrameDelta (round >> millisecond >> AnimationFrameDeltaTick)
-                    , Browser.Events.onResize UserResizeWindow
+                    [ Browser.Events.onResize UserResizeWindow
                     , pause PortPauseApp
                     ]
 

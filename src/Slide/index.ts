@@ -5,10 +5,15 @@ import Fast from "../Caterpillar/FastMain.elm";
 import { Elm as ElmOneApple } from "../Elm/OneApple.elm";
 import { Elm as ElmTwoApples } from "../Elm/TwoApples.elm";
 
+// Web Animation
+import { Elm as JsOneApple } from "../Js/OneApple.elm";
+import { Elm as JsTwoApples } from "../Js/TwoApples.elm";
+
 // JavaScript
 import hljs from "highlight.js";
 import hljsElm from "highlight.js/lib/languages/elm";
 import "highlight.js/styles/a11y-light.css";
+import FpsEmitter from "fps-emitter";
 
 // Images
 import apple from "../Caterpillar/images/apple.png";
@@ -40,10 +45,6 @@ import grass11 from "../Caterpillar/images/grass-11.png";
 import grass12 from "../Caterpillar/images/grass-12.png";
 import grass13 from "../Caterpillar/images/grass-13.png";
 import grass14 from "../Caterpillar/images/grass-14.png";
-
-const SLOW_CATERPILLAR_INDEX = 2;
-const FAST_CATERPILLAR_INDEX = 27;
-const ELM_APPLE_ONE = 9;
 
 hljs.registerLanguage("elm", hljsElm);
 
@@ -84,11 +85,20 @@ const flags = {
 const ws: any = new WebSlides();
 ws.el.addEventListener("ws:init", console.log);
 
+function isVisible(node: HTMLElement): boolean {
+  const section = node.closest("section");
+  if (section) {
+    return section.style.display !== "none";
+  }
+
+  return false;
+}
+
 let slowCaterpillar: any = null;
 function startSlowCaterpillar(node: HTMLElement) {
   if (slowCaterpillar) {
     slowCaterpillar.ports.pause.send(false);
-  } else {
+  } else if (isVisible(node)) {
     slowCaterpillar = Slow.Elm.Caterpillar.SlowMain.init({
       node,
       flags
@@ -100,7 +110,7 @@ let fastCaterpillar: any = null;
 function startFastCaterpillar(node: HTMLElement) {
   if (fastCaterpillar) {
     fastCaterpillar.ports.pause.send(false);
-  } else {
+  } else if (isVisible(node)) {
     fastCaterpillar = Fast.Elm.Caterpillar.FastMain.init({
       node,
       flags
@@ -111,13 +121,13 @@ function startFastCaterpillar(node: HTMLElement) {
 let elmOneApple: any = null;
 function startElmOneApple(node: HTMLElement) {
   if (elmOneApple) {
-  } else {
+  } else if (isVisible(node)) {
     elmOneApple = ElmOneApple.Elm.OneApple.init({ node, flags: { apple } });
   }
 }
 
 function startElmApp(node: HTMLElement, elmApp: any = null, elmModule: any) {
-  if (!elmApp && elmModule) {
+  if (!elmApp && elmModule && isVisible(node)) {
     return elmModule.init({ node, flags: { apple } });
   }
 }
@@ -138,27 +148,39 @@ function enableSyntaxHighlight() {
 }
 
 let elmTwoApples: any = null;
+let jsOneApple: any = null;
+let jsTwoApples: any = null;
 function runElmApps() {
   enableSyntaxHighlight();
 
   let node = document.getElementById("slowCaterpillar");
-  if (node) {
+  if (isVisible(node)) {
     startSlowCaterpillar(node);
   }
 
   node = document.getElementById("fastCaterpillar");
-  if (node) {
+  if (isVisible(node)) {
     startFastCaterpillar(node);
   }
 
   node = document.getElementById("elmOneApple");
-  if (node) {
+  if (isVisible(node)) {
     startElmOneApple(node);
   }
 
   node = document.getElementById("elmTwoApples");
-  if (node) {
+  if (isVisible(node)) {
     elmTwoApples = startElmApp(node, elmTwoApples, ElmTwoApples.Elm.TwoApples);
+  }
+
+  node = document.getElementById("jsOneApple");
+  if (isVisible(node)) {
+    jsOneApple = startElmApp(node, jsOneApple, JsOneApple.Js.OneApple);
+  }
+
+  node = document.getElementById("jsTwoApples");
+  if (isVisible(node)) {
+    jsTwoApples = startElmApp(node, jsTwoApples, JsTwoApples.Js.TwoApples);
   }
 
   //   if (!node) {
@@ -167,4 +189,14 @@ function runElmApps() {
 }
 
 ws.el.addEventListener("ws:slide-change", runElmApps);
-runElmApps();
+
+document.addEventListener("DOMContentLoaded", () => {
+  const fpsCounter = document.getElementById("fpsCounter");
+  if (fpsCounter) {
+    const fps = new FpsEmitter();
+    fps.on("update", (currentFps: number) => {
+      fpsCounter.textContent = "" + currentFps;
+    });
+  }
+  runElmApps();
+});

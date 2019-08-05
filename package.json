@@ -23,5 +23,8 @@
     "sass": "^1.22.7",
     "typescript": "^3.5.1",
     "webslides": "^1.5.0"
+  },
+  "dependencies": {
+    "fps-emitter": "^1.0.0"
   }
 }

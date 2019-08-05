@@ -272,7 +272,7 @@ view model =
         </section>
         <section class="aligncenter bg-green">
           <div class="wrap">
-            <h1>Pros</h1>
+            <h1>The Good</h1>
           </div>
           <div class="wrap-50">
             <ul class="flexblock features">
@@ -283,7 +283,7 @@ view model =
         </section>
         <section class="aligncenter bg-green">
           <div class="wrap">
-            <h1>Cons</h1>
+            <h1>The Bad</h1>
             <ul class="flexblock features">
               <li>Fire and forget type of animation</li>
               <li>Difficult to coordinate multiple animations</li>
@@ -291,12 +291,34 @@ view model =
           </div>
         </section>
         <section class="aligncenter bg-purple">
-          <div class="wrap"><h1>Web Animations Land</h1></div>
+          <div class="wrap">
+            <h1>Web Animations Land</h1>
+            <h3>a.k.a JavaScript Land</h3>
+          </div>
         </section>
         <section class="aligncenter bg-purple">
           <div class="wrap">
             <h1>Web Animations API</h1>
-            <p>JavaScript API for accessing browser's animation engine</p>
+            <h3>
+              JavaScript API for accessing browser's animation engine
+            </h3>
+            <span class="space-small"></span>
+            <code class="js">
+              <pre>
+document.getElementById("apple").animate(
+  [
+    { transform: 'translate(0, 0)' },
+    { transform: 'translate(500, 0)' }
+  ],
+  {
+    fill: 'forwards',
+    duration: 3000,
+    iterations: 1
+  }
+);
+                  </pre
+              >
+            </code>
           </div>
         </section>
         <section class="aligncenter bg-purple">
@@ -308,42 +330,120 @@ view model =
             </ul>
           </div>
         </section>
-        <section class="aligncenter bg-purple">
-          <div class="wrap">
-            <h1>Port</h1>
-            Diagram
+        <section class="fullscreen bg-purple">
+          <div class="card-50 flip">
+            <figure class="diagram port">
+              <img src="../images/port-architecture.png" />
+            </figure>
+            <div class="aligncenter">
+              <h1>Port</h1>
+            </div>
           </div>
         </section>
-        <section class="aligncenter bg-purple">
-          <div class="wrap">
-            <h1>Web Component</h1>
-            <p>( Custom Element )</p>
-            Diagram
+        <section class="fullscreen bg-purple">
+          <div class="card-50 flip">
+            <figure class="diagram web-component">
+              <img src="../images/web-component-architecture.png" />
+            </figure>
+            <div class="aligncenter">
+              <h1>Web Component</h1>
+              <h3>( Custom Element )</h3>
+            </div>
           </div>
         </section>
-        <section class="aligncenter bg-purple">
-          <div class="wrap">
-            <p>Code</p>
+        <section class="fullscreen bg-purple">
+          <div class="card-50 flip">
+            <figure class="flex-content preview">
+              <div id="jsOneApple"></div>
+            </figure>
+            <div class="code">
+              <h1 style="text-align: center">One Apple</h1>
+              <h4>Elm Code</h4>
+              <code class="elm">
+                <pre>
+
+view model =
+  div []
+    [ Animation.node
+      [ Animation.translate { x = px 0, y = px 0 }
+      , Animation.translate { x = px 500, y = px 0 }
+      ]
+      ({ duration = millisecond 2000 }
+        |> Options.default 
+        |> Options.withFill Fill.forwards
+      )
+      []
+      (apple model)
+    ]
+                    </pre
+                >
+              </code>
+              <h4>JS Code</h4>
+              <code class="js">
+                <pre>
+class ElmAnimation extends HTMLElement {
+  connectedCallback() {
+    const animateJson = this.getAttribute("animate");
+
+    if (animateJson) {
+      this.children[0].animate(
+        animationData.keyframes,
+        animationData.options
+      );
+    }
+  }
+}
+                    </pre
+                >
+              </code>
+            </div>
           </div>
         </section>
-        <section class="aligncenter bg-purple">
-          <div class="wrap">
-            <p>Code with multiple animations</p>
+        <section class="fullscreen bg-purple">
+          <div class="card-50 flip">
+            <figure class="flex-content preview">
+              <div id="jsTwoApples"></div>
+            </figure>
+            <div class="code">
+              <h1>Two Apples</h1>
+              <h4>Elm Code</h4>
+              <code class="elm">
+                <pre>
+main =
+    Html.text "Hello World"
+                    </pre
+                >
+              </code>
+            </div>
+          </div>
+        </section>
+        <section class="fullscreen bg-purple">
+          <div class="card-50">
+            <figure>
+              <h3>Complex Animation</h3>
+              <code class="elm">
+                <pre>
+main =
+    Html.text "Hello World"
+                </pre>
+              </code>
+            </figure>
+            <div></div>
           </div>
         </section>
         <section class="aligncenter bg-green">
           <div class="wrap">
-            <h1>Pros</h1>
+            <h1>The Good</h1>
             <ul class="flexblock features">
               <li>Highly performant</li>
               <li>Declarative</li>
-              <li>Easy to synchronize</li>
+              <li>Simple to synchronize</li>
             </ul>
           </div>
         </section>
         <section class="aligncenter bg-green">
           <div class="wrap">
-            <h1>Cons</h1>
+            <h1>The Bad</h1>
             <ul class="flexblock features">
               <li>Browser support (only FF and Chrome)</li>
             </ul>
@@ -354,10 +454,11 @@ view model =
         </section>
         <section class="bg-gray">
           <div class="wrap">
-            <h1>Thank you</h1>
+            <h1>Thank you!</h1>
           </div>
         </section>
       </article>
+      <div id="fpsCounter"></div>
     </main>
     <script src="../Js/elmAnimation.ts"></script>
     <script src="./index.ts"></script>

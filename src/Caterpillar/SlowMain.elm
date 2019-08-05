@@ -531,7 +531,4 @@ view model =
                 , bush
                 , caterpillar
                 , grasses
-                , ControlPanel.view UserUpdateControlPanel data.controlPanelState
-                , Fps.view data
-                , Dimension.view windowDimension
                 ]
