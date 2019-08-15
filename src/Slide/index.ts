@@ -158,6 +158,11 @@ function runElmApps() {
     startSlowCaterpillar(node);
   }
 
+  node = document.getElementById("slowCaterpillarAgain");
+  if (isVisible(node)) {
+    startSlowCaterpillar(node);
+  }
+
   node = document.getElementById("fastCaterpillar");
   if (isVisible(node)) {
     startFastCaterpillar(node);

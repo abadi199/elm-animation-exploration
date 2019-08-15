@@ -17,6 +17,7 @@ import Html.Styled as H exposing (Html)
 import Html.Styled.Attributes as HA
 import Html.Styled.Events as HE
 import Js.Animation as Animation exposing (Keyframe)
+import Js.Animation.Events as Events
 import Js.Animation.Options as Options
 import Json.Decode as JD
 import Millisecond exposing (Millisecond, millisecond)
@@ -94,10 +95,10 @@ view { imageUrl, windowDimension, showShadow, loopDuration, onFinishExpanding, o
         onFinish =
             case state of
                 Expanding ->
-                    HE.on "finish" <| JD.succeed onFinishExpanding
+                    Events.onFinish onFinishExpanding
 
                 Contracting ->
-                    HE.on "finish" <| JD.succeed onFinishContracting
+                    Events.onFinish onFinishContracting
 
         scaleFactor =
             (windowDimension |> Dimension.width |> Px.toFloat) / 1920
