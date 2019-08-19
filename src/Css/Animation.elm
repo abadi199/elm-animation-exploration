@@ -215,10 +215,13 @@ toAnimationStyle animation =
         Delay delayDuration delayedAnimation ->
             hash delayedAnimation
                 ++ " "
+                ++ Second.toString (getDuration delayedAnimation |> Maybe.withDefault (second 0))
+                ++ " "
                 ++ Count.toString (getCount delayedAnimation)
                 ++ " "
                 ++ Second.toString delayDuration
                 ++ " forwards"
+                |> Debug.log "delay"
 
         Sequence animations ->
             hash animation ++ " " ++ Second.toString (getTotalDuration animations) ++ " forwards"
@@ -259,7 +262,6 @@ getDuration animation =
 
         Delay delayDuration delayedAnimation ->
             getDuration delayedAnimation
-                |> Maybe.map (Second.add delayDuration)
 
         Sequence animations ->
             Just <| getTotalDuration animations
