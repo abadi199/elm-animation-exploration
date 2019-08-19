@@ -145,9 +145,12 @@
           <div class="wrap"><h1>The Land of Pure Elm</h1></div>
         </section>
         <section class="fullscreen">
-          <div class="card-50">
-            <figure class="">
-              <h3>One Apple</h3>
+          <div class="card-50 flip">
+            <figure class="flex-content preview">
+              <div id="elmOneApple"></div>
+            </figure>
+            <div class="code">
+              <h1 class="aligncenter">Elm Animation</h1>
               <code class="elm"
                 ><pre>
 type alias Model = { x : Float }
@@ -170,18 +173,19 @@ update (Tick delta) model =
 
 view model =
     div [] [ apple [ css [ left (Css.px model.x) ] ]
-                    </pre
-                ></code
+                </pre></code
               >
-            </figure>
-            <div class="flex-content preview"><div id="elmOneApple"></div></div>
+            </div>
           </div>
         </section>
 
         <section class="fullscreen">
-          <div class="card-50">
-            <figure class="">
-              <h3>Two Apples</h3>
+          <div class="card-50 flip">
+            <figure class="flex-content preview">
+              <div id="elmTwoApples"></div>
+            </figure>
+            <div class="code">
+              <h1 class="aligncenter">Elm Animation</h1>
               <code class="elm"
                 ><pre>
 type alias Model =
@@ -221,9 +225,6 @@ view model =
               </pre
                 ></code
               >
-            </figure>
-            <div class="flex-content preview">
-              <div id="elmTwoApples"></div>
             </div>
           </div>
         </section>
@@ -251,16 +252,50 @@ view model =
         <section class="aligncenter">
           <div class="wrap">
             <h1>CSS Animation Land</h1>
-            <h3>
-              Keyframe Animations
-            </h3>
           </div>
         </section>
-        <section class="aligncenter">
-          <div class="wrap">
-            <p>
-              Code
-            </p>
+        <section class="fullscreen aligncenter">
+          <div class="card-50">
+            <figure>
+              <h3 class="aligncenter">DSL</h3>
+              <code class="elm">
+                <pre>
+div [] []
+Animation.with
+    [ Animation.translate { x = px 0, y = px 100 } (second 1)
+    ,
+    ]
+                </pre>
+              </code>
+            </figure>
+            <figure>
+              <h3 class="aligncenter">CSS Keyframe Animation</h3>
+              <code class="css">
+                <pre>
+@keyframes move2902574612 {
+    100% { transform: translate(0px, 100px); }
+}
+                  </pre
+                >
+              </code>
+            </figure>
+          </div>
+        </section>
+        <section class="fullscreen">
+          <div class="card-50 flip">
+            <figure class="flex-content preview">
+              <div id="cssOneApple"></div>
+            </figure>
+            <div class="code">
+              <h1 class="aligncenter">CSS Animation</h1>
+              <code class="elm">
+                <pre>
+view model =
+    div [] []
+                    </pre
+                >
+              </code>
+            </div>
           </div>
         </section>
         <section class="aligncenter">
@@ -359,7 +394,7 @@ document.getElementById("apple").animate(
             <h1>Our API</h1>
             <ul class="flexblock features">
               <li>
-                <h2>Run Animation</h2>
+                <h2>Running an Animation</h2>
                 Elm > Keyframes data > JSON Encoder > Web Component's Attribute
                 > Run Animation
               </li>

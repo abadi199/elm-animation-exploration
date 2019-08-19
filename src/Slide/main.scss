@@ -1,6 +1,16 @@
 @import "webslides/static/css/webslides.css";
 @import "webslides/static/css/svg-icons.css";
 
+#webslides {
+  cursor: none;
+  &.mousemoving {
+    cursor: url("../images/laser.png"), auto;
+  }
+  &.mousestop {
+    cursor: none;
+  }
+}
+
 .space-small {
   height: 5rem;
   display: block;

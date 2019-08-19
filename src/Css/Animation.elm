@@ -1,17 +1,20 @@
 module Css.Animation exposing
-    ( delay
+    ( css
+    , customCss
+    , delay
     , iterationCount
     , none
     , opacity
     , sequence
     , toKeyframe
     , translate
-    , with
     )
 
 import Count exposing (Count)
 import Html as H
 import Html.Attributes as HA
+import Html.Styled as HS
+import Html.Styled.Attributes as HSA
 import Murmur3
 import Percentage exposing (Percentage)
 import Px exposing (Px, px)
@@ -19,7 +22,7 @@ import Second exposing (Second, second)
 
 
 type alias Html msg =
-    List (H.Attribute msg) -> List (H.Html msg) -> H.Html msg
+    List (HS.Attribute msg) -> List (HS.Html msg) -> HS.Html msg
 
 
 type AnimatedHtml msg
@@ -69,13 +72,13 @@ sequence =
     Sequence
 
 
-toKeyframes : List Animation -> H.Html msg
+toKeyframes : List Animation -> HS.Html msg
 toKeyframes animations =
-    H.node "style"
+    HS.node "style"
         []
         (animations
             |> List.map
-                (\animation -> toKeyframe (hash animation) animation |> H.text)
+                (\animation -> toKeyframe (hash animation) animation |> HS.text)
         )
 
 
@@ -187,9 +190,9 @@ foldAnimation totalTime animation ( keyframe, coordinate, time ) =
     )
 
 
-toStyleAttribute : List Animation -> H.Attribute msg
+toStyleAttribute : List Animation -> HS.Attribute msg
 toStyleAttribute animations =
-    HA.style "animation"
+    HSA.style "animation"
         (animations |> List.map toAnimationStyle |> String.join "," |> Debug.log "")
 
 
@@ -290,13 +293,18 @@ hash animation =
             "sequence" ++ String.fromInt hashInt
 
 
-none : List (H.Attribute msg) -> List (H.Html msg) -> Html msg -> H.Html msg
+none : List (HS.Attribute msg) -> List (HS.Html msg) -> Html msg -> HS.Html msg
 none attributes children html =
     html attributes children
 
 
-with : List Animation -> List (H.Attribute msg) -> List (H.Html msg) -> Html msg -> H.Html msg
-with animations attributes children html =
+css : List Animation -> Html msg -> HS.Html msg
+css animations html =
+    customCss animations [] [] html
+
+
+customCss : List Animation -> List (HS.Attribute msg) -> List (HS.Html msg) -> Html msg -> HS.Html msg
+customCss animations attributes children html =
     html
         (toStyleAttribute animations :: attributes)
         (toKeyframes animations :: children)

@@ -5,6 +5,9 @@ import Fast from "../Caterpillar/FastMain.elm";
 import { Elm as ElmOneApple } from "../Elm/OneApple.elm";
 import { Elm as ElmTwoApples } from "../Elm/TwoApples.elm";
 
+// CSS Animation
+import { Elm as Css } from "../Css/Main.elm";
+
 // Web Animation
 import { Elm as JsOneApple } from "../Js/OneApple.elm";
 import { Elm as JsTwoApples } from "../Js/TwoApples.elm";
@@ -150,6 +153,7 @@ function enableSyntaxHighlight() {
 let elmTwoApples: any = null;
 let jsOneApple: any = null;
 let jsTwoApples: any = null;
+let cssOneApple: any = null;
 function runElmApps() {
   enableSyntaxHighlight();
 
@@ -188,14 +192,45 @@ function runElmApps() {
     jsTwoApples = startElmApp(node, jsTwoApples, JsTwoApples.Js.TwoApples);
   }
 
-  //   if (!node) {
-  //     pauseAll();
-  //   }
+  node = document.getElementById("cssOneApple");
+  if (isVisible(node)) {
+    cssOneApple = startElmApp(node, cssOneApple, Css.Css.Main);
+  }
+}
+
+function showLaserPointer(webslides: HTMLElement, event: MouseEvent) {
+  webslides.className = "mousemoving";
+}
+
+function hideLaserPointer(webslides: HTMLElement) {
+  window.requestAnimationFrame(() => {
+    webslides.className = "mousestop";
+  });
+}
+
+function initializeLaserPointer() {
+  const webslides = document.getElementById("webslides");
+  let mouseTimer: number;
+
+  if (webslides) {
+    webslides.addEventListener("mousemove", (event: MouseEvent) => {
+      if (mouseTimer) {
+        clearTimeout(mouseTimer);
+      }
+
+      mouseTimer = setTimeout(() => {
+        hideLaserPointer(webslides);
+      }, 1000);
+
+      showLaserPointer(webslides, event);
+    });
+  }
 }
 
 ws.el.addEventListener("ws:slide-change", runElmApps);
 
 document.addEventListener("DOMContentLoaded", () => {
+  initializeLaserPointer();
   const fpsCounter = document.getElementById("fpsCounter");
   if (fpsCounter) {
     const fps = new FpsEmitter();
