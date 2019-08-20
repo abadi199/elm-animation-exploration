@@ -2,6 +2,7 @@ module Percentage exposing
     ( Percentage
     , fromFloat
     , fromSecond
+    , percentage
     , toFloat
     , toString
     )
@@ -11,6 +12,11 @@ import Second exposing (Second)
 
 type Percentage
     = Percentage { numerator : Float, denominator : Float }
+
+
+percentage : Float -> Percentage
+percentage =
+    fromFloat
 
 
 fromFloat : Float -> Percentage

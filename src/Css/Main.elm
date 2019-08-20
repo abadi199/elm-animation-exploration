@@ -8,7 +8,7 @@ import Css.Animation as Animation
 import Html.Styled as H exposing (Html, div)
 import Html.Styled.Attributes as HA
 import Html.Styled.Events as HE
-import Percentage
+import Percentage exposing (percentage)
 import Px exposing (px)
 import Second exposing (second)
 import Shadow as Shadow
@@ -76,13 +76,16 @@ view model =
     div [ HA.css [ Css.position Css.relative ] ]
         [ apple (coordinate { x = px 0, y = px -250 })
             |> Animation.css
-                [ Animation.translate { x = px 500, y = px 0 } (second 2)
+                [ Animation.sequence
+                    [ Animation.translate { x = px 500, y = px 0 } (second 2)
+
+                    -- , Animation.translate { x = px 0, y = px 300 } (second 2)
+                    ]
                 ]
         , apple (coordinate { x = px 0, y = px 50 })
             |> Animation.css
-                [ Animation.sequence
-                    [ Animation.translate { x = px 500, y = px 0 } (second 2)
-                    , Animation.translate { x = px 0, y = px 200 } (second 2)
-                    ]
+                [ Animation.translate { x = px 500, y = px 0 } (second 2)
+                    |> Animation.delay (second 2)
+                , Animation.opacity { from = percentage 100, to = percentage 0 } (second 2) |> Animation.delay (second 2)
                 ]
         ]

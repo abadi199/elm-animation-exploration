@@ -254,26 +254,123 @@ view model =
             <h1>CSS Animation Land</h1>
           </div>
         </section>
-        <section class="fullscreen aligncenter">
+        <section class="aligncenter">
+          <div class="wrap">
+            <h1>Domain Specific Language (DSL) for CSS Keyframe Animations</h1>
+          </div>
+        </section>
+        <section class="aligncenter">
+          <h1>Simple Animation</h1>
           <div class="card-50">
-            <figure>
+            <figure class="code">
               <h3 class="aligncenter">DSL</h3>
               <code class="elm">
                 <pre>
-div [] []
-Animation.with
-    [ Animation.translate { x = px 0, y = px 100 } (second 1)
-    ,
+div
+  |> Animation.with
+    [ Animation.translate
+      { x = px 0, y = px 100 }
+      (second 1)
+    , Animation.opacity
+      { from = percentage 100, to = percentage 0 }
+      (second 2)
+    ]
+                        </pre
+                >
+              </code>
+            </figure>
+            <figure class="code">
+              <h3 class="aligncenter">CSS</h3>
+              <code class="css">
+                <pre>
+@keyframes translate2902574612 {
+  100% { transform: translate(0px, 100px); }
+}
+@keyframes opacity2501090504 { 
+  0% { opacity: 10000; }
+  100% { opacity: 0 }
+}
+div {
+  animation: 
+    1s translate2902574612,
+    2s opacity2501090504;
+}
+                        </pre
+                >
+              </code>
+            </figure>
+          </div>
+        </section>
+        <section class="aligncenter">
+          <h1>Sequence of Animations</h1>
+          <div class="card-50">
+            <figure class="code">
+              <h3 class="aligncenter">DSL</h3>
+              <code class="elm">
+                <pre>
+div
+  |> Animation.with
+    [ Animation.sequence
+      [ Animation.translate { x = px 0, y = px 100 }
+        (second 1)
+      , Animation.translate { x = px 100, y = px 0 }
+        (second 2)
+      ]
+    ]
+                        </pre
+                >
+              </code>
+            </figure>
+            <figure class="code">
+              <h3 class="aligncenter">CSS</h3>
+              <code class="css">
+                <pre>
+@keyframes sequence2902574612 {
+    33% { transform: translate(0px, 100px); }
+    100% { transform: translate(100px, 100px); }
+}
+
+div {
+    animation: 3s sequence2902574612;
+}
+                        </pre
+                >
+              </code>
+            </figure>
+          </div>
+        </section>
+        <section class="aligncenter">
+          <h1>Multiple Animations</h1>
+          <div class="card-50">
+            <figure class="code">
+              <h3 class="aligncenter">DSL</h3>
+              <code class="elm">
+                <pre>
+[ div
+  |> Animation.with
+    [ Animation.translate { x = px 100, y = px 0 }
+        (second 2)
+    ]
+, div
+  |> Animation.with
+    [ Animation.translate { x = px 100, y = px 0 }
+        (second 2)
+      |> Animation.delay (second 2)
     ]
                 </pre>
               </code>
             </figure>
-            <figure>
-              <h3 class="aligncenter">CSS Keyframe Animation</h3>
+            <figure class="code">
+              <h3 class="aligncenter">CSS</h3>
               <code class="css">
                 <pre>
-@keyframes move2902574612 {
-    100% { transform: translate(0px, 100px); }
+@keyframes sequence2902574612 {
+    33% { transform: translate(0px, 100px); }
+    100% { transform: translate(100px, 100px); }
+}
+
+div {
+    animation: 3s sequence2902574612;
 }
                   </pre
                 >
