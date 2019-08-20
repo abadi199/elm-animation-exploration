@@ -78,8 +78,7 @@ view model =
             |> Animation.css
                 [ Animation.sequence
                     [ Animation.translate { x = px 500, y = px 0 } (second 2)
-
-                    -- , Animation.translate { x = px 0, y = px 300 } (second 2)
+                    , Animation.translate { x = px -1, y = px 300 } (second 2)
                     ]
                 ]
         , apple (coordinate { x = px 0, y = px 50 })
