@@ -1,6 +1,5 @@
 port module Caterpillar.SlowMain exposing (main)
 
-import AnimationType exposing (AnimationType)
 import Browser
 import Browser.Dom
 import Browser.Events
@@ -9,26 +8,20 @@ import Caterpillar.Grasses as Grasses exposing (Grass)
 import Caterpillar.Object as Object
 import Caterpillar.Sky as Sky
 import Caterpillar.Sun as Sun
-import Color exposing (Color)
-import Coordinate exposing (Coordinate, coordinate)
-import Count
-import Degree exposing (deg)
-import Dict exposing (Dict)
+import Coordinate
+import Css
+import Dict
 import Dimension exposing (Dimension, dimension)
-import Fps exposing (Fps)
 import Html.Styled as H exposing (Html, div)
 import Html.Styled.Attributes as HA
-import Js.Animation as Animation
-import Js.Animation.Options as Options
+import Html.Styled.Events as HE
 import Millisecond exposing (Millisecond, millisecond)
 import Px exposing (Px, px)
 import Random
-import RotationSpeed exposing (RotationSpeed, degPerS)
-import Second exposing (second)
-import Shared.ControlPanel as ControlPanel
-import Speed exposing (Speed, pxPerMs, pxPerS)
+import RotationSpeed exposing (degPerS)
+import Speed exposing (pxPerMs, pxPerS)
 import Task
-import Time exposing (Posix)
+import Time
 
 
 
@@ -68,11 +61,10 @@ type alias NotReadyData =
 
 
 type alias Data =
-    { controlPanelState : ControlPanel.State
+    { showShadow : Bool
+    , stage : Stage
     , flags : Flags
     , windowDimension : Dimension
-    , fps : Fps
-    , animationType : AnimationType
     , caterpillarState : Caterpillar.State
     , sunState : Sun.State
     , cloud1State : Object.State
@@ -89,8 +81,11 @@ type alias Data =
     }
 
 
-type alias Box =
-    { coordinate : Coordinate, spinSpeed : Float }
+type Stage
+    = CaterpillarSoloStill
+    | WithBackgroundStill
+    | AllObjectsWithShadowMoving
+    | WithBackgroundMoving
 
 
 type alias Flags =
@@ -130,9 +125,6 @@ init flags =
 generateGrasses : List String -> Cmd Msg
 generateGrasses grasses =
     let
-        numberOfGrasses =
-            List.length grasses
-
         sequence =
             List.foldr (Random.map2 (::)) (Random.constant [])
     in
@@ -173,10 +165,10 @@ port pause : (Bool -> msg) -> Sub msg
 type Msg
     = AnimationFrameDeltaTick Millisecond
     | RandomGeneratorCompleteGeneratingGrasses (List Grass)
-    | UserUpdateControlPanel ControlPanel.State
     | UserResizeWindow Int Int
     | GetViewportComplete Browser.Dom.Viewport
     | PortPauseApp Bool
+    | UserClickMouse
 
 
 
@@ -202,9 +194,6 @@ update msg model =
         AnimationFrameDeltaTick animationFrameDelta ->
             ( model |> setAnimationState animationFrameDelta, Cmd.none )
 
-        UserUpdateControlPanel controlPanelState ->
-            ( model |> setControlPanelState controlPanelState, Cmd.none )
-
         RandomGeneratorCompleteGeneratingGrasses grasses ->
             ( model |> setGrasses grasses, Cmd.none )
 
@@ -219,6 +208,57 @@ update msg model =
 
         PortPauseApp isPaused ->
             ( model |> pauseApp isPaused, Cmd.none )
+
+        UserClickMouse ->
+            ( model |> updateStage, Cmd.none )
+
+
+updateStage : Model -> Model
+updateStage model =
+    case model of
+        NotReady _ ->
+            model
+
+        Ready data ->
+            let newStage = nextStage data.stage
+            in
+            Ready
+                { data
+                    | stage = newStage
+                    , showShadow = shouldShowShadow newStage
+                }
+
+
+shouldShowShadow : Stage -> Bool
+shouldShowShadow stage =
+    case stage of
+        CaterpillarSoloStill ->
+            False
+
+        WithBackgroundStill ->
+            False
+
+        WithBackgroundMoving ->
+            False
+
+        AllObjectsWithShadowMoving ->
+            True
+
+
+nextStage : Stage -> Stage
+nextStage stage =
+    case stage of
+        CaterpillarSoloStill ->
+            WithBackgroundStill
+
+        WithBackgroundStill ->
+            WithBackgroundMoving
+
+        WithBackgroundMoving ->
+            AllObjectsWithShadowMoving
+
+        AllObjectsWithShadowMoving ->
+            AllObjectsWithShadowMoving
 
 
 pauseApp : Bool -> Model -> Model
@@ -236,14 +276,11 @@ toReady data =
     case ( data.windowDimension, data.grasses ) of
         ( Just windowDimension, Just grasses ) ->
             Ready
-                { controlPanelState =
-                    ControlPanel.initialState
-                        |> ControlPanel.withShowShadow True
+                { showShadow = False
+                , stage = CaterpillarSoloStill
                 , flags = data.flags
                 , grasses = grasses
                 , windowDimension = windowDimension
-                , fps = Fps.initial
-                , animationType = AnimationType.Elm
                 , caterpillarState = Caterpillar.initialState
                 , sunState = Sun.initialState
                 , cloud1State = Object.initialState
@@ -265,7 +302,7 @@ toReady data =
 setAnimationState : Millisecond -> Model -> Model
 setAnimationState animationFrameDelta model =
     case model of
-        NotReady data ->
+        NotReady _ ->
             model
 
         Ready data ->
@@ -289,16 +326,11 @@ setAnimationState animationFrameDelta model =
                     , speed = pxPerS -450
                     , rotationSpeed = degPerS 0
                     }
-            in
-            case data.animationType of
-                AnimationType.WebAnimation ->
-                    Ready { data | fps = Fps.update animationFrameDelta data.fps }
 
-                AnimationType.Elm ->
+                move =
                     Ready
                         { data
-                            | fps = Fps.update animationFrameDelta data.fps
-                            , caterpillarState = Caterpillar.tick options data.caterpillarState
+                            | caterpillarState = Caterpillar.tick options data.caterpillarState
                             , sunState = Sun.tick { options | rotationSpeed = degPerS 10 } data.sunState
                             , cloud1State = Object.continuousTick { options | speed = pxPerS 20 } data.cloud1State
                             , cloud2State = Object.continuousTick { options | speed = pxPerS 30 } data.cloud2State
@@ -311,16 +343,21 @@ setAnimationState animationFrameDelta model =
                             , grassesState = Grasses.tick grassesOptions data.grassesState
                         }
 
+                still =
+                    Ready data
+            in
+            case data.stage of
+                CaterpillarSoloStill ->
+                    still
 
-setControlPanelState : ControlPanel.State -> Model -> Model
-setControlPanelState controlPanelState model =
-    case model of
-        NotReady data ->
-            data
-                |> toReady
+                WithBackgroundStill ->
+                    still
 
-        Ready data ->
-            Ready { data | controlPanelState = controlPanelState }
+                WithBackgroundMoving ->
+                    move
+
+                AllObjectsWithShadowMoving ->
+                    move
 
 
 setGrasses : List Grass -> Model -> Model
@@ -358,9 +395,7 @@ view model =
         Ready data ->
             let
                 showShadow =
-                    data.controlPanelState
-                        |> ControlPanel.showShadow
-                        |> Maybe.withDefault True
+                    data.showShadow
 
                 windowDimension =
                     data.windowDimension
@@ -514,21 +549,69 @@ view model =
                         , showShadow = showShadow
                         , state = data.caterpillarState
                         }
+
+                canvas =
+                    div
+                        [ HE.onClick UserClickMouse
+                        , HA.css
+                            [ Css.position Css.absolute
+                            , Css.width (Css.vw 100)
+                            , Css.height (Css.vh 100)
+                            , Css.top (Css.px 0)
+                            , Css.left (Css.px 0)
+                            ]
+                        ]
+
+                viewAll =
+                    canvas
+                        [ Sky.view
+                            { sky = data.flags.sky
+                            , windowDimension = windowDimension
+                            }
+                        , sun
+                        , cloud2
+                        , cloud1
+                        , hillFar
+                        , hillNear
+                        , tree
+                        , grass
+                        , fence
+                        , bush
+                        , caterpillar
+                        , grasses
+                        ]
+
+                viewWithBackground =
+                    canvas
+                        [ Sky.view
+                            { sky = data.flags.sky
+                            , windowDimension = windowDimension
+                            }
+                        , sun
+                        , cloud2
+                        , cloud1
+                        , hillFar
+                        , hillNear
+                        , tree
+                        , grass
+                        , fence
+                        , bush
+                        , caterpillar
+                        ]
+
+                viewCaterpillar =
+                    canvas
+                        [ caterpillar ]
             in
-            div []
-                [ Sky.view
-                    { sky = data.flags.sky
-                    , windowDimension = windowDimension
-                    }
-                , sun
-                , cloud2
-                , cloud1
-                , hillFar
-                , hillNear
-                , tree
-                , grass
-                , fence
-                , bush
-                , caterpillar
-                , grasses
-                ]
+            case data.stage of
+                CaterpillarSoloStill ->
+                    viewCaterpillar
+
+                WithBackgroundStill ->
+                    viewWithBackground
+
+                WithBackgroundMoving ->
+                    viewWithBackground
+
+                AllObjectsWithShadowMoving ->
+                    viewAll

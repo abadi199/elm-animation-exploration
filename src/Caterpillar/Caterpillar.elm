@@ -9,7 +9,6 @@ import Html.Styled.Attributes as HA
 import Millisecond exposing (Millisecond, millisecond)
 import Px
 import Speed exposing (Speed)
-import Time exposing (Posix)
 
 
 type State
@@ -22,6 +21,7 @@ type alias StateData =
     }
 
 
+initialState : State
 initialState =
     State
         { timer = millisecond 0
