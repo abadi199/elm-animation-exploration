@@ -8,26 +8,16 @@ import Caterpillar.FastGrasses as Grasses exposing (Grass)
 import Caterpillar.FastObject as Object
 import Caterpillar.FastSun as Sun
 import Caterpillar.Sky as Sky
-import Color exposing (Color)
-import Coordinate exposing (Coordinate, coordinate)
-import Count
-import Degree exposing (deg)
-import Dict exposing (Dict)
+import Coordinate
 import Dimension exposing (Dimension, dimension)
-import Fps exposing (Fps)
 import Html.Styled as H exposing (Html, div)
-import Html.Styled.Attributes as HA
-import Js.Animation as Animation
-import Js.Animation.Options as Options
 import Millisecond exposing (Millisecond, millisecond)
 import Px exposing (Px, px)
 import Random
 import RotationSpeed
-import Second exposing (second)
-import Shared.ControlPanel as ControlPanel
-import Speed exposing (Speed, pxPerMs, pxPerS)
+import Speed exposing (pxPerS)
 import Task
-import Time exposing (Posix)
+import Time
 
 
 
@@ -67,19 +57,13 @@ type alias NotReadyData =
 
 
 type alias Data =
-    { controlPanelState : ControlPanel.State
-    , flags : Flags
+    { flags : Flags
     , windowDimension : Dimension
-    , fps : Fps
     , grasses : List Grass
     , caterpillarState : Caterpillar.State
     , isAnimationPaused : Bool
     , isAppPaused : Bool
     }
-
-
-type alias Box =
-    { coordinate : Coordinate, spinSpeed : Float }
 
 
 type alias Flags =
@@ -119,9 +103,6 @@ init flags =
 generateGrasses : List String -> Cmd Msg
 generateGrasses grasses =
     let
-        numberOfGrasses =
-            List.length grasses
-
         sequence =
             List.foldr (Random.map2 (::)) (Random.constant [])
     in
@@ -159,9 +140,7 @@ port pause : (Bool -> msg) -> Sub msg
 
 
 type Msg
-    = AnimationFrameDeltaTick Millisecond
-    | RandomGeneratorCompleteGeneratingGrasses (List Grass)
-    | UserUpdateControlPanel ControlPanel.State
+    = RandomGeneratorCompleteGeneratingGrasses (List Grass)
     | UserResizeWindow Int Int
     | GetViewportComplete Browser.Dom.Viewport
     | CaterpillarFinishExpanding
@@ -188,12 +167,6 @@ update msg model =
                 |> setWindowDimension windowDimension
             , Cmd.none
             )
-
-        AnimationFrameDeltaTick animationFrameDelta ->
-            ( model |> setAnimationState animationFrameDelta, Cmd.none )
-
-        UserUpdateControlPanel controlPanelState ->
-            ( model |> setControlPanelState controlPanelState, Cmd.none )
 
         RandomGeneratorCompleteGeneratingGrasses grasses ->
             ( model |> setGrasses grasses, Cmd.none )
@@ -240,13 +213,9 @@ toReady data =
     case ( data.windowDimension, data.grasses ) of
         ( Just windowDimension, Just grasses ) ->
             Ready
-                { controlPanelState =
-                    ControlPanel.initialState
-                        |> ControlPanel.withShowShadow True
-                , flags = data.flags
+                { flags = data.flags
                 , grasses = grasses
                 , windowDimension = windowDimension
-                , fps = Fps.initial
                 , caterpillarState = Caterpillar.expanding
                 , isAnimationPaused = True
                 , isAppPaused = False
@@ -254,19 +223,6 @@ toReady data =
 
         _ ->
             NotReady data
-
-
-setAnimationState : Millisecond -> Model -> Model
-setAnimationState animationFrameDelta model =
-    case model of
-        NotReady data ->
-            model
-
-        Ready data ->
-            Ready
-                { data
-                    | fps = Fps.update animationFrameDelta data.fps
-                }
 
 
 setAnimationPaused : Bool -> Model -> Model
@@ -287,17 +243,6 @@ setCaterpillarState caterpillarState model =
 
         Ready data ->
             Ready { data | caterpillarState = caterpillarState }
-
-
-setControlPanelState : ControlPanel.State -> Model -> Model
-setControlPanelState controlPanelState model =
-    case model of
-        NotReady data ->
-            data
-                |> toReady
-
-        Ready data ->
-            Ready { data | controlPanelState = controlPanelState }
 
 
 setGrasses : List Grass -> Model -> Model
@@ -335,9 +280,7 @@ view model =
         Ready data ->
             let
                 showShadow =
-                    data.controlPanelState
-                        |> ControlPanel.showShadow
-                        |> Maybe.withDefault True
+                    True
 
                 windowDimension =
                     data.windowDimension
@@ -524,7 +467,5 @@ view model =
                 , bush
                 , caterpillar
                 , grasses
-                , ControlPanel.view UserUpdateControlPanel data.controlPanelState
-                , Fps.view data
                 , Dimension.view windowDimension
                 ]

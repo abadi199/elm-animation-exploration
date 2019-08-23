@@ -61,7 +61,8 @@ type alias NotReadyData =
 
 
 type alias Data =
-    { showShadow : Bool
+    { fps : Maybe Int
+    , showShadow : Bool
     , stage : Stage
     , flags : Flags
     , windowDimension : Dimension
@@ -90,14 +91,16 @@ type Stage
 
 type alias Flags =
     { apple : String
-    , caterpillar : String
+    , caterpillarSmile : String
+    , caterpillarFrown : String
     , sky : String
     , grass : String
     , fence : String
     , hillFar : String
     , hillNear : String
     , bush : String
-    , sun : String
+    , sunSmile : String
+    , sunFrown : String
     , sunRays : String
     , cloud1 : String
     , cloud2 : String
@@ -105,6 +108,7 @@ type alias Flags =
     , apples : String
     , grassAll : String
     , grasses : List String
+    , useStage : Bool
     }
 
 
@@ -152,10 +156,14 @@ subscriptions model =
                     [ Browser.Events.onAnimationFrameDelta (round >> millisecond >> AnimationFrameDeltaTick)
                     , Browser.Events.onResize UserResizeWindow
                     , pause PortPauseApp
+                    , fps FpsUpdate
                     ]
 
 
 port pause : (Bool -> msg) -> Sub msg
+
+
+port fps : (Int -> msg) -> Sub msg
 
 
 
@@ -169,6 +177,7 @@ type Msg
     | GetViewportComplete Browser.Dom.Viewport
     | PortPauseApp Bool
     | UserClickMouse
+    | FpsUpdate Int
 
 
 
@@ -178,6 +187,11 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        FpsUpdate currentFps ->
+            ( model |> updateFps currentFps
+            , Cmd.none
+            )
+
         GetViewportComplete viewport ->
             let
                 windowDimension =
@@ -213,6 +227,16 @@ update msg model =
             ( model |> updateStage, Cmd.none )
 
 
+updateFps : Int -> Model -> Model
+updateFps currentFps model =
+    case model of
+        NotReady _ ->
+            model
+
+        Ready data ->
+            Ready { data | fps = Just currentFps }
+
+
 updateStage : Model -> Model
 updateStage model =
     case model of
@@ -220,7 +244,9 @@ updateStage model =
             model
 
         Ready data ->
-            let newStage = nextStage data.stage
+            let
+                newStage =
+                    nextStage data.stage
             in
             Ready
                 { data
@@ -276,8 +302,14 @@ toReady data =
     case ( data.windowDimension, data.grasses ) of
         ( Just windowDimension, Just grasses ) ->
             Ready
-                { showShadow = False
-                , stage = CaterpillarSoloStill
+                { fps = Nothing
+                , showShadow = not data.flags.useStage
+                , stage =
+                    if data.flags.useStage then
+                        CaterpillarSoloStill
+
+                    else
+                        AllObjectsWithShadowMoving
                 , flags = data.flags
                 , grasses = grasses
                 , windowDimension = windowDimension
@@ -405,10 +437,11 @@ view model =
 
                 sun =
                     Sun.view data.sunState
-                        { sunUrl = data.flags.sun
+                        { smile = data.flags.sunSmile
+                        , frown = data.flags.sunFrown
+                        , isHappy = isHappy
                         , sunRaysUrl = data.flags.sunRays
                         , windowDimension = windowDimension
-                        , time = Time.millisToPosix 0
                         , showShadow = showShadow
                         }
 
@@ -542,9 +575,16 @@ view model =
                                 |> Coordinate.multiplyY 0.45
                         }
 
+                isHappy =
+                    data.fps
+                        |> Maybe.map (\currentFps -> currentFps >= 30)
+                        |> Maybe.withDefault True
+
                 caterpillar =
                     Caterpillar.view
-                        { caterpillar = data.flags.caterpillar
+                        { isHappy = isHappy
+                        , smile = data.flags.caterpillarSmile
+                        , frown = data.flags.caterpillarFrown
                         , windowDimension = windowDimension
                         , showShadow = showShadow
                         , state = data.caterpillarState

@@ -88,8 +88,8 @@ tick { animationFrameDelta, loopDuration } (State stateData) =
         }
 
 
-view : { caterpillar : String, windowDimension : Dimension, showShadow : Bool, state : State } -> Html msg
-view { caterpillar, windowDimension, showShadow, state } =
+view : { isHappy : Bool, smile : String, frown : String, windowDimension : Dimension, showShadow : Bool, state : State } -> Html msg
+view { isHappy, smile, frown, windowDimension, showShadow, state } =
     let
         positionIndex =
             calculateBackgroundPositionIndex state
@@ -102,14 +102,34 @@ view { caterpillar, windowDimension, showShadow, state } =
                 |> Dimension.scale scaleFactor
 
         bottomPosition =
-            216 * scaleFactor |> px
+            300 * scaleFactor |> px
+
+        caterpillar visible image =
+            H.div
+                [ HA.css
+                    [ backgroundImage (url image)
+                    , backgroundSize (pct 100)
+                    , backgroundPositions |> Array.get positionIndex |> Maybe.withDefault (backgroundPosition2 zero zero)
+                    , width (pct 100)
+                    , height (pct 100)
+                    , Shadow.style showShadow
+                    , position absolute
+                    , top (px 0)
+                    , left (px 0)
+                    , property "transition" "opacity 1s"
+                    , if visible then
+                        opacity (num 1)
+
+                      else
+                        opacity (num 0)
+                    ]
+                , HA.attribute "data-name" "caterpillar"
+                ]
+                []
     in
     H.div
         [ HA.css
             [ position absolute
-            , backgroundImage (url caterpillar)
-            , backgroundSize (pct 100)
-            , backgroundPositions |> Array.get positionIndex |> Maybe.withDefault (backgroundPosition2 zero zero)
             , left
                 (windowDimension
                     |> Dimension.width
@@ -131,8 +151,7 @@ view { caterpillar, windowDimension, showShadow, state } =
             , bottom bottomPosition
             , width (caterpillarScaledDimension |> Dimension.width |> Px.toElmCss)
             , height (caterpillarScaledDimension |> Dimension.height |> Px.toElmCss)
-            , Shadow.style showShadow
             ]
         , HA.attribute "data-name" "caterpillar"
         ]
-        []
+        [ caterpillar (not isHappy) frown, caterpillar isHappy smile ]

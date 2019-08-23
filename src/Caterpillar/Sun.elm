@@ -53,27 +53,19 @@ tick { animationFrameDelta, rotationSpeed } (State stateData) =
         }
 
 
-type alias Options a =
-    { a
-        | sunUrl : String
-        , sunRaysUrl : String
-        , windowDimension : Dimension
-        , showShadow : Bool
+type alias Options =
+    { smile : String
+    , frown : String
+    , isHappy : Bool
+    , sunRaysUrl : String
+    , windowDimension : Dimension
+    , showShadow : Bool
     }
 
 
-view : State -> Options a -> Html msg
-view (State stateData) { sunUrl, sunRaysUrl, windowDimension, showShadow } =
+view : State -> Options -> Html msg
+view (State stateData) { isHappy, smile, frown, sunRaysUrl, windowDimension, showShadow } =
     let
-        loopDuration =
-            10000
-
-        windowWidth =
-            windowDimension
-                |> Dimension.width
-                |> Px.toInt
-                |> toFloat
-
         scaleFactor =
             (windowDimension |> Dimension.width |> Px.toFloat) / 1920
 
@@ -83,21 +75,43 @@ view (State stateData) { sunUrl, sunRaysUrl, windowDimension, showShadow } =
 
         bottomPosition =
             800 * scaleFactor |> px
+
+        sun visible image =
+            H.div
+                [ HA.css
+                    [ backgroundImage (url image)
+                    , backgroundRepeat2 noRepeat noRepeat
+                    , height (sunScaledDimension |> Dimension.height |> Px.toElmCss)
+                    , width (sunScaledDimension |> Dimension.width |> Px.toElmCss)
+                    , position absolute
+                    , left (px 0)
+                    , width (pct 100)
+                    , height (pct 100)
+                    , top (px 0)
+                    , backgroundSize contain
+                    , Shadow.style showShadow
+                    , property "transition" "opacity 1s"
+                    , if visible then
+                        opacity (num 1)
+
+                      else
+                        opacity (num 0)
+                    ]
+                ]
+                []
     in
     H.div
         [ HA.css
-            [ backgroundImage (url sunUrl)
-            , backgroundRepeat2 noRepeat noRepeat
-            , height (sunScaledDimension |> Dimension.height |> Px.toElmCss)
+            [ height (sunScaledDimension |> Dimension.height |> Px.toElmCss)
             , width (sunScaledDimension |> Dimension.width |> Px.toElmCss)
             , position absolute
             , left (vw 80)
             , bottom bottomPosition
-            , backgroundSize contain
-            , Shadow.style showShadow
             ]
         ]
-        [ H.div
+        [ sun (not isHappy) frown
+        , sun isHappy smile
+        , H.div
             [ HA.css
                 [ backgroundImage (url sunRaysUrl)
                 , backgroundRepeat2 noRepeat noRepeat

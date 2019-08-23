@@ -17,11 +17,13 @@ import hljs from "highlight.js";
 import hljsElm from "highlight.js/lib/languages/elm";
 import "highlight.js/styles/a11y-light.css";
 import FpsEmitter from "fps-emitter";
+import up from "up.js";
 
 // Images
 import apple from "../Caterpillar/images/apple.png";
 import apples from "../Caterpillar/images/apples.png";
-import caterpillar from "../Caterpillar/images/caterpillar.png";
+import caterpillarSmile from "../Caterpillar/images/caterpillar-smile.png";
+import caterpillarFrown from "../Caterpillar/images/caterpillar-frown.png";
 import sky from "../Caterpillar/images/sky.png";
 import grass from "../Caterpillar/images/grass.png";
 import fence from "../Caterpillar/images/fence.png";
@@ -30,7 +32,8 @@ import hillNear from "../Caterpillar/images/hill-near.png";
 import bush from "../Caterpillar/images/bush.png";
 import cloud1 from "../Caterpillar/images/cloud-1.png";
 import cloud2 from "../Caterpillar/images/cloud-2.png";
-import sun from "../Caterpillar/images/sun.png";
+import sunSmile from "../Caterpillar/images/sun-smile.png";
+import sunFrown from "../Caterpillar/images/sun-frown.png";
 import sunRays from "../Caterpillar/images/sun-rays.png";
 import tree from "../Caterpillar/images/tree.png";
 import grassAll from "../Caterpillar/images/grass-all.png";
@@ -51,10 +54,12 @@ import grass14 from "../Caterpillar/images/grass-14.png";
 
 hljs.registerLanguage("elm", hljsElm);
 
-const flags = {
+const flags: any = {
   apple,
   apples,
-  caterpillar,
+  caterpillar: caterpillarSmile,
+  caterpillarSmile,
+  caterpillarFrown,
   sky,
   grass,
   fence,
@@ -63,7 +68,9 @@ const flags = {
   bush,
   cloud1,
   cloud2,
-  sun,
+  sun: sunSmile,
+  sunSmile,
+  sunFrown,
   sunRays,
   tree,
   grassAll,
@@ -85,10 +92,24 @@ const flags = {
   ]
 };
 
+Object.keys(flags).forEach((key: string) => {
+  const value = flags[key];
+  console.log(value);
+  if (typeof value === "string") {
+    up.link("prefetch", value);
+  } else if (Array.isArray(value)) {
+    value.forEach(grass => up.link("prefetch", grass));
+  }
+});
+
 const ws: any = new WebSlides();
 ws.el.addEventListener("ws:init", console.log);
 
-function isVisible(node: HTMLElement): boolean {
+function isVisible(node: HTMLElement | null): boolean {
+  if (!node) {
+    return false;
+  }
+
   const section = node.closest("section");
   if (section) {
     return section.style.display !== "none";
@@ -98,19 +119,19 @@ function isVisible(node: HTMLElement): boolean {
 }
 
 let slowCaterpillar: any = null;
-function startSlowCaterpillar(node: HTMLElement) {
+function startSlowCaterpillar(node: HTMLElement | null, useStage: boolean) {
   if (slowCaterpillar) {
     slowCaterpillar.ports.pause.send(false);
   } else if (isVisible(node)) {
     slowCaterpillar = Slow.Elm.Caterpillar.SlowMain.init({
       node,
-      flags
+      flags: { ...flags, useStage }
     });
   }
 }
 
 let fastCaterpillar: any = null;
-function startFastCaterpillar(node: HTMLElement) {
+function startFastCaterpillar(node: HTMLElement | null) {
   if (fastCaterpillar) {
     fastCaterpillar.ports.pause.send(false);
   } else if (isVisible(node)) {
@@ -122,14 +143,18 @@ function startFastCaterpillar(node: HTMLElement) {
 }
 
 let elmOneApple: any = null;
-function startElmOneApple(node: HTMLElement) {
+function startElmOneApple(node: HTMLElement | null) {
   if (elmOneApple) {
   } else if (isVisible(node)) {
     elmOneApple = ElmOneApple.Elm.OneApple.init({ node, flags: { apple } });
   }
 }
 
-function startElmApp(node: HTMLElement, elmApp: any = null, elmModule: any) {
+function startElmApp(
+  node: HTMLElement | null,
+  elmApp: any = null,
+  elmModule: any
+) {
   if (!elmApp && elmModule && isVisible(node)) {
     return elmModule.init({ node, flags: { apple } });
   }
@@ -159,12 +184,12 @@ function runElmApps() {
 
   let node = document.getElementById("slowCaterpillar");
   if (isVisible(node)) {
-    startSlowCaterpillar(node);
+    startSlowCaterpillar(node, true);
   }
 
   node = document.getElementById("slowCaterpillarAgain");
   if (isVisible(node)) {
-    startSlowCaterpillar(node);
+    startSlowCaterpillar(node, false);
   }
 
   node = document.getElementById("fastCaterpillar");
@@ -235,7 +260,10 @@ document.addEventListener("DOMContentLoaded", () => {
   if (fpsCounter) {
     const fps = new FpsEmitter();
     fps.on("update", (currentFps: number) => {
-      fpsCounter.textContent = "" + currentFps;
+      fpsCounter.textContent = "fps: " + currentFps;
+      if (slowCaterpillar) {
+        slowCaterpillar.ports.fps.send(currentFps);
+      }
     });
   }
   runElmApps();

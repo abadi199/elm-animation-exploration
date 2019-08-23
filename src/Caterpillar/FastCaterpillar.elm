@@ -108,7 +108,7 @@ view { imageUrl, windowDimension, showShadow, loopDuration, onFinishExpanding, o
                 |> Dimension.scale scaleFactor
 
         bottomPosition =
-            216 * scaleFactor |> px
+            300 * scaleFactor |> px
     in
     Animation.styledNode
         keyframes
