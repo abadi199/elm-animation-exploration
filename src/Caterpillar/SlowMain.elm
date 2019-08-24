@@ -577,7 +577,7 @@ view model =
 
                 isHappy =
                     data.fps
-                        |> Maybe.map (\currentFps -> currentFps >= 30)
+                        |> Maybe.map (\currentFps -> currentFps >= 20)
                         |> Maybe.withDefault True
 
                 caterpillar =

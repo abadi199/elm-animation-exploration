@@ -94,7 +94,6 @@ const flags: any = {
 
 Object.keys(flags).forEach((key: string) => {
   const value = flags[key];
-  console.log(value);
   if (typeof value === "string") {
     up.link("prefetch", value);
   } else if (Array.isArray(value)) {
@@ -103,8 +102,6 @@ Object.keys(flags).forEach((key: string) => {
 });
 
 const ws: any = new WebSlides();
-ws.el.addEventListener("ws:init", console.log);
-
 function isVisible(node: HTMLElement | null): boolean {
   if (!node) {
     return false;
@@ -142,30 +139,22 @@ function startFastCaterpillar(node: HTMLElement | null) {
   }
 }
 
-let elmOneApple: any = null;
-function startElmOneApple(node: HTMLElement | null) {
-  if (elmOneApple) {
-  } else if (isVisible(node)) {
-    elmOneApple = ElmOneApple.Elm.OneApple.init({ node, flags: { apple } });
-  }
-}
-
 function startElmApp(
   node: HTMLElement | null,
   elmApp: any = null,
-  elmModule: any
+  elmModule: any,
+  startButton: HTMLElement | null = null
 ) {
-  if (!elmApp && elmModule && isVisible(node)) {
-    return elmModule.init({ node, flags: { apple } });
-  }
-}
+  const actuallyStartTheApp = () => {
+    if (!elmApp && elmModule && isVisible(node)) {
+      return elmModule.init({ node, flags: { apple } });
+    }
+  };
 
-function pauseAll() {
-  if (slowCaterpillar) {
-    slowCaterpillar.ports.pause.send(true);
-  }
-  if (fastCaterpillar) {
-    fastCaterpillar.ports.pause.send(true);
+  if (startButton) {
+    startButton.addEventListener("click", actuallyStartTheApp);
+  } else {
+    actuallyStartTheApp();
   }
 }
 
@@ -175,51 +164,95 @@ function enableSyntaxHighlight() {
   });
 }
 
+function hideFpsCounter() {
+  const fpsCounter = document.getElementById("fpsCounter");
+  if (fpsCounter) {
+    fpsCounter.style.display = "none";
+  }
+}
+
+function showFpsCounter() {
+  const fpsCounter = document.getElementById("fpsCounter");
+  if (fpsCounter) {
+    fpsCounter.style.display = "block";
+  }
+}
+
+let elmOneApple: any = null;
 let elmTwoApples: any = null;
 let jsOneApple: any = null;
 let jsTwoApples: any = null;
-let cssOneApple: any = null;
-function runElmApps() {
+let cssApple: any = null;
+function slideChangeHandler() {
   enableSyntaxHighlight();
+  hideFpsCounter();
 
   let node = document.getElementById("slowCaterpillar");
   if (isVisible(node)) {
     startSlowCaterpillar(node, true);
+    showFpsCounter();
   }
 
   node = document.getElementById("slowCaterpillarAgain");
   if (isVisible(node)) {
     startSlowCaterpillar(node, false);
+    showFpsCounter();
   }
 
   node = document.getElementById("fastCaterpillar");
   if (isVisible(node)) {
     startFastCaterpillar(node);
+    showFpsCounter();
   }
 
   node = document.getElementById("elmOneApple");
   if (isVisible(node)) {
-    startElmOneApple(node);
+    elmOneApple = startElmApp(
+      node,
+      elmOneApple,
+      ElmOneApple.Elm.OneApple,
+      document.getElementById("startElmOneAppleButton")
+    );
   }
 
   node = document.getElementById("elmTwoApples");
   if (isVisible(node)) {
-    elmTwoApples = startElmApp(node, elmTwoApples, ElmTwoApples.Elm.TwoApples);
+    elmTwoApples = startElmApp(
+      node,
+      elmTwoApples,
+      ElmTwoApples.Elm.TwoApples,
+      document.getElementById("startElmTwoApplesButton")
+    );
   }
 
   node = document.getElementById("jsOneApple");
   if (isVisible(node)) {
-    jsOneApple = startElmApp(node, jsOneApple, JsOneApple.Js.OneApple);
+    jsOneApple = startElmApp(
+      node,
+      jsOneApple,
+      JsOneApple.Js.OneApple,
+      document.getElementById("startJsOneAppleButton")
+    );
   }
 
   node = document.getElementById("jsTwoApples");
   if (isVisible(node)) {
-    jsTwoApples = startElmApp(node, jsTwoApples, JsTwoApples.Js.TwoApples);
+    jsTwoApples = startElmApp(
+      node,
+      jsTwoApples,
+      JsTwoApples.Js.TwoApples,
+      document.getElementById("startJsTwoApplesButton")
+    );
   }
 
-  node = document.getElementById("cssOneApple");
+  node = document.getElementById("cssApple");
   if (isVisible(node)) {
-    cssOneApple = startElmApp(node, cssOneApple, Css.Css.Main);
+    cssApple = startElmApp(
+      node,
+      cssApple,
+      Css.Css.Main,
+      document.getElementById("startCssAppleButton")
+    );
   }
 }
 
@@ -252,7 +285,7 @@ function initializeLaserPointer() {
   }
 }
 
-ws.el.addEventListener("ws:slide-change", runElmApps);
+ws.el.addEventListener("ws:slide-change", slideChangeHandler);
 
 document.addEventListener("DOMContentLoaded", () => {
   initializeLaserPointer();
@@ -266,5 +299,5 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
-  runElmApps();
+  slideChangeHandler();
 });

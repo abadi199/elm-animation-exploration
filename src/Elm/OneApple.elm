@@ -3,19 +3,11 @@ module Elm.OneApple exposing (main)
 import Browser
 import Browser.Events
 import Caterpillar.Shadow as Shadow
-import Color exposing (Color)
 import Coordinate exposing (Coordinate, coordinate)
-import Count
 import Css
 import Html.Styled as H exposing (Html, div)
 import Html.Styled.Attributes as HA
-import Html.Styled.Events as HE
-import Json.Decode as JD
-import Percentage
 import Px exposing (Px, px)
-import Random
-import Second exposing (second)
-import Time exposing (Posix)
 
 
 targetX : Px
@@ -54,7 +46,7 @@ init flags =
 
 
 subscriptions : Model -> Sub Msg
-subscriptions model =
+subscriptions _ =
     Browser.Events.onAnimationFrameDelta AnimationFrameTick
 
 
@@ -74,7 +66,6 @@ update msg model =
                 | coordinate = move delta model.coordinate
                 , timeElapsed = model.timeElapsed + delta
               }
-                |> reset
             , Cmd.none
             )
 

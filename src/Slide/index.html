@@ -147,7 +147,11 @@
         <section class="fullscreen">
           <div class="card-50 flip">
             <figure class="flex-content preview">
-              <div id="elmOneApple"></div>
+              <div id="elmOneApple">
+                <button type="button" id="startElmOneAppleButton">
+                  Start Animation
+                </button>
+              </div>
             </figure>
             <div class="code">
               <h1 class="aligncenter">Elm Animation</h1>
@@ -182,7 +186,11 @@ view model =
         <section class="fullscreen">
           <div class="card-50 flip">
             <figure class="flex-content preview">
-              <div id="elmTwoApples"></div>
+              <div id="elmTwoApples">
+                <button type="button" id="startElmTwoApplesButton">
+                  Start Animation
+                </button>
+              </div>
             </figure>
             <div class="code">
               <h1 class="aligncenter">Elm Animation</h1>
@@ -381,7 +389,11 @@ div {
         <section class="fullscreen">
           <div class="card-50 flip">
             <figure class="flex-content preview">
-              <div id="cssOneApple"></div>
+              <div id="cssApple">
+                <button type="button" id="startCssAppleButton">
+                  Start Animation
+                </button>
+              </div>
             </figure>
             <div class="code">
               <h1 class="aligncenter">CSS Animation</h1>
@@ -525,7 +537,11 @@ document.getElementById("apple").animate(
         <section class="fullscreen bg-purple">
           <div class="card-50 flip">
             <figure class="flex-content preview">
-              <div id="jsOneApple"></div>
+              <div id="jsOneApple">
+                <button type="button" id="startJsOneAppleButton">
+                  Start Animation
+                </button>
+              </div>
             </figure>
             <div class="code">
               <h1 class="aligncenter">One Apple</h1>
@@ -573,32 +589,45 @@ class ElmAnimation extends HTMLElement {
         <section class="fullscreen bg-purple">
           <div class="card-50 flip">
             <figure class="flex-content preview">
-              <div id="jsTwoApples"></div>
+              <div id="jsTwoApples">
+                <button type="button" id="startJsTwoApplesButton">
+                  Start Animation
+                </button>
+              </div>
             </figure>
             <div class="code">
               <h1 class="aligncenter">Two Apples</h1>
               <h4>Elm Code</h4>
               <code class="elm">
                 <pre>
-div []
-  [ Animation.node
-    keyframes 
-    options
-    [ Events.onFinish FirstAppleAnimationFinish ]
-    (apple model)
 
-  , Animation.node
-    (case model.animationState of
-      FirstAppleMoving ->
-        []
+view model = 
+  div []
+    [ Animation.node
+      keyframes 
+      options
+      [ Events.onFinish FirstAppleAnimationFinish ]
+      (apple model)
 
-      SecondAppleMoving ->
-        keyframes 
-    )
-    options
-    []
-    (apple model)
-  ]
+    , Animation.node
+      (case model.animationState of
+        FirstAppleMoving ->
+          []
+
+        SecondAppleMoving ->
+          keyframes 
+      )
+      options
+      []
+      (apple model)
+    ]
+
+update msg model =
+  case msg of
+    FirstAppleAnimationFinish ->
+     ( { model | animationState = SecondAppleMoving }
+     , Cmd.none
+     )
                     </pre
                 >
               </code>
