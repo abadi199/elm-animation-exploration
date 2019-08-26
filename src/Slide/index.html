@@ -16,6 +16,10 @@
       href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,700,700i%7CMaitree:200,300,400,600,700&amp;subset=latin-ext"
       rel="stylesheet"
     />
+    <link
+      href="https://fonts.googleapis.com/css?family=Lexend+Deca&display=swap"
+      rel="stylesheet"
+    />
     <!-- CSS Base -->
     <link rel="stylesheet" type="text/css" href="main.scss" />
 
@@ -106,55 +110,69 @@
           - <div class="wrap"> = container 90% / <div class="wrap size-50"> = 45%;
         -->
 
-        <section class="bg-blue aligncenter">
+        <section class="aligncenter">
           <span class="background dark"></span>
           <div class="wrap">
             <h1>
               Building Highly Performant Animation in Elm
             </h1>
-            <h3>by Abadi Kurniawan</h3>
-            <h4>Elm Conf 2019</h4>
+            <span class="space-small"></span>
+            <h2>by Abadi Kurniawan</h2>
+            <h2>Elm Conf 2019</h2>
+            <img src="../images/elm-conf-logo.png" style="width: 250px" />
           </div>
         </section>
         <section class="aligncenter">
-          <div id="slowCaterpillar"></div>
+          <div id="slowCaterpillarContainer">
+            <div id="slowCaterpillar"></div>
+          </div>
         </section>
         <section class="aligncenter">
-          <div class="wrap"><h1>Journey Through the Animation Lands</h1></div>
-        </section>
-        <section class="aligncenter">
+          <span class="background blue-sky"></span>
           <div class="wrap">
-            <h1>Goal of Our Journey</h1>
+            <h1>Journey Through the <br />Animation Lands</h1>
+          </div>
+        </section>
+        <section class="aligncenter">
+          <span class="background blue-sky"></span>
+          <div class="wrap">
+            <h1>The Goal</h1>
             <ul class="flexblock features">
-              <li>Explore ways of doing animation</li>
+              <li>Explore ideas for ways of doing animation</li>
               <li>High performant animation</li>
               <li>Make our caterpillar happy</li>
             </ul>
           </div>
         </section>
         <section class="aligncenter">
+          <span class="background blue-sky"></span>
           <div class="wrap">
-            <h1>NOT the Goal of Our Journey</h1>
+            <h1>NOT the Goal</h1>
             <ul class="flexblock features">
-              <li>Build a complete solution</li>
+              <li>Build a finished solution</li>
               <li>Teach you best practice</li>
             </ul>
           </div>
         </section>
         <section class="aligncenter">
+          <span class="background elm"></span>
           <div class="wrap"><h1>The Land of Pure Elm</h1></div>
         </section>
         <section class="fullscreen">
           <div class="card-50 flip">
+            <span class="background elm"></span>
             <figure class="flex-content preview">
-              <div id="elmOneApple">
-                <button type="button" id="startElmOneAppleButton">
-                  Start Animation
-                </button>
+              <div id="elmOneAppleContainer">
+                <div id="elmOneApple">
+                  <button type="button" id="startElmOneAppleButton">
+                    Start Animation
+                  </button>
+                </div>
               </div>
             </figure>
             <div class="code">
-              <h1 class="aligncenter">Elm Animation</h1>
+              <h2 class="aligncenter">Single Animation in Elm</h2>
+              <span class="space-small"></span>
               <code class="elm"
                 ><pre>
 type alias Model = { x : Float }
@@ -185,15 +203,19 @@ view model =
 
         <section class="fullscreen">
           <div class="card-50 flip">
+            <span class="background elm"></span>
             <figure class="flex-content preview">
-              <div id="elmTwoApples">
-                <button type="button" id="startElmTwoApplesButton">
-                  Start Animation
-                </button>
+              <div id="elmTwoApplesContainer">
+                <div id="elmTwoApples">
+                  <button type="button" id="startElmTwoApplesButton">
+                    Start Animation
+                  </button>
+                </div>
               </div>
             </figure>
             <div class="code">
-              <h1 class="aligncenter">Elm Animation</h1>
+              <h2 class="aligncenter">Multiple Animations in Elm</h2>
+              <span class="space-small"></span>
               <code class="elm"
                 ><pre>
 type alias Model =
@@ -237,37 +259,43 @@ view model =
           </div>
         </section>
         <section class="aligncenter">
+          <span class="background elm"></span>
           <div class="wrap">
-            <h1>What's Great</h1>
+            <h1>Pros</h1>
             <ul class="flexblock features">
               <li>Pure functional</li>
             </ul>
           </div>
         </section>
         <section class="aligncenter">
+          <span class="background elm"></span>
           <div class="wrap">
-            <h1>What's not so great</h1>
+            <h1>Cons</h1>
             <ul class="flexblock features">
-              <li>Cumbersome to synchronize multiple animations</li>
+              <li>Cumbersome</li>
               <li>No browser/hardware optimization</li>
               <li>Break elm debugger</li>
             </ul>
           </div>
         </section>
         <section class="aligncenter">
+          <span class="background blue-sky"></span>
           <div class="wrap"><h1>Animation as Side Effect</h1></div>
         </section>
         <section class="aligncenter">
+          <span class="background css"></span>
           <div class="wrap">
             <h1>CSS Animation Land</h1>
           </div>
         </section>
         <section class="aligncenter">
+          <span class="background css"></span>
           <div class="wrap">
             <h1>Domain Specific Language (DSL) for CSS Keyframe Animations</h1>
           </div>
         </section>
         <section class="aligncenter">
+          <span class="background css"></span>
           <h1>Simple Animation</h1>
           <div class="card-50">
             <figure class="code">
@@ -276,8 +304,7 @@ view model =
                 <pre>
 div
   |> Animation.with
-    [ Animation.translate
-      { x = px 0, y = px 100 }
+    [ Animation.translateY (px 100)
       (second 1)
     , Animation.opacity
       { from = percentage 100, to = percentage 0 }
@@ -310,6 +337,7 @@ div {
           </div>
         </section>
         <section class="aligncenter">
+          <span class="background css"></span>
           <h1>Sequence of Animations</h1>
           <div class="card-50">
             <figure class="code">
@@ -319,9 +347,9 @@ div {
 div
   |> Animation.with
     [ Animation.sequence
-      [ Animation.translate { x = px 0, y = px 100 }
+      [ Animation.translateY (px 100) }
         (second 1)
-      , Animation.translate { x = px 100, y = px 0 }
+      , Animation.translateX (px 100) }
         (second 2)
       ]
     ]
@@ -334,12 +362,12 @@ div
               <code class="css">
                 <pre>
 @keyframes sequence2902574612 {
-    33% { transform: translate(0px, 100px); }
-    100% { transform: translate(100px, 100px); }
+  33% { transform: translate(0px, 100px); }
+  100% { transform: translate(100px, 100px); }
 }
 
 div {
-    animation: 3s sequence2902574612;
+  animation: 3s sequence2902574612;
 }
                         </pre
                 >
@@ -348,6 +376,7 @@ div {
           </div>
         </section>
         <section class="aligncenter">
+          <span class="background css"></span>
           <h1>Multiple Animations</h1>
           <div class="card-50">
             <figure class="code">
@@ -356,12 +385,12 @@ div {
                 <pre>
 [ div
   |> Animation.with
-    [ Animation.translate { x = px 100, y = px 0 }
+    [ Animation.translateX (px 100) }
         (second 2)
     ]
 , div
   |> Animation.with
-    [ Animation.translate { x = px 100, y = px 0 }
+    [ Animation.translateX (px 100) }
         (second 2)
       |> Animation.delay (second 2)
     ]
@@ -373,12 +402,12 @@ div {
               <code class="css">
                 <pre>
 @keyframes sequence2902574612 {
-    33% { transform: translate(0px, 100px); }
-    100% { transform: translate(100px, 100px); }
+  33% { transform: translate(0px, 100px); }
+  100% { transform: translate(100px, 100px); }
 }
 
 div {
-    animation: 3s sequence2902574612;
+  animation: 3s sequence2902574612;
 }
                   </pre
                 >
@@ -388,85 +417,92 @@ div {
         </section>
         <section class="fullscreen">
           <div class="card-50 flip">
+            <span class="background css"></span>
             <figure class="flex-content preview">
-              <div id="cssApple">
-                <button type="button" id="startCssAppleButton">
-                  Start Animation
-                </button>
+              <div id="cssAppleContainer">
+                <div id="cssApple">
+                  <button type="button" id="startCssAppleButton">
+                    Start Animation
+                  </button>
+                </div>
               </div>
             </figure>
             <div class="code">
-              <h1 class="aligncenter">CSS Animation</h1>
+              <h2 class="aligncenter">CSS Animation</h2>
               <code class="elm">
                 <pre>
-[ apple 
-  |> Animation.css
-    [ Animation.sequence
 
-      [ Animation.translate 
-        { x = px 500, y = px 0 } 
-        (second 2)
+view model =
+  div []
+    [ apple 
+      |> Animation.css
+        [ Animation.sequence
 
-      , Animation.translate 
-        { x = px 0, y = px 300 }
-        (second 2)
-      ]
+          [ Animation.translate 
+            { x = px 500, y = px 0 } 
+            (second 2)
+
+          , Animation.translate 
+            { x = px 0, y = px 300 }
+            (second 2)
+          ]
+        ]
+
+    , apple 
+      |> Animation.css
+
+        [ Animation.translate 
+          { x = px 500, y = px 0 } 
+          (second 2)
+          |> Animation.delay (second 2)
+
+        , Animation.opacity 
+          { from = percentage 100, to = percentage 0 } 
+          (second 2) 
+          |> Animation.delay (second 2)
+        ]
     ]
-
-, apple 
-  |> Animation.css
-
-    [ Animation.translate 
-      { x = px 500, y = px 0 } 
-      (second 2)
-      |> Animation.delay (second 2)
-
-    , Animation.opacity 
-      { from = percentage 100, to = percentage 0 } 
-      (second 2) 
-      |> Animation.delay (second 2)
-    ]
-]
                     </pre
                 >
               </code>
             </div>
           </div>
         </section>
-        <section class="aligncenter bg-green">
+        <section class="aligncenter">
+          <span class="background css"></span>
           <div class="wrap">
-            <h1>The Good</h1>
+            <h1>Pros</h1>
           </div>
-          <div class="wrap-50">
+          <ul class="flexblock features">
+            <li>Highly performant</li>
+            <li>Declarative</li>
+          </ul>
+        </section>
+        <section class="aligncenter">
+          <span class="background css"></span>
+          <div class="wrap">
+            <h1>Cons</h1>
             <ul class="flexblock features">
-              <li>Highly performant</li>
-              <li>Declarative</li>
+              <li>Difficult to synchronize multiple animations</li>
             </ul>
           </div>
         </section>
-        <section class="aligncenter bg-green">
-          <div class="wrap">
-            <h1>The Bad</h1>
-            <ul class="flexblock features">
-              <li>Fire and forget type of animation</li>
-              <li>Difficult to coordinate multiple animations</li>
-            </ul>
-          </div>
-        </section>
-        <section class="aligncenter bg-purple">
+        <section class="aligncenter">
+          <span class="background js"></span>
           <div class="wrap">
             <h1>Web Animations Land</h1>
             <h3>a.k.a JavaScript Land</h3>
           </div>
         </section>
-        <section class="aligncenter bg-purple">
+        <section class="aligncenter">
+          <span class="background js"></span>
           <div class="wrap">
             <h1>Web Animations API</h1>
             <h3>
               JavaScript API for accessing browser's animation engine
             </h3>
             <span class="space-small"></span>
-            <code class="js">
+            <code class="js size-70 aligncenter">
               <pre>
 document.getElementById("apple").animate(
   [
@@ -487,7 +523,8 @@ document.getElementById("apple").animate(
             </h4>
           </div>
         </section>
-        <section class="aligncenter bg-purple">
+        <section class="aligncenter">
+          <span class="background js"></span>
           <div class="wrap">
             <h1>JS Interop</h1>
             <ul class="flexblock features">
@@ -496,8 +533,9 @@ document.getElementById("apple").animate(
             </ul>
           </div>
         </section>
-        <section class="fullscreen bg-purple">
+        <section class="fullscreen">
           <div class="card-50 flip">
+            <span class="background js"></span>
             <figure class="diagram port">
               <img src="../images/port-architecture.png" />
             </figure>
@@ -506,8 +544,9 @@ document.getElementById("apple").animate(
             </div>
           </div>
         </section>
-        <section class="fullscreen bg-purple">
+        <section class="fullscreen">
           <div class="card-50 flip">
+            <span class="background js"></span>
             <figure class="diagram web-component">
               <img src="../images/web-component-architecture.png" />
             </figure>
@@ -517,35 +556,77 @@ document.getElementById("apple").animate(
             </div>
           </div>
         </section>
-        <section class="aligncenter bg-purple">
-          <div class="wrap">
-            <h1>Our API</h1>
-            <ul class="flexblock features">
-              <li>
-                <h2>Running an Animation</h2>
-                Elm > Keyframes data > JSON Encoder > Web Component's Attribute
-                > Run Animation
-              </li>
-              <li>
-                <h2>Listening to Animation</h2>
-                Current Animation .onFinish > Web Component dispatchEvent > Elm
-                onFinish > Msg
-              </li>
-            </ul>
+        <section class="fullscreen">
+          <div class="card-50 flip">
+            <span class="background js"></span>
+            <figure class="flex-content diagram">
+              <h2>Running an Animation</h2>
+              <span class="space-small"></span>
+              <ul class="workflow">
+                <li>
+                  Elm
+                </li>
+                <li class="arrow">Keyframes</li>
+                <li>
+                  JSON Encoder
+                </li>
+                <li class="arrow">JSON</li>
+                <li>
+                  JavaScript
+                </li>
+                <li class="arrow"></li>
+                <li>
+                  Web Animations
+                </li>
+                <li class="arrow">run()</li>
+              </ul>
+            </figure>
+            <div class="aligncenter">
+              <h1>The Workflow</h1>
+            </div>
           </div>
         </section>
-        <section class="fullscreen bg-purple">
+        <section class="fullscreen">
           <div class="card-50 flip">
+            <span class="background js"></span>
+            <figure class="flex-content diagram">
+              <h2>Listening to Animation Events</h2>
+              <span class="space-small"></span>
+              <ul class="workflow">
+                <li>
+                  JavaScript
+                </li>
+                <li class="arrow">animation.onFinish()</li>
+                <li>
+                  Web Component
+                </li>
+                <li class="arrow">dispatchEvent()</li>
+                <li>
+                  Elm
+                </li>
+                <li class="arrow">FinishMsg</li>
+              </ul>
+            </figure>
+            <div class="aligncenter">
+              <h1>The Workflow</h1>
+            </div>
+          </div>
+        </section>
+        <section class="fullscreen">
+          <div class="card-50 flip">
+            <span class="background js"></span>
             <figure class="flex-content preview">
-              <div id="jsOneApple">
-                <button type="button" id="startJsOneAppleButton">
-                  Start Animation
-                </button>
+              <div id="jsOneAppleContainer">
+                <div id="jsOneApple">
+                  <button type="button" id="startJsOneAppleButton">
+                    Start Animation
+                  </button>
+                </div>
               </div>
             </figure>
             <div class="code">
-              <h1 class="aligncenter">One Apple</h1>
-              <h4>Elm Code</h4>
+              <h2 class="aligncenter">Single Animation</h2>
+              <span class="space-small"></span>
               <code class="elm">
                 <pre>
 
@@ -565,39 +646,24 @@ view model =
                     </pre
                 >
               </code>
-              <h4>JS Code</h4>
-              <code class="js">
-                <pre>
-class ElmAnimation extends HTMLElement {
-  connectedCallback() {
-    const animateJson = this.getAttribute("animate");
-
-    if (animateJson) {
-      this.children[0].animate(
-        animationData.keyframes,
-        animationData.options
-      );
-    }
-  }
-}
-                    </pre
-                >
-              </code>
             </div>
           </div>
         </section>
-        <section class="fullscreen bg-purple">
+        <section class="fullscreen">
           <div class="card-50 flip">
+            <span class="background js"></span>
             <figure class="flex-content preview">
-              <div id="jsTwoApples">
-                <button type="button" id="startJsTwoApplesButton">
-                  Start Animation
-                </button>
+              <div id="jsTwoApplesContainer">
+                <div id="jsTwoApples">
+                  <button type="button" id="startJsTwoApplesButton">
+                    Start Animation
+                  </button>
+                </div>
               </div>
             </figure>
             <div class="code">
-              <h1 class="aligncenter">Two Apples</h1>
-              <h4>Elm Code</h4>
+              <h2 class="aligncenter">Multiple Animations</h2>
+              <span class="space-small"></span>
               <code class="elm">
                 <pre>
 
@@ -634,31 +700,38 @@ update msg model =
             </div>
           </div>
         </section>
-        <section class="aligncenter bg-green">
+        <section class="aligncenter">
+          <span class="background js"></span>
           <div class="wrap">
-            <h1>The Good</h1>
+            <h1>Pros</h1>
             <ul class="flexblock features">
               <li>Highly performant</li>
               <li>Declarative</li>
-              <li>Simple to synchronize</li>
+              <li>Simpler to synchronize multiple animations</li>
             </ul>
           </div>
         </section>
-        <section class="aligncenter bg-green">
+        <section class="aligncenter">
+          <span class="background js"></span>
           <div class="wrap">
-            <h1>The Bad</h1>
+            <h1>Cons</h1>
             <ul class="flexblock features">
               <li>Browser support (only FF and Chrome)</li>
             </ul>
           </div>
         </section>
         <section class="aligncenter">
-          <div id="slowCaterpillarAgain"></div>
+          <div id="slowCaterpillarAgainContainer">
+            <div id="slowCaterpillarAgain"></div>
+          </div>
         </section>
         <section>
-          <div id="fastCaterpillar"></div>
+          <div id="fastCaterpillarContainer">
+            <div id="fastCaterpillar"></div>
+          </div>
         </section>
-        <section class="aligncenter bg-blue">
+        <section class="aligncenter">
+          <span class="background blue-sky"></span>
           <div class="wrap">
             <h1>What's Next?</h1>
             <ul class="flexblock features">
@@ -666,21 +739,22 @@ update msg model =
             </ul>
           </div>
         </section>
-        <section class="aligncenter bg-blue">
+        <section class="aligncenter">
+          <span class="background blue-sky"></span>
           <div class="wrap">
             <h1>Links</h1>
             <span class="space-small"></span>
-            <h4>
+            <h3>
               Elm Animation Exploration
-            </h4>
+            </h3>
 
-            <h5>https://github.com/abadi199/elm-animation-exploration</h5>
-            <h5></h5>
+            <h4>https://github.com/abadi199/elm-animation-exploration</h4>
           </div>
         </section>
-        <section class="bg-gray">
+        <section class="aligncenter">
           <div class="wrap">
             <h1>Thank you!</h1>
+            <img src="../images/single-caterpillar.png" style="width: 300px" />
           </div>
         </section>
       </article>

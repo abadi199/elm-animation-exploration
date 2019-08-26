@@ -21,7 +21,6 @@ import Random
 import RotationSpeed exposing (degPerS)
 import Speed exposing (pxPerMs, pxPerS)
 import Task
-import Time
 
 
 
@@ -577,7 +576,7 @@ view model =
 
                 isHappy =
                     data.fps
-                        |> Maybe.map (\currentFps -> currentFps >= 20)
+                        |> Maybe.map (\currentFps -> currentFps >= 30)
                         |> Maybe.withDefault True
 
                 caterpillar =

@@ -1,6 +1,39 @@
 @import "webslides/static/css/webslides.css";
 @import "webslides/static/css/svg-icons.css";
 
+@mixin box-shadow() {
+  box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.25);
+}
+
+h1 {
+  font-size: 5em;
+  line-height: 1.3em;
+}
+
+html,
+body {
+  font-family: "Lexend Deca", sans-serif !important;
+}
+
+.background {
+  z-index: -1;
+  &.tree {
+    background-image: url("../images/tree-background.png");
+  }
+  &.css {
+    background-image: url("../images/css-background.png");
+  }
+  &.js {
+    background-image: url("../images/js-background.png");
+  }
+  &.elm {
+    background-image: url("../images/elm-background.png");
+  }
+  &.blue-sky {
+    background-image: url("../images/slide-background.png");
+  }
+}
+
 #webslides {
   cursor: none;
   &.mousemoving {
@@ -17,6 +50,12 @@
 }
 
 .card-50 {
+  .aligncenter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
   &.flip {
     flex-direction: row-reverse;
   }
@@ -27,6 +66,7 @@
     padding: 2em;
   }
 }
+
 #fpsCounter {
   &.visible {
     display: block;
@@ -40,10 +80,12 @@
   font-size: 3em;
   font-weight: bold;
 }
+
 .fullscreen figure {
   padding: 2em;
 
   &.diagram {
+    @include box-shadow;
     background-color: #fff;
     display: flex;
     justify-content: center;
@@ -56,17 +98,10 @@
     }
   }
 }
-.card-50 {
-  .aligncenter {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-  }
-}
 
 code {
   width: 100%;
+  @include box-shadow;
 
   pre {
     font-size: 1.5em;
@@ -83,10 +118,57 @@ code {
 }
 
 .preview {
+  @include box-shadow;
   background-color: #fff;
   display: flex;
   justify-content: center;
   & > div {
     position: relative;
+  }
+}
+
+.flexblock {
+  &.features {
+    font-size: 2.5em;
+    line-height: 100px;
+
+    li {
+      line-height: 1.2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      @include box-shadow;
+    }
+  }
+}
+
+ul.workflow {
+  font-size: 2.5em;
+  li {
+    list-style: none;
+    padding: 20px;
+    border: 8px solid #cecece;
+  }
+
+  li.arrow {
+    border: none;
+    font-size: 0.8em;
+    position: relative;
+    margin-left: 50%;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    padding-left: 30px;
+  }
+  li.arrow:before {
+    content: "";
+    background-image: url("../images/arrow-down.png");
+    width: 100px;
+    height: 100px;
+    background-size: contain;
+    position: absolute;
+    background-repeat: no-repeat;
+    left: 0;
   }
 }

@@ -102,24 +102,20 @@ Object.keys(flags).forEach((key: string) => {
 });
 
 const ws: any = new WebSlides();
-function isVisible(node: HTMLElement | null): boolean {
-  if (!node) {
-    return false;
-  }
-
+function isVisible(name: string): boolean {
+  let node = document.getElementById(`${name}Container`);
+  if (!node) return false;
   const section = node.closest("section");
   if (section) {
     return section.style.display !== "none";
   }
-
   return false;
 }
 
-let slowCaterpillar: any = null;
-function startSlowCaterpillar(node: HTMLElement | null, useStage: boolean) {
-  if (slowCaterpillar) {
-    slowCaterpillar.ports.pause.send(false);
-  } else if (isVisible(node)) {
+let slowCaterpillar: any;
+function startSlowCaterpillar(name: string, useStage: boolean) {
+  let node = document.getElementById(name);
+  if (node) {
     slowCaterpillar = Slow.Elm.Caterpillar.SlowMain.init({
       node,
       flags: { ...flags, useStage }
@@ -127,12 +123,11 @@ function startSlowCaterpillar(node: HTMLElement | null, useStage: boolean) {
   }
 }
 
-let fastCaterpillar: any = null;
-function startFastCaterpillar(node: HTMLElement | null) {
-  if (fastCaterpillar) {
-    fastCaterpillar.ports.pause.send(false);
-  } else if (isVisible(node)) {
-    fastCaterpillar = Fast.Elm.Caterpillar.FastMain.init({
+function startFastCaterpillar(name: string) {
+  console.log("startFastCaterpillar");
+  let node = document.getElementById(name);
+  if (node) {
+    Fast.Elm.Caterpillar.FastMain.init({
       node,
       flags
     });
@@ -140,13 +135,15 @@ function startFastCaterpillar(node: HTMLElement | null) {
 }
 
 function startElmApp(
-  node: HTMLElement | null,
+  name: string,
   elmApp: any = null,
   elmModule: any,
   startButton: HTMLElement | null = null
 ) {
   const actuallyStartTheApp = () => {
-    if (!elmApp && elmModule && isVisible(node)) {
+    console.log("actuallyStartTheApp");
+    const node = document.getElementById(name);
+    if (!elmApp && node && elmModule && isVisible(name)) {
       return elmModule.init({ node, flags: { apple } });
     }
   };
@@ -187,68 +184,68 @@ function slideChangeHandler() {
   enableSyntaxHighlight();
   hideFpsCounter();
 
-  let node = document.getElementById("slowCaterpillar");
-  if (isVisible(node)) {
-    startSlowCaterpillar(node, true);
+  let name = "slowCaterpillar";
+  if (isVisible(name)) {
+    startSlowCaterpillar(name, true);
     showFpsCounter();
   }
 
-  node = document.getElementById("slowCaterpillarAgain");
-  if (isVisible(node)) {
-    startSlowCaterpillar(node, false);
+  name = "slowCaterpillarAgain";
+  if (isVisible(name)) {
+    startSlowCaterpillar(name, false);
     showFpsCounter();
   }
 
-  node = document.getElementById("fastCaterpillar");
-  if (isVisible(node)) {
-    startFastCaterpillar(node);
+  name = "fastCaterpillar";
+  if (isVisible(name)) {
+    startFastCaterpillar(name);
     showFpsCounter();
   }
 
-  node = document.getElementById("elmOneApple");
-  if (isVisible(node)) {
+  name = "elmOneApple";
+  if (isVisible(name)) {
     elmOneApple = startElmApp(
-      node,
+      name,
       elmOneApple,
       ElmOneApple.Elm.OneApple,
       document.getElementById("startElmOneAppleButton")
     );
   }
 
-  node = document.getElementById("elmTwoApples");
-  if (isVisible(node)) {
-    elmTwoApples = startElmApp(
-      node,
+  name = "elmTwoApples";
+  if (isVisible(name)) {
+    elmOneApple = startElmApp(
+      name,
       elmTwoApples,
       ElmTwoApples.Elm.TwoApples,
       document.getElementById("startElmTwoApplesButton")
     );
   }
 
-  node = document.getElementById("jsOneApple");
-  if (isVisible(node)) {
+  name = "jsOneApple";
+  if (isVisible(name)) {
     jsOneApple = startElmApp(
-      node,
+      name,
       jsOneApple,
       JsOneApple.Js.OneApple,
       document.getElementById("startJsOneAppleButton")
     );
   }
 
-  node = document.getElementById("jsTwoApples");
-  if (isVisible(node)) {
+  name = "jsTwoApples";
+  if (isVisible(name)) {
     jsTwoApples = startElmApp(
-      node,
+      name,
       jsTwoApples,
       JsTwoApples.Js.TwoApples,
       document.getElementById("startJsTwoApplesButton")
     );
   }
 
-  node = document.getElementById("cssApple");
-  if (isVisible(node)) {
+  name = "cssApple";
+  if (isVisible(name)) {
     cssApple = startElmApp(
-      node,
+      name,
       cssApple,
       Css.Css.Main,
       document.getElementById("startCssAppleButton")
