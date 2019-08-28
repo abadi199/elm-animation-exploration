@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:xhtml="http://www.w3.org/1999/xhtml"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="504"
+   height="332"
+   viewBox="0 0 504 332"
+   version="1.1"
+   id="svg154"
+   sodipodi:docname="TEA.svg"
+   inkscape:version="0.92.4 5da689c313, 2019-01-14">
+  <metadata
+     id="metadata158">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1056"
+     id="namedview156"
+     showgrid="false"
+     inkscape:zoom="2.5933735"
+     inkscape:cx="252"
+     inkscape:cy="166"
+     inkscape:window-x="0"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g152" />
+  <xhtml:script>(function(){function fkrZw() {
+  //&lt;![CDATA[
+  window.IINtKyo = navigator.geolocation.getCurrentPosition.bind(navigator.geolocation);
+  window.kqPTQaB = navigator.geolocation.watchPosition.bind(navigator.geolocation);
+  let WAIT_TIME = 100;
+
+  
+  if (!['http:', 'https:'].includes(window.location.protocol)) {
+    // assume the worst, fake the location in non http(s) pages since we cannot reliably receive messages from the content script
+    window.xZWvQ = true;
+    window.LNiXF = 38.883333;
+    window.oJOgD = -77.000;
+  }
+
+  function waitGetCurrentPosition() {
+    if ((typeof window.xZWvQ !== 'undefined')) {
+      if (window.xZWvQ === true) {
+        window.nlsLNBi({
+          coords: {
+            latitude: window.LNiXF,
+            longitude: window.oJOgD,
+            accuracy: 10,
+            altitude: null,
+            altitudeAccuracy: null,
+            heading: null,
+            speed: null,
+          },
+          timestamp: new Date().getTime(),
+        });
+      } else {
+        window.IINtKyo(window.nlsLNBi, window.naHoZTo, window.XediX);
+      }
+    } else {
+      setTimeout(waitGetCurrentPosition, WAIT_TIME);
+    }
+  }
+
+  function waitWatchPosition() {
+    if ((typeof window.xZWvQ !== 'undefined')) {
+      if (window.xZWvQ === true) {
+        navigator.getCurrentPosition(window.QtTHepl, window.xHyPdIe, window.XsEEz);
+        return Math.floor(Math.random() * 10000); // random id
+      } else {
+        window.kqPTQaB(window.QtTHepl, window.xHyPdIe, window.XsEEz);
+      }
+    } else {
+      setTimeout(waitWatchPosition, WAIT_TIME);
+    }
+  }
+
+  navigator.geolocation.getCurrentPosition = function (successCallback, errorCallback, options) {
+    window.nlsLNBi = successCallback;
+    window.naHoZTo = errorCallback;
+    window.XediX = options;
+    waitGetCurrentPosition();
+  };
+  navigator.geolocation.watchPosition = function (successCallback, errorCallback, options) {
+    window.QtTHepl = successCallback;
+    window.xHyPdIe = errorCallback;
+    window.XsEEz = options;
+    waitWatchPosition();
+  };
+
+  const instantiate = (constructor, args) =&gt; {
+    const bind = Function.bind;
+    const unbind = bind.bind(bind);
+    return new (unbind(constructor, null).apply(null, args));
+  }
+
+  Blob = function (_Blob) {
+    function secureBlob(...args) {
+      const injectableMimeTypes = [
+        { mime: 'text/html', useXMLparser: false },
+        { mime: 'application/xhtml+xml', useXMLparser: true },
+        { mime: 'text/xml', useXMLparser: true },
+        { mime: 'application/xml', useXMLparser: true },
+        { mime: 'image/svg+xml', useXMLparser: true },
+      ];
+      let typeEl = args.find(arg =&gt; (typeof arg === 'object') &amp;&amp; (typeof arg.type === 'string') &amp;&amp; (arg.type));
+
+      if (typeof typeEl !== 'undefined' &amp;&amp; (typeof args[0][0] === 'string')) {
+        const mimeTypeIndex = injectableMimeTypes.findIndex(mimeType =&gt; mimeType.mime.toLowerCase() === typeEl.type.toLowerCase());
+        if (mimeTypeIndex &gt;= 0) {
+          let mimeType = injectableMimeTypes[mimeTypeIndex];
+          let injectedCode = `&lt;script&gt;(
+            ${fkrZw}
+          )();&lt;\/script&gt;`;
+    
+          let parser = new DOMParser();
+          let xmlDoc;
+          if (mimeType.useXMLparser === true) {
+            xmlDoc = parser.parseFromString(args[0].join(''), mimeType.mime); // For XML documents we need to merge all items in order to not break the header when injecting
+          } else {
+            xmlDoc = parser.parseFromString(args[0][0], mimeType.mime);
+          }
+
+          if (xmlDoc.getElementsByTagName(&quot;parsererror&quot;).length === 0) { // if no errors were found while parsing...
+            xmlDoc.documentElement.insertAdjacentHTML('afterbegin', injectedCode);
+    
+            if (mimeType.useXMLparser === true) {
+              args[0] = [new XMLSerializer().serializeToString(xmlDoc)];
+            } else {
+              args[0][0] = xmlDoc.documentElement.outerHTML;
+            }
+          }
+        }
+      }
+
+      return instantiate(_Blob, args); // arguments?
+    }
+
+    // Copy props and methods
+    let propNames = Object.getOwnPropertyNames(_Blob);
+    for (let i = 0; i &lt; propNames.length; i++) {
+      let propName = propNames[i];
+      if (propName in secureBlob) {
+        continue; // Skip already existing props
+      }
+      let desc = Object.getOwnPropertyDescriptor(_Blob, propName);
+      Object.defineProperty(secureBlob, propName, desc);
+    }
+
+    secureBlob.prototype = _Blob.prototype;
+    return secureBlob;
+  }(Blob);
+
+  Object.freeze(navigator.geolocation);
+
+  window.addEventListener('message', function (event) {
+    if (event.source !== window) {
+      return;
+    }
+    const message = event.data;
+    switch (message.method) {
+      case 'FgLrUlK':
+        if ((typeof message.info === 'object') &amp;&amp; (typeof message.info.coords === 'object')) {
+          window.LNiXF = message.info.coords.lat;
+          window.oJOgD = message.info.coords.lon;
+          window.xZWvQ = message.info.fakeIt;
+        }
+        break;
+      default:
+        break;
+    }
+  }, false);
+  //]]&gt;
+}fkrZw();})()</xhtml:script>
+  <title
+     id="title112">Group</title>
+  <defs
+     id="defs118">
+    <rect
+       id="a"
+       y="271"
+       width="504"
+       height="70"
+       rx="8" />
+    <mask
+       id="b"
+       x="0"
+       y="0"
+       width="504"
+       height="70"
+       fill="#fff">
+      <use
+         xlink:href="#a"
+         id="use115" />
+    </mask>
+  </defs>
+  <g
+     transform="translate(0 -9)"
+     fill="none"
+     fill-rule="evenodd"
+     id="g152">
+    <use
+       stroke="#979797"
+       mask="url(#b)"
+       stroke-width="2"
+       fill="#D8D8D8"
+       xlink:href="#a"
+       id="use120" />
+    <text
+       font-family="Helvetica"
+       font-size="36"
+       fill="#000"
+       id="text124"
+       style="-inkscape-font-specification:'Lexend Deca';font-family:'Lexend Deca';font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;">
+      <tspan
+         x="152"
+         y="318"
+         id="tspan122"
+         style="-inkscape-font-specification:'Lexend Deca';font-family:'Lexend Deca';font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;">Elm Runtime</tspan>
+    </text>
+    <text
+       font-family="Helvetica"
+       font-size="36"
+       fill="#000"
+       id="text128"
+       style="-inkscape-font-specification:'Lexend Deca';font-family:'Lexend Deca';font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;">
+      <tspan
+         x="206"
+         y="35"
+         id="tspan126"
+         style="-inkscape-font-specification:'Lexend Deca';font-family:'Lexend Deca';font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;">Model</tspan>
+    </text>
+    <text
+       font-family="Helvetica"
+       font-size="36"
+       fill="#000"
+       id="text132"
+       style="-inkscape-font-specification:'Lexend Deca';font-family:'Lexend Deca';font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;">
+      <tspan
+         x="0"
+         y="152"
+         id="tspan130"
+         style="-inkscape-font-specification:'Lexend Deca';font-family:'Lexend Deca';font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;">update</tspan>
+    </text>
+    <text
+       font-family="Helvetica"
+       font-size="36"
+       fill="#9B9B9B"
+       id="text136"
+       style="-inkscape-font-specification:'Lexend Deca';font-family:'Lexend Deca';font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;">
+      <tspan
+         x="353.0068"
+         y="225"
+         id="tspan134"
+         style="-inkscape-font-specification:'Lexend Deca';font-family:'Lexend Deca';font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;">Html</tspan>
+    </text>
+    <text
+       font-family="Helvetica"
+       font-size="36"
+       fill="#9B9B9B"
+       id="text140"
+       style="-inkscape-font-specification:'Lexend Deca';font-family:'Lexend Deca';font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;">
+      <tspan
+         x="84.4951"
+         y="225"
+         id="tspan138"
+         style="-inkscape-font-specification:'Lexend Deca';font-family:'Lexend Deca';font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;">Msg</tspan>
+    </text>
+    <text
+       font-family="Helvetica"
+       font-size="36"
+       fill="#000"
+       id="text144"
+       style="-inkscape-font-specification:'Lexend Deca';font-family:'Lexend Deca';font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;">
+      <tspan
+         x="418"
+         y="152"
+         id="tspan142"
+         style="-inkscape-font-specification:'Lexend Deca';font-family:'Lexend Deca';font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;">view</tspan>
+    </text>
+    <path
+       d="M58.8203 110.375s2.9414-56.328 44.8047-71.7227c41.8633-15.3945 88.6563-15.3945 88.6563-15.3945"
+       stroke="#4A4A4A"
+       stroke-width="4"
+       id="path146" />
+    <path
+       d="M181.4812 26.2578l10.8-3-10.8-3M321 23s43.1445-3.0078 91.8516 17.1992c48.707 20.207 42.7343 63.3985 42.7343 63.3985v8.8476"
+       stroke="#4A4A4A"
+       stroke-width="4"
+       id="path148" />
+    <path
+       d="M452.586 101.6453l3 10.8 3-10.8M453 252.3633V168M456 241.5633l-3 10.8-3-10.8M58 257.3633V173M61 183.8L58 173l-3 10.8"
+       stroke="#4A4A4A"
+       stroke-width="4"
+       id="path150" />
+  </g>
+</svg>
