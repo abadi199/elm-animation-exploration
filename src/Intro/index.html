@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en" prefix="og: http://ogp.me/ns#">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- SEO -->
+    <title>Building Highly Performant Animation in Elm</title>
+    <meta name="description" content="Elm Conf 2019 Talk by Abadi Kurniawan" />
+
+    <!-- URL CANONICAL -->
+    <!-- <link rel="canonical" href="http://your-url.com/permalink"> -->
+
+    <!-- Google Fonts -->
+    <link href="../fonts/FantasqueSansMono-Regular.woff2" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,700,700i%7CMaitree:200,300,400,600,700&amp;subset=latin-ext"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Lexend+Deca&display=swap"
+      rel="stylesheet"
+    />
+    <!-- CSS Base -->
+    <link rel="stylesheet" type="text/css" href="main.scss" />
+
+    <!-- SOCIAL CARDS (ADD YOUR INFO) -->
+
+    <!-- FACEBOOK -->
+    <meta property="og:url" content="http://your-url.com/permalink" />
+    <!-- EDIT -->
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Elm Conf 2019 Talk by Abadi Kurniawan" />
+    <!-- EDIT -->
+    <meta
+      property="og:description"
+      content="Elm Conf 2019 Talk by Abadi Kurniawan"
+    />
+    <!-- EDIT -->
+    <meta property="og:updated_time" content="2017-01-04T16:54:27" />
+    <!-- EDIT -->
+    <meta property="og:image" content="../static/images/share-webslides.jpg" />
+    <!-- EDIT -->
+
+    <!-- TWITTER -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@webslides" />
+    <!-- EDIT -->
+    <meta name="twitter:creator" content="@jlantunez" />
+    <!-- EDIT -->
+    <meta
+      name="twitter:title"
+      content="Elm Conf 2019 Talk by Abadi Kurniawan"
+    />
+    <!-- EDIT -->
+    <meta
+      name="twitter:description"
+      content="Elm Conf 2019 Talk by Abadi Kurniawan"
+    />
+    <!-- EDIT -->
+    <meta name="twitter:image" content="../static/images/share-webslides.jpg" />
+    <!-- EDIT -->
+
+    <!-- FAVICONS -->
+    <link
+      rel="shortcut icon"
+      sizes="16x16"
+      href="../static/images/favicons/favicon.png"
+    />
+    <link
+      rel="shortcut icon"
+      sizes="32x32"
+      href="../static/images/favicons/favicon-32.png"
+    />
+    <link
+      rel="apple-touch-icon icon"
+      sizes="76x76"
+      href="../static/images/favicons/favicon-76.png"
+    />
+    <link
+      rel="apple-touch-icon icon"
+      sizes="120x120"
+      href="../static/images/favicons/favicon-120.png"
+    />
+    <link
+      rel="apple-touch-icon icon"
+      sizes="152x152"
+      href="../static/images/favicons/favicon-152.png"
+    />
+    <link
+      rel="apple-touch-icon icon"
+      sizes="180x180"
+      href="../static/images/favicons/favicon-180.png"
+    />
+    <link
+      rel="apple-touch-icon icon"
+      sizes="192x192"
+      href="../static/images/favicons/favicon-192.png"
+    />
+
+    <!-- Android -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="theme-color" content="#333333" />
+  </head>
+  <body>
+    <main role="main">
+      <article id="webslides">
+        <!-- Quick Guide
+          - Each parent <section> in the <article id="webslides"> element is an individual slide.
+          - Vertical sliding = <article id="webslides" class="vertical">
+          - <div class="wrap"> = container 90% / <div class="wrap size-50"> = 45%;
+        -->
+
+        <section class="aligncenter">
+          <div class="wrap">
+            <h1>
+              Introduction to Elm
+            </h1>
+            <span class="space-small"></span>
+            <h2>by Abadi Kurniawan</h2>
+            <img src="../images/elm-logo.png" style="width: 250px" />
+            <h2>1904Labs Lunch and Learn</h2>
+          </div>
+        </section>
+        <section class="bg-green aligncenter">
+          <h1>What is Elm?</h1>
+          <ul class="flexblock features">
+            <li>Functional Programming Language</li>
+            <li>Compiled to JavaScript, Run in Browser</li>
+            <li>Building Reliable Web Application</li>
+          </ul>
+        </section>
+        <section class="bg-green aligncenter">
+          <h1>Why Elm?</h1>
+        </section>
+        <section class="bg-green aligncenter">
+          <h1>No Runtime Exception</h1>
+        </section>
+        <section class="bg-green aligncenter">
+          <h1>No Null Reference</h1>
+          <span class="space-small"></span>
+          <div class="size-50 aligncenter">
+            <blockquote class="text-quote">
+              <p>
+                I call it my billion-dollar mistake. It was the invention of the
+                null reference in 1965.
+              </p>
+              <cite style="font-size: 1.5em">
+                Tony Hoare -- Designer of ALGOL W
+              </cite>
+            </blockquote>
+          </div>
+        </section>
+        <section class="bg-green fullscreen">
+          <div class="card-50 flip">
+            <figure class="contain">
+              <img src="../images/compiler-error.png" alt="" srcset="" />
+            </figure>
+            <div class="aligncenter">
+              <h1>Helpful Compiler</h1>
+            </div>
+          </div>
+        </section>
+        <section class="bg-green fullscreen">
+          <div class="card-50 flip">
+            <figure class="contain">
+              <img src="../images/compiler-error2.png" alt="" srcset="" />
+            </figure>
+            <div class="aligncenter">
+              <h1>More Helpful Compiler</h1>
+            </div>
+          </div>
+        </section>
+        <section class="bg-green aligncenter">
+          <h1>Enforced Semantic Versioning</h1>
+        </section>
+        <section class="bg-green aligncenter">
+          <h1>Friendly Community</h1>
+        </section>
+        <section class="bg-blue aligncenter">
+          <h1>Syntax</h1>
+        </section>
+        <section class="bg-blue aligncenter">
+          <h1>Hello World</h1>
+          <code class="elm size-70 aligncenter">
+            <pre>
+module Main exposing (main)
+
+import Html exposing (div, text)
+import Html.Attributes exposing (style)
+
+-- This is the main function
+main =
+    view "Hello World"
+
+-- This is the view function
+view content =
+    div 
+        [ style "border" "5px solid #ccc"
+        , style "padding" "10px"
+        ] 
+        [ text content ]
+              </pre
+            >
+          </code>
+        </section>
+        <section class="bg-blue aligncenter">
+          <h1>Number</h1>
+          <code class="elm size-70 aligncenter">
+            <pre>
+
+n: Int
+n = 10
+
+m : Int
+m = 30 
+
+total = n + m 
+-- 40
+                </pre
+            >
+          </code>
+        </section>
+        <section class="bg-blue aligncenter">
+          <h1>String</h1>
+          <code class="elm size-70 aligncenter">
+            <pre>
+
+hello : String
+hello = "hello"
+
+world : String
+world = "world"
+
+helloWorld = hello ++ " " ++ world -- "hello world"
+
+            </pre></code
+          >
+        </section>
+
+        <section class="bg-blue aligncenter">
+          <h1>Function</h1>
+          <code class="elm size-70 aligncenter">
+            <pre>
+
+isNegative : Int -> Bool
+isNegative n = n < 0
+
+isNegative 10 -- False
+isNegative -10 -- True
+              </pre
+            >
+          </code>
+        </section>
+        <section class="bg-blue aligncenter">
+          <h1>If Expressions</h1>
+          <code class="elm size-70 aligncenter">
+            <pre>
+
+content : String
+content = if True then "hello" else "world"
+-- "hello"
+
+error : String
+error = if True then "bad"
+-- Won't compile
+
+            </pre>
+          </code>
+        </section>
+        <section class="bg-blue aligncenter">
+          <h1>List</h1>
+          <code class="elm size-70 aligncenter">
+            <pre>
+
+dogs : List String
+dogs = [ "Husky", "Golden Retriever", "Dachshund" ]
+
+birds : List String
+birds = [ "Parakeet ",  "Macaw", "Cardinal" ]
+
+animals = dogs ++ birds
+-- [ "Husky", "Golden Retriever", "Dachshund", "Parakeet ",  "Macaw", "Cardinal" ]
+                </pre
+            >
+          </code>
+        </section>
+        <section class="bg-blue aligncenter">
+          <h1>Tuple</h1>
+          <code class="elm size-70 aligncenter">
+            <pre>
+
+coordinate : (Int, Int)
+coordinate = ( 0, 100 )
+
+attendance : ( String, Bool )
+attendance = ( "Abadi", True )
+                </pre
+            >
+          </code>
+        </section>
+        <section class="bg-blue aligncenter">
+          <h1>Records</h1>
+          <code class="elm size-70 aligncenter">
+            <pre>
+
+point : { x : Int, y : Int }
+point = { x = 4, y = 10 }
+
+person : { name : String, age : Int }
+person = { name = "Bill", age = 62 }
+            </pre>
+          </code>
+        </section>
+        <section class="aligncenter">
+          <h1>The Elm Architecture</h1>
+          <ul class="flexblock features">
+            <li>Model</li>
+            <li>Update</li>
+            <li>View</li>
+          </ul>
+        </section>
+        <section class="fullscreen">
+          <div class="card-50 flip">
+            <figure class="flex-content preview">
+              <div id="elmTea"></div>
+            </figure>
+            <div class="code">
+              <code class="elm">
+                <pre>
+
+import Browser
+import Html exposing (Html, button, div, text)
+import Html.Events exposing (onClick)
+
+-- MODEL
+
+type alias Model = Int
+
+
+-- UPDATE
+
+type Msg = Increment | Decrement
+
+update msg model =
+  case msg of
+    Increment ->
+      model + 1
+
+    Decrement ->
+      model - 1
+
+
+-- VIEW
+
+view model =
+  div []
+    [ button [ onClick Decrement ] [ text "-" ]
+    , div [] [ text (String.fromInt model) ]
+    , button [ onClick Increment ] [ text "+" ]
+    ] 
+
+
+main =
+  Browser.sandbox 
+    { init = 0, update = update, view = view }
+
+            </pre
+                >
+              </code>
+            </div>
+          </div>
+        </section>
+      </article>
+    </main>
+    <script src="./index.ts"></script>
+  </body>
+</html>

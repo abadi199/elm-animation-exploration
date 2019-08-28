@@ -8,6 +8,7 @@
     "css": "parcel src/Css/index.html",
     "js": "parcel src/Js/index.html --no-cache",
     "slide": "parcel src/Slide/index.html --no-cache",
+    "intro": "parcel src/Intro/index.html --no-cache",
     "slow": "parcel src/Caterpillar/slow.html --no-cache --no-hmr",
     "fast": "parcel src/Caterpillar/fast.html --no-cache --no-hmr",
     "elmOne": "parcel src/Elm/oneApple.html --no-cache",
