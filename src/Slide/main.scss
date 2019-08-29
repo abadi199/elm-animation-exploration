@@ -149,6 +149,7 @@ ul.workflow {
     list-style: none;
     padding: 20px;
     border: 8px solid #cecece;
+    background: #fff;
   }
 
   li.arrow {
@@ -160,6 +161,7 @@ ul.workflow {
     display: flex;
     align-items: center;
     padding-left: 30px;
+    background: none;
   }
   li.arrow:before {
     content: "";

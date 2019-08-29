@@ -288,10 +288,21 @@ view model =
             <h1>CSS Animation Land</h1>
           </div>
         </section>
-        <section class="aligncenter">
-          <span class="background css"></span>
-          <div class="wrap">
-            <h1>Domain Specific Language (DSL) for CSS Keyframe Animations</h1>
+        <section class="fullscreen">
+          <div class="card-50 flip">
+            <span class="background css"></span>
+            <figure class="flex-content diagram">
+              <ul class="workflow">
+                <li>
+                  Domain Specific Language (DSL)
+                </li>
+                <li class="arrow"></li>
+                <li>CSS Keyframe Animations</li>
+              </ul>
+            </figure>
+            <div class="aligncenter">
+              <h1>Workflow</h1>
+            </div>
           </div>
         </section>
         <section class="aligncenter">
@@ -655,9 +666,7 @@ document.getElementById("apple").animate(
 view model =
   div []
     [ Animation.node
-      [ Animation.translate { x = px 0, y = px 0 }
-      , Animation.translate { x = px 500, y = px 0 }
-      ]
+      [ Animation.translate { x = px 500, y = px 0 } ]
       ({ duration = millisecond 2000 }
         |> Options.default 
         |> Options.withFill Fill.forwards
@@ -689,25 +698,27 @@ view model =
               <code class="elm">
                 <pre>
 
+type AnimationState = FirstAppleMoving | SecondAppleMoving
+
 view model = 
   div []
     [ Animation.node
-      keyframes 
-      options
-      [ Events.onFinish FirstAppleAnimationFinish ]
-      (apple model)
+        keyframes 
+        options
+        [ Events.onFinish FirstAppleAnimationFinish ]
+        (apple model)
 
     , Animation.node
-      (case model.animationState of
-        FirstAppleMoving ->
-          []
+        (case model.animationState of
+          FirstAppleMoving ->
+            []
 
-        SecondAppleMoving ->
-          keyframes 
-      )
-      options
-      []
-      (apple model)
+          SecondAppleMoving ->
+            keyframes 
+        )
+        options
+        []
+        (apple model)
     ]
 
 update msg model =
@@ -760,6 +771,10 @@ update msg model =
               <li>
                 Implement all Web Animations API in Elm <br />
                 ( Request for collaborator )
+                <span class="space-small"></span>
+                <div>Elm Slack: @abadi199</div>
+                <div>Github: @abadi199</div>
+                <div>Twitter: @abadikurniawan</div>
               </li>
             </ul>
           </div>
