@@ -467,5 +467,4 @@ view model =
                 , bush
                 , caterpillar
                 , grasses
-                , Dimension.view windowDimension
                 ]

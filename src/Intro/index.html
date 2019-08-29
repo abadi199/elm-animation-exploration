@@ -124,7 +124,7 @@
         <section class="bg-green aligncenter">
           <h1>What is Elm?</h1>
           <ul class="flexblock features">
-            <li>Functional Programming Language</li>
+            <li>A Delightful Functional Programming Language</li>
             <li>Compiled to JavaScript, Run in Browser</li>
             <li>Building Reliable Web Application</li>
           </ul>
@@ -188,11 +188,15 @@ module Main exposing (main)
 import Html exposing (div, text)
 import Html.Attributes exposing (style)
 
+
 -- This is the main function
+
 main =
     view "Hello World"
 
+
 -- This is the view function
+
 view content =
     div 
         [ style "border" "5px solid #ccc"
@@ -208,14 +212,21 @@ view content =
           <code class="elm size-70 aligncenter">
             <pre>
 
-n: Int
-n = 10
+numberOfApples : Int
+numberOfApples = 10
 
-m : Int
-m = 30 
+numberOfOranges : Int
+numberOfOranges = 30 
 
-total = n + m 
+totalFruits = numberOfApples + numberOfOranges
 -- 40
+
+
+price : Float
+price = 5.25
+
+totalPrice = totalFruits * price
+-- Won't compile
                 </pre
             >
           </code>
@@ -231,7 +242,8 @@ hello = "hello"
 world : String
 world = "world"
 
-helloWorld = hello ++ " " ++ world -- "hello world"
+helloWorld = hello ++ " " ++ world 
+-- "hello world"
 
             </pre></code
           >
@@ -243,7 +255,8 @@ helloWorld = hello ++ " " ++ world -- "hello world"
             <pre>
 
 isNegative : Int -> Bool
-isNegative n = n < 0
+isNegative number = 
+    number < 0
 
 isNegative 10 -- False
 isNegative -10 -- True
@@ -256,12 +269,18 @@ isNegative -10 -- True
           <code class="elm size-70 aligncenter">
             <pre>
 
-content : String
-content = if True then "hello" else "world"
--- "hello"
+over9000 powerLevel =
+  if powerLevel > 9000 then 
+      "It's over 9000!!!" 
+  
+  else 
+    "meh"
 
-error : String
-error = if True then "bad"
+
+badExample: String
+badExample = 
+  if True then 
+      "bad"
 -- Won't compile
 
             </pre>
@@ -306,8 +325,86 @@ attendance = ( "Abadi", True )
 point : { x : Int, y : Int }
 point = { x = 4, y = 10 }
 
-person : { name : String, age : Int }
-person = { name = "Bill", age = 62 }
+bill : { name : String, age : Int }
+bill = { name = "Bill", age = 62 }
+
+
+-- Record update
+
+billClone = { bill | age = 18 }
+
+            </pre>
+          </code>
+        </section>
+        <section class="bg-blue aligncenter">
+          <h1>Type Alias</h1>
+          <code class="elm size-70 aligncenter">
+            <pre>
+
+type alias Entjero = Integer
+
+type alias Person = { name : String, age : Int }
+            </pre>
+          </code>
+        </section>
+        <section class="bg-blue aligncenter">
+          <h1>Custom Types</h1>
+          <h2>formerly: Union Types</h2>
+          <code class="elm size-70 aligncenter">
+            <pre>
+
+type Fruit = Durian | Salak | Rambutan
+
+type Bool = True | False
+
+type UserStatus = Regular | Visitor
+            </pre></code
+          >
+        </section>
+        <section class="bg-blue aligncenter">
+          <h1>More Custom Types</h1>
+          <div class="card-50">
+            <code class="elm size-40 aligncenter">
+              <pre>
+
+type UserStatus 
+  = Regular 
+  | Visitor
+
+type alias User =
+  { status : UserStatus
+  , name : String
+  }
+
+thomas = { status = Regular, name = "Thomas" }
+kate95 = { status = Visitor, name = "kate95" }
+  </pre
+              >
+            </code>
+            <code class="elm size-40 aligncenter">
+              <pre>
+
+type UserStatus 
+  = Regular String
+  | Visitor String
+
+thomas = Regular "Thomas"
+kate95 = Visitor "kate95"
+            </pre
+              >
+            </code>
+          </div>
+        </section>
+        <section class="bg-blue aligncenter">
+          <h1>More Custom Types</h1>
+          <h2>I really like custom types :)</h2>
+          <code class="elm size-50 aligncenter">
+            <pre>
+
+type Profile 
+    = Loading
+    | Failure String
+    | Success { name : String, age : Int }
             </pre>
           </code>
         </section>
@@ -340,17 +437,9 @@ import Html.Events exposing (onClick)
 type alias Model = Int
 
 
--- UPDATE
-
-type Msg = Increment | Decrement
-
-update msg model =
-  case msg of
-    Increment ->
-      model + 1
-
-    Decrement ->
-      model - 1
+main =
+  Browser.sandbox 
+    { init = 0, update = update, view = view }
 
 
 -- VIEW
@@ -363,10 +452,17 @@ view model =
     ] 
 
 
-main =
-  Browser.sandbox 
-    { init = 0, update = update, view = view }
+-- UPDATE
 
+type Msg = Increment | Decrement
+
+update msg model =
+  case msg of
+    Increment ->
+      model + 1
+
+    Decrement ->
+      model - 1
             </pre
                 >
               </code>
