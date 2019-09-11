@@ -1,10 +1,11 @@
 # Elm Animation Exploration
 
+Slide: https://abadi199.github.com/elm-animation-exploration
+
+
 This project is for exploring the idea of doing highly performant animation in Elm with a nice API.
 
 It's presented at [Elm-Conf 2019](https://2019.elm-conf.com/speakers/abadi-kurniawan) with the title: **Building Highly Performant Animations in Elm**
-
-
 
 ## Install all dependencies:
 ```
