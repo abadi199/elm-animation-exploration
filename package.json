@@ -12,7 +12,7 @@
     "fast": "parcel src/Caterpillar/fast.html --no-cache --no-hmr",
     "elmOne": "parcel src/Elm/oneApple.html --no-cache",
     "elmTwo": "parcel src/Elm/twoApples.html --no-cache",
-    "build": "rm -rf docs && parcel build src/Slide/index.html --out-dir docs --public-url ./"
+    "build": "rm -rf docs && parcel build src/Slide/index.html --out-dir docs --public-url ./ --no-content-hash"
   },
   "author": "",
   "license": "ISC",
