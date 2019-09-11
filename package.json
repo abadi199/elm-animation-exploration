@@ -7,7 +7,6 @@
     "start": "parcel src/Css/index.html",
     "css": "parcel src/Css/index.html",
     "js": "parcel src/Js/index.html --no-cache",
-    "intro": "parcel src/Intro/index.html --no-cache --no-hmr --port 1111 --out-dir dist/intro",
     "slide": "parcel src/Slide/index.html --no-cache --no-hmr --port 2222 --out-dir dist/slide",
     "slow": "parcel src/Caterpillar/slow.html --no-cache --no-hmr",
     "fast": "parcel src/Caterpillar/fast.html --no-cache --no-hmr",
