@@ -666,7 +666,9 @@ document.getElementById("apple").animate(
 view model =
   div []
     [ Animation.node
-      [ Animation.translate { x = px 500, y = px 0 } ]
+      [ Animation.translate { x = px 0, y = px 0 }
+      , Animation.translate { x = px 500, y = px 0 } 
+      ]
       ({ duration = millisecond 2000 }
         |> Options.default 
         |> Options.withFill Fill.forwards
@@ -800,6 +802,7 @@ update msg model =
       </article>
       <div id="fpsCounter"></div>
     </main>
+    <div class="laser"></div>
     <script src="../Js/elmAnimation.ts"></script>
     <script src="./index.ts"></script>
   </body>

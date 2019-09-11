@@ -77,7 +77,8 @@ view : Model -> Html Msg
 view model =
     div [ HA.css [ Css.height (Css.px 200) ] ]
         [ Animation.styledNode
-            [ Animation.translate { x = targetX, y = px 0 }
+            [ Animation.translate { x = px 0, y = px 0 }
+            , Animation.translate { x = targetX, y = px 0 }
             ]
             (Options.default { duration = millisecond 2000 }
                 |> Options.withFill Fill.forwards
