@@ -11,7 +11,8 @@
     "slow": "parcel src/Caterpillar/slow.html --no-cache --no-hmr",
     "fast": "parcel src/Caterpillar/fast.html --no-cache --no-hmr",
     "elmOne": "parcel src/Elm/oneApple.html --no-cache",
-    "elmTwo": "parcel src/Elm/twoApples.html --no-cache"
+    "elmTwo": "parcel src/Elm/twoApples.html --no-cache",
+    "build": "rm -rf docs && parcel build src/Slide/index.html --out-dir docs --public-url ./"
   },
   "author": "",
   "license": "ISC",

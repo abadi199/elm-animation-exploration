@@ -193,7 +193,7 @@ foldAnimation totalTime animation ( keyframe, coordinate, time ) =
 toStyleAttribute : List Animation -> HS.Attribute msg
 toStyleAttribute animations =
     HSA.style "animation"
-        (animations |> List.map toAnimationStyle |> String.join "," |> Debug.log "")
+        (animations |> List.map toAnimationStyle |> String.join ",")
 
 
 toAnimationStyle : Animation -> String

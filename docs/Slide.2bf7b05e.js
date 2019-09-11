@@ -448,68 +448,68 @@ for(var e=arguments[3],n=require("performance-now"),t="undefined"==typeof window
 },{"raf":"Slta","events":"LMQS","inherits":"UAgo"}],"V3iP":[function(require,module,exports) {
 "use strict";var e=window.document,r="createElement",n="appendChild";module.exports={js:function(t){var i=e[r]("script");return i.src=t,i.async=!1,e.head[n](i),this},link:function(t,i){var s=e[r]("link");return s.rel=t,s.href=i,e.head[n](s),this}};
 },{}],"5c0f":[function(require,module,exports) {
-module.exports="/apple.f776b4d7.png";
+module.exports="apple.f776b4d7.png";
 },{}],"KKQz":[function(require,module,exports) {
-module.exports="/apples.48fd2123.png";
+module.exports="apples.48fd2123.png";
 },{}],"wLJ7":[function(require,module,exports) {
-module.exports="/caterpillar-smile.454f5015.png";
+module.exports="caterpillar-smile.454f5015.png";
 },{}],"QXdu":[function(require,module,exports) {
-module.exports="/caterpillar-frown.fa86a9b9.png";
+module.exports="caterpillar-frown.fa86a9b9.png";
 },{}],"wD9a":[function(require,module,exports) {
-module.exports="/sky.775fd810.png";
+module.exports="sky.775fd810.png";
 },{}],"rVgr":[function(require,module,exports) {
-module.exports="/grass.bafbf718.png";
+module.exports="grass.bafbf718.png";
 },{}],"Rbvi":[function(require,module,exports) {
-module.exports="/fence.1525dc2b.png";
+module.exports="fence.1525dc2b.png";
 },{}],"l7aU":[function(require,module,exports) {
-module.exports="/hill-far.330e0cb6.png";
+module.exports="hill-far.330e0cb6.png";
 },{}],"7q4j":[function(require,module,exports) {
-module.exports="/hill-near.9e3930f8.png";
+module.exports="hill-near.9e3930f8.png";
 },{}],"jjik":[function(require,module,exports) {
-module.exports="/bush.14afa7b4.png";
+module.exports="bush.14afa7b4.png";
 },{}],"u4Y/":[function(require,module,exports) {
-module.exports="/cloud-1.0147298f.png";
+module.exports="cloud-1.0147298f.png";
 },{}],"3hnx":[function(require,module,exports) {
-module.exports="/cloud-2.8fdc202f.png";
+module.exports="cloud-2.8fdc202f.png";
 },{}],"1VYf":[function(require,module,exports) {
-module.exports="/sun-smile.78a062e3.png";
+module.exports="sun-smile.78a062e3.png";
 },{}],"83eP":[function(require,module,exports) {
-module.exports="/sun-frown.50f35eca.png";
+module.exports="sun-frown.50f35eca.png";
 },{}],"ggTK":[function(require,module,exports) {
-module.exports="/sun-rays.71896874.png";
+module.exports="sun-rays.71896874.png";
 },{}],"t4i9":[function(require,module,exports) {
-module.exports="/tree.dd6202e5.png";
+module.exports="tree.dd6202e5.png";
 },{}],"UEal":[function(require,module,exports) {
-module.exports="/grass-all.84bb7fdb.png";
+module.exports="grass-all.84bb7fdb.png";
 },{}],"u+K5":[function(require,module,exports) {
-module.exports="/grass-01.529d9587.png";
+module.exports="grass-01.529d9587.png";
 },{}],"dtEA":[function(require,module,exports) {
-module.exports="/grass-02.4fd87e6c.png";
+module.exports="grass-02.4fd87e6c.png";
 },{}],"H5jz":[function(require,module,exports) {
-module.exports="/grass-03.d14bcfd3.png";
+module.exports="grass-03.d14bcfd3.png";
 },{}],"r8os":[function(require,module,exports) {
-module.exports="/grass-04.4ad263dc.png";
+module.exports="grass-04.4ad263dc.png";
 },{}],"084x":[function(require,module,exports) {
-module.exports="/grass-05.075de06d.png";
+module.exports="grass-05.075de06d.png";
 },{}],"x4rp":[function(require,module,exports) {
-module.exports="/grass-06.700f8743.png";
+module.exports="grass-06.700f8743.png";
 },{}],"7F3e":[function(require,module,exports) {
-module.exports="/grass-07.33e3f75f.png";
+module.exports="grass-07.33e3f75f.png";
 },{}],"mqf4":[function(require,module,exports) {
-module.exports="/grass-08.60655466.png";
+module.exports="grass-08.60655466.png";
 },{}],"m/kb":[function(require,module,exports) {
-module.exports="/grass-09.072cec28.png";
+module.exports="grass-09.072cec28.png";
 },{}],"gZ2l":[function(require,module,exports) {
-module.exports="/grass-10.c79fa7dd.png";
+module.exports="grass-10.c79fa7dd.png";
 },{}],"fwqL":[function(require,module,exports) {
-module.exports="/grass-11.a56870cd.png";
+module.exports="grass-11.a56870cd.png";
 },{}],"lyOE":[function(require,module,exports) {
-module.exports="/grass-12.10494b43.png";
+module.exports="grass-12.10494b43.png";
 },{}],"MDy5":[function(require,module,exports) {
-module.exports="/grass-13.7d94821b.png";
+module.exports="grass-13.7d94821b.png";
 },{}],"O3jJ":[function(require,module,exports) {
-module.exports="/grass-14.4e7779fb.png";
+module.exports="grass-14.4e7779fb.png";
 },{}],"7QCb":[function(require,module,exports) {
 "use strict";var e=this&&this.__importDefault||function(e){return e&&e.__esModule?e:{default:e}};Object.defineProperty(exports,"__esModule",{value:!0});var l=e(require("webslides/src/js/modules/webslides")),r=e(require("../Caterpillar/SlowMain.elm")),a=e(require("../Caterpillar/FastMain.elm")),t=require("../Elm/OneApple.elm"),i=require("../Elm/TwoApples.elm"),n=require("../Css/Main.elm"),s=require("../Js/OneApple.elm"),u=require("../Js/TwoApples.elm"),p=e(require("highlight.js")),g=e(require("highlight.js/lib/languages/elm"));require("highlight.js/styles/a11y-light.css");var o=e(require("fps-emitter")),d=e(require("up.js")),m=e(require("../Caterpillar/images/apple.png")),f=e(require("../Caterpillar/images/apples.png")),c=e(require("../Caterpillar/images/caterpillar-smile.png")),C=e(require("../Caterpillar/images/caterpillar-frown.png")),q=e(require("../Caterpillar/images/sky.png")),E=e(require("../Caterpillar/images/grass.png")),y=e(require("../Caterpillar/images/fence.png")),h=e(require("../Caterpillar/images/hill-far.png")),v=e(require("../Caterpillar/images/hill-near.png")),A=e(require("../Caterpillar/images/bush.png")),w=e(require("../Caterpillar/images/cloud-1.png")),B=e(require("../Caterpillar/images/cloud-2.png")),I=e(require("../Caterpillar/images/sun-smile.png")),O=e(require("../Caterpillar/images/sun-frown.png")),T=e(require("../Caterpillar/images/sun-rays.png")),b=e(require("../Caterpillar/images/tree.png")),j=e(require("../Caterpillar/images/grass-all.png")),M=e(require("../Caterpillar/images/grass-01.png")),k=e(require("../Caterpillar/images/grass-02.png")),F=e(require("../Caterpillar/images/grass-03.png")),S=e(require("../Caterpillar/images/grass-04.png")),J=e(require("../Caterpillar/images/grass-05.png")),L=e(require("../Caterpillar/images/grass-06.png")),_=e(require("../Caterpillar/images/grass-07.png")),N=e(require("../Caterpillar/images/grass-08.png")),x=e(require("../Caterpillar/images/grass-09.png")),D=e(require("../Caterpillar/images/grass-10.png")),P=e(require("../Caterpillar/images/grass-11.png")),R=e(require("../Caterpillar/images/grass-12.png")),z=e(require("../Caterpillar/images/grass-13.png")),G=e(require("../Caterpillar/images/grass-14.png"));p.default.registerLanguage("elm",g.default);var H={apple:m.default,apples:f.default,caterpillar:c.default,caterpillarSmile:c.default,caterpillarFrown:C.default,sky:q.default,grass:E.default,fence:y.default,hillFar:h.default,hillNear:v.default,bush:A.default,cloud1:w.default,cloud2:B.default,sun:I.default,sunSmile:I.default,sunFrown:O.default,sunRays:T.default,tree:b.default,grassAll:j.default,grasses:[M.default,k.default,F.default,S.default,J.default,L.default,_.default,N.default,x.default,D.default,P.default,R.default,z.default,G.default]};Object.keys(H).forEach(function(e){var l=H[e];"string"==typeof l?d.default.link("prefetch",l):Array.isArray(l)&&l.forEach(function(e){return d.default.link("prefetch",e)})});var K,Q=new l.default;function U(e){var l=document.getElementById("".concat(e,"Container"));if(!l)return!1;var r=l.closest("section");return!!r&&"none"!==r.style.display}function V(e,l){var a=document.getElementById(e);a&&(K=r.default.Elm.Caterpillar.SlowMain.init({node:a,flags:Object.assign({},H,{useStage:l})}))}function W(e){console.log("startFastCaterpillar");var l=document.getElementById(e);l&&a.default.Elm.Caterpillar.FastMain.init({node:l,flags:H})}function X(e){var l=arguments.length>1&&void 0!==arguments[1]?arguments[1]:null,r=arguments.length>2?arguments[2]:void 0,a=arguments.length>3&&void 0!==arguments[3]?arguments[3]:null,t=function(){console.log("actuallyStartTheApp");var a=document.getElementById(e);if(!l&&a&&r&&U(e))return r.init({node:a,flags:{apple:m.default}})};a?a.addEventListener("click",t):t()}function Y(){document.querySelectorAll("code").forEach(function(e){p.default.highlightBlock(e)})}function Z(){var e=document.getElementById("fpsCounter");e&&(e.style.display="none")}function $(){var e=document.getElementById("fpsCounter");e&&(e.style.display="block")}var ee=null,le=null,re=null,ae=null,te=null;function ie(){Y(),Z();var e="slowCaterpillar";U(e)&&(V(e,!0),$()),U(e="slowCaterpillarAgain")&&(V(e,!1),$()),U(e="fastCaterpillar")&&(W(e),$()),U(e="elmOneApple")&&(ee=X(e,ee,t.Elm.Elm.OneApple,document.getElementById("startElmOneAppleButton"))),U(e="elmTwoApples")&&(ee=X(e,le,i.Elm.Elm.TwoApples,document.getElementById("startElmTwoApplesButton"))),U(e="jsOneApple")&&(re=X(e,re,s.Elm.Js.OneApple,document.getElementById("startJsOneAppleButton"))),U(e="jsTwoApples")&&(ae=X(e,ae,u.Elm.Js.TwoApples,document.getElementById("startJsTwoApplesButton"))),U(e="cssApple")&&(te=X(e,te,n.Elm.Css.Main,document.getElementById("startCssAppleButton")))}function ne(e,l){e.className="mousemoving"}function se(e){window.requestAnimationFrame(function(){e.className="mousestop"})}function ue(){var e,l=document.getElementById("webslides");l&&l.addEventListener("mousemove",function(r){e&&clearTimeout(e),e=setTimeout(function(){se(l)},1e3),ne(l,r)})}Q.el.addEventListener("ws:slide-change",ie),document.addEventListener("DOMContentLoaded",function(){ue();var e=document.getElementById("fpsCounter");e&&(new o.default).on("update",function(l){e.textContent="fps: "+l,K&&K.ports.fps.send(l)});ie()});
 },{"webslides/src/js/modules/webslides":"1szh","../Caterpillar/SlowMain.elm":"IRNh","../Caterpillar/FastMain.elm":"kQh9","../Elm/OneApple.elm":"Tiuu","../Elm/TwoApples.elm":"NYJj","../Css/Main.elm":"xbQ8","../Js/OneApple.elm":"HXUp","../Js/TwoApples.elm":"6GbT","highlight.js":"NqUz","highlight.js/lib/languages/elm":"v8tq","highlight.js/styles/a11y-light.css":"TmBe","fps-emitter":"GaWs","up.js":"V3iP","../Caterpillar/images/apple.png":"5c0f","../Caterpillar/images/apples.png":"KKQz","../Caterpillar/images/caterpillar-smile.png":"wLJ7","../Caterpillar/images/caterpillar-frown.png":"QXdu","../Caterpillar/images/sky.png":"wD9a","../Caterpillar/images/grass.png":"rVgr","../Caterpillar/images/fence.png":"Rbvi","../Caterpillar/images/hill-far.png":"l7aU","../Caterpillar/images/hill-near.png":"7q4j","../Caterpillar/images/bush.png":"jjik","../Caterpillar/images/cloud-1.png":"u4Y/","../Caterpillar/images/cloud-2.png":"3hnx","../Caterpillar/images/sun-smile.png":"1VYf","../Caterpillar/images/sun-frown.png":"83eP","../Caterpillar/images/sun-rays.png":"ggTK","../Caterpillar/images/tree.png":"t4i9","../Caterpillar/images/grass-all.png":"UEal","../Caterpillar/images/grass-01.png":"u+K5","../Caterpillar/images/grass-02.png":"dtEA","../Caterpillar/images/grass-03.png":"H5jz","../Caterpillar/images/grass-04.png":"r8os","../Caterpillar/images/grass-05.png":"084x","../Caterpillar/images/grass-06.png":"x4rp","../Caterpillar/images/grass-07.png":"7F3e","../Caterpillar/images/grass-08.png":"mqf4","../Caterpillar/images/grass-09.png":"m/kb","../Caterpillar/images/grass-10.png":"gZ2l","../Caterpillar/images/grass-11.png":"fwqL","../Caterpillar/images/grass-12.png":"lyOE","../Caterpillar/images/grass-13.png":"MDy5","../Caterpillar/images/grass-14.png":"O3jJ"}]},{},["7QCb"], null)
-//# sourceMappingURL=/Slide.2bf7b05e.js.map
+//# sourceMappingURL=Slide.2bf7b05e.js.map
