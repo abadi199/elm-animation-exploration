@@ -170,13 +170,13 @@ foldAnimation totalTime animation ( keyframe, coordinate, time ) =
                         ++ ");"
 
                 Opacity _ _ _ ->
-                    Debug.todo "foldAnimation for opacity"
+                    "TODO: oldAnimation for opacity"
 
                 Delay _ delayedAnimation ->
                     toCss delayedAnimation
 
                 Sequence _ ->
-                    Debug.todo "should we support nested sequence?"
+                    "TODO: should we support nested sequence?"
 
         content =
             "{ " ++ toCss animation ++ " } "
@@ -250,7 +250,7 @@ getCount animation =
             getCount delayedAnimation
 
         Sequence _ ->
-            Debug.todo "???"
+            Count.once
 
 
 getDuration : Animation -> Maybe Second

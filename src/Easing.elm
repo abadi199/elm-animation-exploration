@@ -83,7 +83,7 @@ encode easing =
             JE.string "ease-in-out"
 
         CubicBezier ->
-            Debug.todo "cubicBezier"
+            JE.string "TODO: cubicBezier"
 
         Steps n ->
             JE.string <| "steps(" ++ String.fromInt n ++ ")"
