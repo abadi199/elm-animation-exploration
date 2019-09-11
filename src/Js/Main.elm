@@ -120,10 +120,6 @@ updateReady : Msg -> Data -> ( Model, Cmd Msg )
 updateReady msg data =
     case msg of
         AnimationFinish ->
-            let
-                _ =
-                    Debug.log "AnimationFinish" ""
-            in
             ( Ready data, Cmd.none )
 
         UserCheckShowShadowCheckBox checked ->

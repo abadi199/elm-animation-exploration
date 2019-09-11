@@ -224,7 +224,6 @@ toAnimationStyle animation =
                 ++ " "
                 ++ Second.toString delayDuration
                 ++ " forwards"
-                |> Debug.log "delay"
 
         Sequence animations ->
             hash animation ++ " " ++ Second.toString (getTotalDuration animations) ++ " forwards"
