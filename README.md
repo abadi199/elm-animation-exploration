@@ -1,6 +1,6 @@
 # Elm Animation Exploration
 
-Slide: https://abadi199.github.com/elm-animation-exploration
+Slide: https://elm-animation-exploration.netlify.com
 
 
 This project is for exploring the idea of doing highly performant animation in Elm with a nice API.
