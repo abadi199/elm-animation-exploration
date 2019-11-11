@@ -12,20 +12,22 @@
     "fast": "parcel src/Caterpillar/fast.html --no-cache --no-hmr",
     "elmOne": "parcel src/Elm/oneApple.html --no-cache",
     "elmTwo": "parcel src/Elm/twoApples.html --no-cache",
+    "animator": "parcel src/Animator/index.html --no-cache",
     "build": "rm -rf docs && parcel build src/Slide/index.html --out-dir docs --public-url ./ --no-content-hash"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@types/highlight.js": "^9.12.3",
+    "elm": "^0.19.1-3",
     "elm-hot": "^1.0.1",
+    "fps-emitter": "^1.0.0",
     "highlight.js": "^9.15.8",
     "node-elm-compiler": "^5.0.4",
     "parcel-bundler": "^1.12.3",
     "sass": "^1.22.7",
     "typescript": "^3.5.1",
-    "webslides": "^1.5.0",
-    "fps-emitter": "^1.0.0",
-    "up.js": "^1.0.0"
+    "up.js": "^1.0.0",
+    "webslides": "^1.5.0"
   }
 }
