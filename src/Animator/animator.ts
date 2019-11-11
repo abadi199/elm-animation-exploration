@@ -10,9 +10,11 @@ class Animator extends HTMLElement {
   attributeChangedCallback(name: string, oldValue: string, newValue: string) {
     switch (name) {
       case "transitioning":
-        requestAnimationFrame(() => {
-          this.transitioning();
-        });
+        if (newValue) {
+          requestAnimationFrame(() => {
+            this.transitioning();
+          });
+        }
         break;
 
       default:

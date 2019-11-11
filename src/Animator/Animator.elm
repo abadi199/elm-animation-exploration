@@ -1,4 +1,9 @@
-module Animator.Animator exposing (AnimationKind(..), State(..), view)
+module Animator.Animator exposing
+    ( AnimationKind(..)
+    , State(..)
+    , transitionTo
+    , view
+    )
 
 import Css exposing (..)
 import Html.Styled as H
@@ -44,6 +49,8 @@ view { onFinish, render, animationKind } state =
             H.node "elm-animator"
                 [ HA.css
                     [ overflow hidden
+                    , height (vh 100)
+                    , display inlineBlock
                     ]
                 ]
                 [ render p
@@ -54,49 +61,77 @@ view { onFinish, render, animationKind } state =
                 animationKindValue =
                     { from = from, to = to }
                         |> animationKind
+
+                baseCss =
+                    [ width (pct 100) ]
             in
             H.node "elm-animator"
                 [ HA.attribute "transitioning" "true"
                 , HA.attribute "kind" (animationKindToString animationKindValue)
                 , HE.on "finish" (JD.succeed (onFinish to))
-                , HA.css
-                    [ overflow hidden
-                    ]
+                , case animationKindValue of
+                    Fade ->
+                        HA.css
+                            [ property "display" "inline-grid"
+                            , property "grid-template-areas" "\"main\""
+                            ]
+
+                    _ ->
+                        HA.css
+                            [ overflow hidden
+                            , display inlineBlock
+                            , height (vh 100)
+                            ]
                 ]
                 [ H.node "elm-animator-to"
-                    [ HA.css
-                        [ width (pct 100)
-                        , case animationKindValue of
-                            SlideInFromTop ->
-                                display none
+                    [ case animationKindValue of
+                        SlideInFromTop ->
+                            HA.css
+                                (display inlineBlock
+                                    :: transform (translateY (pct -100))
+                                    :: baseCss
+                                )
 
-                            _ ->
-                                display inlineBlock
-                        , case animationKindValue of
-                            Fade ->
-                                opacity (num 0)
+                        Fade ->
+                            HA.css
+                                (opacity (num 0)
+                                    :: property "grid-area" "main"
+                                    :: baseCss
+                                )
 
-                            _ ->
-                                opacity (num 1)
-                        ]
+                        NoAnimation ->
+                            HA.css baseCss
                     ]
                     [ render to ]
                 , H.node "elm-animator-from"
-                    [ HA.css
-                        [ width (pct 100)
-                        , case animationKindValue of
-                            SlideInFromTop ->
-                                display none
+                    [ case animationKindValue of
+                        SlideInFromTop ->
+                            HA.css
+                                (display inlineBlock
+                                    :: transform (translateY (pct -100))
+                                    :: baseCss
+                                )
 
-                            _ ->
-                                display inlineBlock
-                        , case animationKindValue of
-                            Fade ->
-                                opacity (num 1)
+                        Fade ->
+                            HA.css
+                                (display inlineBlock
+                                    :: opacity (num 1)
+                                    :: property "grid-area" "main"
+                                    :: baseCss
+                                )
 
-                            _ ->
-                                opacity (num 0)
-                        ]
+                        NoAnimation ->
+                            HA.css baseCss
                     ]
                     [ render from ]
                 ]
+
+
+transitionTo : page -> State page -> State page
+transitionTo to state =
+    case state of
+        Idle from ->
+            Transitioning from to
+
+        Transitioning from _ ->
+            Transitioning from to
