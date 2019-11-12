@@ -19,8 +19,8 @@ type State page
 
 type AnimationKind
     = SlideInFromTop
+    | SlideInFromLeft
     | Fade
-    | NoAnimation
 
 
 animationKindToString : AnimationKind -> String
@@ -32,8 +32,8 @@ animationKindToString kind =
         Fade ->
             "Fade"
 
-        NoAnimation ->
-            "NoAnimation"
+        SlideInFromLeft ->
+            "SlideInFromLeft"
 
 
 view :
@@ -76,10 +76,19 @@ view { onFinish, render, animationKind } state =
                             , property "grid-template-areas" "\"main\""
                             ]
 
-                    _ ->
+                    SlideInFromTop ->
                         HA.css
                             [ overflow hidden
-                            , display inlineBlock
+                            , displayFlex
+                            , flexDirection column
+                            , height (vh 100)
+                            ]
+
+                    SlideInFromLeft ->
+                        HA.css
+                            [ overflow hidden
+                            , displayFlex
+                            , flexDirection row
                             , height (vh 100)
                             ]
                 ]
@@ -92,15 +101,19 @@ view { onFinish, render, animationKind } state =
                                     :: baseCss
                                 )
 
+                        SlideInFromLeft ->
+                            HA.css
+                                (display inlineBlock
+                                    :: transform (translateX (pct -100))
+                                    :: baseCss
+                                )
+
                         Fade ->
                             HA.css
                                 (opacity (num 0)
                                     :: property "grid-area" "main"
                                     :: baseCss
                                 )
-
-                        NoAnimation ->
-                            HA.css baseCss
                     ]
                     [ render to ]
                 , H.node "elm-animator-from"
@@ -112,6 +125,13 @@ view { onFinish, render, animationKind } state =
                                     :: baseCss
                                 )
 
+                        SlideInFromLeft ->
+                            HA.css
+                                (display inlineBlock
+                                    :: transform (translateX (pct -100))
+                                    :: baseCss
+                                )
+
                         Fade ->
                             HA.css
                                 (display inlineBlock
@@ -119,9 +139,6 @@ view { onFinish, render, animationKind } state =
                                     :: property "grid-area" "main"
                                     :: baseCss
                                 )
-
-                        NoAnimation ->
-                            HA.css baseCss
                     ]
                     [ render from ]
                 ]

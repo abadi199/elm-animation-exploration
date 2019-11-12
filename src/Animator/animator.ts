@@ -39,7 +39,8 @@ class Animator extends HTMLElement {
 
     switch (kind) {
       case "SlideInFromTop":
-        this.slideInFromTop(from, to);
+      case "SlideInFromLeft":
+        this.slideIn(kind, from, to);
         break;
 
       case "Fade":
@@ -51,7 +52,11 @@ class Animator extends HTMLElement {
     }
   }
 
-  slideInFromTop(from: HTMLElement, to: HTMLElement) {
+  slideIn(
+    kind: "SlideInFromTop" | "SlideInFromLeft",
+    from: HTMLElement,
+    to: HTMLElement
+  ) {
     const duration = 500;
     const options: KeyframeAnimationOptions = {
       duration,
@@ -60,15 +65,24 @@ class Animator extends HTMLElement {
       easing: "ease-in-out"
     };
 
-    from.animate(
-      [{ transform: "translateY(-100%)" }, { transform: "translateY(0%)" }],
-      options
-    );
+    let keyframes: Keyframe[] = [];
+    switch (kind) {
+      case "SlideInFromLeft":
+        keyframes = [
+          { transform: "translateX(-100%)" },
+          { transform: "translateX(0%)" }
+        ];
+        break;
+      case "SlideInFromTop":
+        keyframes = [
+          { transform: "translateY(-100%)" },
+          { transform: "translateY(0%)" }
+        ];
+        break;
+    }
 
-    to.animate(
-      [{ transform: "translateY(-100%)" }, { transform: "translateY(0%)" }],
-      options
-    ).addEventListener("finish", () => {
+    from.animate(keyframes, options);
+    to.animate(keyframes, options).addEventListener("finish", () => {
       this.dispatchEvent(new Event("finish"));
     });
   }

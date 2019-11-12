@@ -64,7 +64,17 @@ view model =
         , Animator.view
             { onFinish = PageTransitionComplete
             , render = viewPage
-            , animationKind = always Animator.SlideInFromTop
+            , animationKind =
+                \{ to } ->
+                    case to of
+                        BluePage ->
+                            Animator.SlideInFromLeft
+
+                        RedPage ->
+                            Animator.SlideInFromTop
+
+                        GreenPage ->
+                            Animator.Fade
             }
             model.page
         , H.p
@@ -156,7 +166,7 @@ animationKindForNotification { from, to } =
             Animator.Fade
 
         _ ->
-            Animator.NoAnimation
+            Animator.Fade
 
 
 viewNotification : Bool -> H.Html Msg
